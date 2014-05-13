@@ -8,6 +8,7 @@
 class UserIdentity extends CUserIdentity
 {
     public $role;
+    public $userModel;
 
     public function __construct($username, $password)
     {
@@ -16,16 +17,20 @@ class UserIdentity extends CUserIdentity
 
     public function authenticate()
     {
-        $users = array(
-            // username => password
-            'demo' => 'demo',
-            'admin' => 'admin',
-        );
-        if (!isset($users[$this->username]))
+        /**
+         * @var $user User
+         */
+        $user = User::loadByLogin($this->username);
+
+        if ($user->id === null)
             $this->errorCode = self::ERROR_USERNAME_INVALID;
-        elseif ($users[$this->username] !== $this->password)
-            $this->errorCode = self::ERROR_PASSWORD_INVALID; else
+        elseif ($user->validatePassword($this->password) == false)
+            $this->errorCode = self::ERROR_PASSWORD_INVALID; else {
             $this->errorCode = self::ERROR_NONE;
+            $this->userModel = $user;
+            $this->role = $user->role;
+        }
+
         return !$this->errorCode;
     }
 }
