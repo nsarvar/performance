@@ -1,0 +1,119 @@
+2014/05/13 14:30:40 [error] [system.db.CDbCommand] CDbCommand::fetch() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'login='admin'' at line 1. The SQL statement executed was: login=:login.
+in Z:\home\perf.lc\www\protected\models\User.php (151)
+in Z:\home\perf.lc\www\protected\components\UserIdentity.php (19)
+in Z:\home\perf.lc\www\protected\models\LoginForm.php (52)
+2014/05/13 14:30:40 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'login='admin'' at line 1. The SQL statement executed was: login=:login' in Z:\home\perf.lc\framework\db\CDbCommand.php:543
+Stack trace:
+#0 Z:\home\perf.lc\framework\db\CDbCommand.php(415): CDbCommand->queryInternal('fetch', Array, Array)
+#1 Z:\home\perf.lc\framework\db\ar\CActiveRecord.php(1558): CDbCommand->queryRow()
+#2 Z:\home\perf.lc\www\protected\models\User.php(151): CActiveRecord->findBySql('login=:login', Array)
+#3 Z:\home\perf.lc\www\protected\components\UserIdentity.php(19): User::loadByLogin('admin')
+#4 Z:\home\perf.lc\www\protected\models\LoginForm.php(52): UserIdentity->authenticate()
+#5 Z:\home\perf.lc\framework\validators\CInlineValidator.php(42): LoginForm->authenticate('password', Array)
+#6 Z:\home\perf.lc\framework\validators\CValidator.php(213): CInlineValidator->validateAttribute(Object(LoginForm), 'password')
+#7 Z:\home\perf.lc\framework\base\CModel.php(159): CValidator->validate(Object(LoginForm), NULL)
+#8 Z:\home\perf.lc\www\protected\controllers\SiteController.php(94): CModel->validate()
+#9 Z:\home\perf.lc\framework\web\actions\CInlineAction.php(49): SiteController->actionLogin()
+#10 Z:\home\perf.lc\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#11 Z:\home\perf.lc\framework\web\CController.php(286): CController->runAction(Object(CInlineAction))
+#12 Z:\home\perf.lc\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('login')
+#14 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/login')
+#15 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#16 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#17 {main}
+REQUEST_URI=/index.php?r=site/login
+HTTP_REFERER=http://perf.lc/index.php?r=site/login
+---
+2014/05/13 14:33:45 [error] [exception.CException] exception 'CException' with message 'Property "CDbCommand.login" is not defined.' in Z:\home\perf.lc\framework\base\CComponent.php:173
+Stack trace:
+#0 Z:\home\perf.lc\framework\db\CDbCommand.php(106): CComponent->__set('login', 'admin')
+#1 Z:\home\perf.lc\framework\db\CDbConnection.php(481): CDbCommand->__construct(Object(CDbConnection), Array)
+#2 Z:\home\perf.lc\framework\db\schema\CDbCommandBuilder.php(453): CDbConnection->createCommand(Array)
+#3 Z:\home\perf.lc\framework\db\ar\CActiveRecord.php(1557): CDbCommandBuilder->createSqlCommand(Array, Array)
+#4 Z:\home\perf.lc\www\protected\models\User.php(151): CActiveRecord->findBySql(Array)
+#5 Z:\home\perf.lc\www\protected\components\UserIdentity.php(19): User::loadByLogin('admin')
+#6 Z:\home\perf.lc\www\protected\models\LoginForm.php(52): UserIdentity->authenticate()
+#7 Z:\home\perf.lc\framework\validators\CInlineValidator.php(42): LoginForm->authenticate('password', Array)
+#8 Z:\home\perf.lc\framework\validators\CValidator.php(213): CInlineValidator->validateAttribute(Object(LoginForm), 'password')
+#9 Z:\home\perf.lc\framework\base\CModel.php(159): CValidator->validate(Object(LoginForm), NULL)
+#10 Z:\home\perf.lc\www\protected\controllers\SiteController.php(94): CModel->validate()
+#11 Z:\home\perf.lc\framework\web\actions\CInlineAction.php(49): SiteController->actionLogin()
+#12 Z:\home\perf.lc\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#13 Z:\home\perf.lc\framework\web\CController.php(286): CController->runAction(Object(CInlineAction))
+#14 Z:\home\perf.lc\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('login')
+#16 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/login')
+#17 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#18 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#19 {main}
+REQUEST_URI=/index.php?r=site/login
+HTTP_REFERER=http://perf.lc/index.php?r=site/login
+---
+2014/05/13 15:04:49 [error] [exception.CException] exception 'CException' with message 'Property "User.hashKey" is not defined.' in Z:\home\perf.lc\framework\base\CComponent.php:130
+Stack trace:
+#0 Z:\home\perf.lc\framework\db\ar\CActiveRecord.php(145): CComponent->__get('hashKey')
+#1 Z:\home\perf.lc\www\protected\models\User.php(159): CActiveRecord->__get('hashKey')
+#2 Z:\home\perf.lc\www\protected\models\User.php(166): User->encryptPassword('random123', '1d3add50f5')
+#3 Z:\home\perf.lc\www\protected\components\UserIdentity.php(26): User->validatePassword('random123')
+#4 Z:\home\perf.lc\www\protected\models\LoginForm.php(52): UserIdentity->authenticate()
+#5 Z:\home\perf.lc\framework\validators\CInlineValidator.php(42): LoginForm->authenticate('password', Array)
+#6 Z:\home\perf.lc\framework\validators\CValidator.php(213): CInlineValidator->validateAttribute(Object(LoginForm), 'password')
+#7 Z:\home\perf.lc\framework\base\CModel.php(159): CValidator->validate(Object(LoginForm), NULL)
+#8 Z:\home\perf.lc\www\protected\controllers\SiteController.php(94): CModel->validate()
+#9 Z:\home\perf.lc\framework\web\actions\CInlineAction.php(49): SiteController->actionLogin()
+#10 Z:\home\perf.lc\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#11 Z:\home\perf.lc\framework\web\CController.php(286): CController->runAction(Object(CInlineAction))
+#12 Z:\home\perf.lc\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('login')
+#14 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/login')
+#15 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#16 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#17 {main}
+REQUEST_URI=/index.php?r=site/login
+HTTP_REFERER=http://perf.lc/index.php?r=site/login
+---
+2014/05/13 15:13:59 [error] [exception.CException] exception 'CException' with message 'User and its behaviors do not have a method or closure named "validatePassword".' in Z:\home\perf.lc\framework\base\CComponent.php:266
+Stack trace:
+#0 Z:\home\perf.lc\framework\db\ar\CActiveRecord.php(227): CComponent->__call('validatePasswor...', Array)
+#1 Z:\home\perf.lc\www\protected\components\UserIdentity.php(26): CActiveRecord->__call('validatePasswor...', Array)
+#2 Z:\home\perf.lc\www\protected\components\UserIdentity.php(26): User->validatePassword('random1')
+#3 Z:\home\perf.lc\www\protected\models\LoginForm.php(52): UserIdentity->authenticate()
+#4 Z:\home\perf.lc\framework\validators\CInlineValidator.php(42): LoginForm->authenticate('password', Array)
+#5 Z:\home\perf.lc\framework\validators\CValidator.php(213): CInlineValidator->validateAttribute(Object(LoginForm), 'password')
+#6 Z:\home\perf.lc\framework\base\CModel.php(159): CValidator->validate(Object(LoginForm), NULL)
+#7 Z:\home\perf.lc\www\protected\controllers\SiteController.php(94): CModel->validate()
+#8 Z:\home\perf.lc\framework\web\actions\CInlineAction.php(49): SiteController->actionLogin()
+#9 Z:\home\perf.lc\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#10 Z:\home\perf.lc\framework\web\CController.php(286): CController->runAction(Object(CInlineAction))
+#11 Z:\home\perf.lc\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#12 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('login')
+#13 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/login')
+#14 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#15 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#16 {main}
+REQUEST_URI=/index.php?r=site/login
+HTTP_REFERER=http://perf.lc/index.php?r=site/login
+---
+2014/05/14 13:14:56 [error] [exception.CException] exception 'CException' with message 'CAssetManager.basePath "Z:\home\perf.lc\www\performance\assets" is invalid. Please make sure the directory exists and is writable by the Web server process.' in Z:\home\perf.lc\www\framework\web\CAssetManager.php:138
+Stack trace:
+#0 Z:\home\perf.lc\www\framework\web\CAssetManager.php(123): CAssetManager->setBasePath('Z:\home\perf.lc...')
+#1 Z:\home\perf.lc\www\framework\web\CAssetManager.php(217): CAssetManager->getBasePath()
+#2 Z:\home\perf.lc\www\framework\web\CClientScript.php(510): CAssetManager->publish('Z:\home\perf.lc...')
+#3 Z:\home\perf.lc\www\framework\web\CClientScript.php(547): CClientScript->getCoreScriptUrl()
+#4 Z:\home\perf.lc\www\framework\web\CClientScript.php(348): CClientScript->getPackageBaseUrl('jquery')
+#5 Z:\home\perf.lc\www\framework\web\CClientScript.php(208): CClientScript->renderCoreScripts()
+#6 Z:\home\perf.lc\www\framework\web\CController.php(351): CClientScript->render('<!DOCTYPE html ...')
+#7 Z:\home\perf.lc\www\framework\web\CController.php(788): CController->processOutput('<!DOCTYPE html ...')
+#8 Z:\home\perf.lc\www\performance\protected\controllers\SiteController.php(72): CController->render('contact', Array)
+#9 Z:\home\perf.lc\www\framework\web\actions\CInlineAction.php(49): SiteController->actionContact()
+#10 Z:\home\perf.lc\www\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#11 Z:\home\perf.lc\www\framework\web\CController.php(286): CController->runAction(Object(CInlineAction))
+#12 Z:\home\perf.lc\www\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 Z:\home\perf.lc\www\framework\web\CWebApplication.php(282): CController->run('contact')
+#14 Z:\home\perf.lc\www\framework\web\CWebApplication.php(141): CWebApplication->runController('site/contact')
+#15 Z:\home\perf.lc\www\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#16 Z:\home\perf.lc\www\performance\index.php(13): CApplication->run()
+#17 {main}
+REQUEST_URI=/performance/index.php?r=site/contact
+---
