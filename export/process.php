@@ -19,6 +19,7 @@ class Database
 
     public function __construct()
     {
+        error_reporting(E_ALL);
         $this->oldDbLink = mysql_connect('localhost', self::$user, self::$password);
         $this->newDbLink = mysql_connect('localhost', self::$user, self::$password, true);
         mysql_select_db(self::$oldDb, $this->oldDbLink) or die ("could not open db" . mysql_error());
@@ -34,7 +35,8 @@ class Database
         $cols = array();
         $values = array();
 
-        $result = mysql_query("select * from $table where id={$data['id']}");
+        $result = mysql_query("select * from $table where id={$data['id']}", $this->newDbLink);
+        print_r($data);
         if (!mysql_num_rows($result)) {
 
             foreach ($data as $col=> $value) {
@@ -44,22 +46,22 @@ class Database
             $cols = implode(',', $cols);
             $values = implode(',', $values);
             $query = "Insert into $table($cols) values($values);\n";
-            mysql_query($query);
+            mysql_query($query, $this->newDbLink);
+            echo "-------------INSERTED-------------------\n";
         } else {
             foreach ($data as $col=> $value) {
                 $cols[] = "`$col`='$value'";
             }
             $cols = implode(',', $cols);
             $query = "Update $table set $cols where id={$data['id']};\n";
-            mysql_query($query);
-            print_r($query);
+            mysql_query($query, $this->newDbLink);
+            echo "-------------UPDATED--------------------\n";
         }
 
     }
 
 }
-
-class Organization
+abstract class Import
 {
     protected $db;
 
@@ -67,6 +69,12 @@ class Organization
     {
         $this->db = new Database();
     }
+
+    abstract function startImport();
+}
+
+class _Organization extends Import
+{
 
     public function startImport()
     {
@@ -107,7 +115,6 @@ class Organization
                 'created_at'           => date('Y-m-d H:i:s'),
             );
             $this->db->insert('organization', $cols);
-            print_r($cols);
         }
     }
 
@@ -139,5 +146,41 @@ class Organization
     }
 }
 
-$org = new Organization();
-$org->startImport();
+class _User extends Import
+{
+    public function startImport()
+    {
+        $departments = array();
+        $result = mysql_query("SELECT * FROM `organization` order by id", $this->db->newDbLink);
+        while ($row = mysql_fetch_assoc($result)) {
+            $departments[$row['id']] = $row;
+        }
+
+        $result = mysql_query("SELECT * FROM users", $this->db->oldDbLink);
+        while ($row = mysql_fetch_assoc($result)) {
+            $cols = array(
+                'id'                    => $row['user_id'],
+                'login'                 => $row['user_username'],
+                'password'              => $row['user_password'],
+                'name'                  => $row['user_first_name'] . ' ' . $row['user_last_name'],
+                'email'                 => $row['user_email'],
+                'telephone'             => $row['user_phone'],
+                'mobile'                => $row['user_mobile'],
+                'organization_id'       => isset($departments[$row['user_department']]) ? $row['user_department'] : null,
+                'role'                  => ($row['user_type']) ? 'admin' : 'user',
+                'created_at'            => date('Y-m-d H:i:s'),
+            );
+            $this->db->insert('user', $cols);
+        }
+    }
+}
+
+/**
+ * @var $model Import
+ */
+if (isset($_GET['type'])) {
+    $class = '_' . $_GET['type'];
+
+    $model = new $class;
+    $model->startImport();
+}
