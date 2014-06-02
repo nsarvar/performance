@@ -161,7 +161,7 @@ class _User extends Import
             $cols = array(
                 'id'                    => $row['user_id'],
                 'login'                 => $row['user_username'],
-                'password'              => $row['user_password'],
+                'password'              => 123,
                 'name'                  => $row['user_first_name'] . ' ' . $row['user_last_name'],
                 'email'                 => $row['user_email'],
                 'telephone'             => $row['user_phone'],
@@ -175,6 +175,127 @@ class _User extends Import
     }
 }
 
+class _Task extends Import
+{
+    function startImport()
+    {
+        $users = array();
+        $result = mysql_query("SELECT * FROM `user` order by id", $this->db->newDbLink);
+        while ($row = mysql_fetch_assoc($result)) {
+            $users[$row['id']] = $row;
+        }
+
+        $periods = array();
+        $result = mysql_query("SELECT * FROM `period` order by period_from", $this->db->newDbLink);
+        while ($row = mysql_fetch_assoc($result)) {
+            $periods[$row['id']] = array(
+                'start'=> date_create_from_format('Y-m-d H:i:s', $row['period_from']),
+                'end'  => date_create_from_format('Y-m-d H:i:s', $row['period_to']),
+            );
+        }
+
+
+        $result = mysql_query("SELECT * FROM tasks order by task_id", $this->db->oldDbLink);
+        $j = 0;
+        while ($row = mysql_fetch_assoc($result)) {
+            $j++;
+            //if ($j > 40) die;
+            $cols = array(
+                'id'                        => $row['task_id'],
+                'number'                    => $this->getNumber($row['task_name']),
+                'name'                      => $row['task_name'],
+                'type'                      => $this->getTaskType($row),
+                'description'               => $row['task_description'],
+                'parent_id'                 => ($row['task_parent'] != $row['task_id']) ? $row['task_parent'] : null,
+                'user_id'                   => (isset($users[$row['task_owner']])) ? $row['task_owner'] : null,
+                'period_id'                 => $this->getPeriod($row['task_start_date'], $periods),
+                'start_date'                => $row['task_start_date'],
+                'created_at'                => $row['task_start_date'],
+                'updated_at'                => $row['task_start_date'],
+                'end_date'                  => $row['task_end_date'],
+                'priority'                  => ($row['task_priority']) ? 'high' : 'normal',
+                'status'                    => 'enabled',
+                'attachable'                => '1',
+            );
+            //print_r($cols);
+            $this->db->insert('task', $cols);
+        }
+
+
+    }
+
+    protected function getPeriod($date, $periods)
+    {
+        $date = date_create_from_format('Y-m-d H:i:s', $date);
+        foreach ($periods as $id=> $period) {
+            if ($date > $period['start'] && $date < $period['end']) return $id;
+        }
+        return null;
+    }
+
+    protected $types = array(
+        'buyruq'=> array('buyruq'),
+        'xat'   => array('modemnoma', 'Modemogramma'),
+        'fishka'=> array(),
+    );
+
+    protected function getNumber($name)
+    {
+        $name = strtolower($name);
+        preg_match_all('/\b[0-9]{2}\s*-\s*[0-9]{2,3}[\/]?[0-9]{0,3}\s*-\s*[0-9]{1,5}\b/', $name, $matches);
+        if (isset($matches[0][0])) return $matches[0][0];
+        preg_match_all('/\bbuyruq[-,#,№, ]{1,4}[0-9]{2,5}\s*\b/', $name, $matches);
+        if (isset($matches[0][0])) {
+            $number = $matches[0][0];
+            return preg_replace("/[^0-9]/", "", $number);
+        }
+        return null;
+    }
+
+    protected function getTaskType($row)
+    {
+        foreach ($this->types as $type=> $words) {
+            foreach ($words as $word) {
+                $string = '..' . $row['task_name'];
+                if (stripos($string, $word) !== false) return $type;
+            }
+        }
+        return 'xat';
+    }
+
+}
+
+class _Period extends Import
+{
+    function startImport()
+    {
+        $start = 2004;
+        $end = 2014;
+        $now = new DateTime(null, new DateTimeZone('Asia/Tashkent'));
+        $seconds = new DateTime();
+        $seconds->setDate(2004, 1, 1)->setTime(0, 0, 0);
+        //print_r($now->format('Y-m-d H:i:s'));
+        for ($year = $start; $year <= 2014; $year++) {
+            for ($month = 1; $month <= 12; $month++) {
+                $start = new DateTime();
+                $start->setDate($year, $month, 1)->setTime(0, 0, 0);
+                //$start = $date->format('Y-m-d H:i:s');
+                $end = clone $start;
+                $end = $end->modify('+' . (cal_days_in_month(CAL_GREGORIAN, $month, $year)) . ' day')->modify('-1 sec');
+                $cols = array(
+                    //'id'         => $start->format('U') - $seconds->format('U'),
+                    'period_from'=> $start->format('Y-m-d H:i:s'),
+                    'period_to'  => $end->format('Y-m-d H:i:s'),
+                    'status'     => 'archived',
+                    'name'       => $start->format('F, Y')
+                );
+                if ($end < $now) {
+                    //$this->db->insert('period', $cols);
+                }
+            }
+        }
+    }
+}
 /**
  * @var $model Import
  */
