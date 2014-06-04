@@ -36,7 +36,8 @@ class Database
         $values = array();
 
         $result = mysql_query("select * from $table where id={$data['id']}", $this->newDbLink);
-        print_r($data);
+        //print_r($data);
+        //file_put_contents("$table.log", print_r($data, true), FILE_APPEND);
         if (!mysql_num_rows($result)) {
 
             foreach ($data as $col=> $value) {
@@ -46,7 +47,7 @@ class Database
             $cols = implode(',', $cols);
             $values = implode(',', $values);
             $query = "Insert into $table($cols) values($values);\n";
-            mysql_query($query, $this->newDbLink);
+            $result = mysql_query($query, $this->newDbLink);
             echo "-------------INSERTED-------------------\n";
         } else {
             foreach ($data as $col=> $value) {
@@ -54,8 +55,17 @@ class Database
             }
             $cols = implode(',', $cols);
             $query = "Update $table set $cols where id={$data['id']};\n";
-            mysql_query($query, $this->newDbLink);
+            $result = mysql_query($query, $this->newDbLink);
             echo "-------------UPDATED--------------------\n";
+        }
+        if ($result === false) {
+            $error = array(
+                'error' => mysql_errno(),
+                'string'=> mysql_error(),
+                'data'  => $cols
+            );
+            print_r($error);
+            file_put_contents("$table.log", print_r($error, true), FILE_APPEND);
         }
 
     }
@@ -105,11 +115,11 @@ class _Organization extends Import
                     isset($companies[$dept['dept_company']]) ?
                         isset($groups[$companies[$dept['dept_company']]['company_name']]) ?
                             $groups[$companies[$dept['dept_company']]['company_name']]['id'] : null : null : null,
-                'name'                 => $dept['dept_name'],
-                'description'          => ($dept['dept_desc']) ? $dept['dept_desc'] : $dept['dept_name'],
+                'name'                 => mysql_real_escape_string($dept['dept_name']),
+                'description'          => mysql_real_escape_string(($dept['dept_desc']) ? $dept['dept_desc'] : $dept['dept_name']),
                 'phone'                => $dept['dept_phone'],
                 'web_site'             => $dept['dept_url'],
-                'address'              => implode(',\n', array_filter(array($dept['dept_address1'], $dept['dept_address2'], $dept['dept_city']))),
+                'address'              => mysql_real_escape_string(implode(',\n', array_filter(array($dept['dept_address1'], $dept['dept_address2'], $dept['dept_city'])))),
                 'type'                 => $this->getOrganizationType($dept),
                 'region_id'            => $this->getRegion($dept, $regions),
                 'created_at'           => date('Y-m-d H:i:s'),
@@ -162,8 +172,8 @@ class _User extends Import
                 'id'                    => $row['user_id'],
                 'login'                 => $row['user_username'],
                 'password'              => 123,
-                'name'                  => $row['user_first_name'] . ' ' . $row['user_last_name'],
-                'email'                 => $row['user_email'],
+                'name'                  => mysql_real_escape_string($row['user_first_name'] . ' ' . $row['user_last_name']),
+                'email'                 => mysql_real_escape_string($row['user_email']),
                 'telephone'             => $row['user_phone'],
                 'mobile'                => $row['user_mobile'],
                 'organization_id'       => isset($departments[$row['user_department']]) ? $row['user_department'] : null,
@@ -194,6 +204,11 @@ class _Task extends Import
             );
         }
 
+        $tasks = array();
+        $result = mysql_query("SELECT * FROM `task` order by id", $this->db->newDbLink);
+        while ($row = mysql_fetch_assoc($result)) {
+            $tasks[(int)$row['id']] = $row;
+        }
 
         $result = mysql_query("SELECT * FROM tasks order by task_id", $this->db->oldDbLink);
         $j = 0;
@@ -201,21 +216,21 @@ class _Task extends Import
             $j++;
             //if ($j > 40) die;
             $cols = array(
-                'id'                        => $row['task_id'],
-                'number'                    => $this->getNumber($row['task_name']),
-                'name'                      => $row['task_name'],
-                'type'                      => $this->getTaskType($row),
-                'description'               => $row['task_description'],
-                'parent_id'                 => ($row['task_parent'] != $row['task_id']) ? $row['task_parent'] : null,
-                'user_id'                   => (isset($users[$row['task_owner']])) ? $row['task_owner'] : null,
-                'period_id'                 => $this->getPeriod($row['task_start_date'], $periods),
-                'start_date'                => $row['task_start_date'],
-                'created_at'                => $row['task_start_date'],
-                'updated_at'                => $row['task_start_date'],
-                'end_date'                  => $row['task_end_date'],
-                'priority'                  => ($row['task_priority']) ? 'high' : 'normal',
-                'status'                    => 'enabled',
-                'attachable'                => '1',
+                'id'                  => $row['task_id'],
+                'number'              => $this->getNumber($row['task_name']),
+                'name'                => mysql_real_escape_string($row['task_name']),
+                'type'                => $this->getTaskType($row),
+                'description'         => mysql_real_escape_string($row['task_description']),
+                'parent_id'           => ($row['task_parent'] != $row['task_id'] && isset($tasks[$row['task_parent']])) ? $row['task_parent'] : null,
+                'user_id'             => (isset($users[$row['task_owner']])) ? $row['task_owner'] : null,
+                'period_id'           => $this->getPeriod($row['task_start_date'], $periods),
+                'start_date'          => $row['task_start_date'],
+                'created_at'          => $row['task_start_date'],
+                'updated_at'          => $row['task_start_date'],
+                'end_date'            => $row['task_end_date'],
+                'priority'            => ($row['task_priority']) ? 'high' : 'normal',
+                'status'              => 'enabled',
+                'attachable'          => '1',
             );
             //print_r($cols);
             $this->db->insert('task', $cols);
@@ -296,9 +311,100 @@ class _Period extends Import
         }
     }
 }
+
+
+class _Job extends Import
+{
+    function startImport()
+    {
+
+        $users = array();
+        $result = mysql_query("SELECT * FROM `user` order by id", $this->db->newDbLink);
+        while ($row = mysql_fetch_assoc($result)) {
+            $users[$row['id']] = $row;
+        }
+
+        $tasks = array();
+        $result = mysql_query("SELECT * FROM `task` order by id", $this->db->newDbLink);
+        while ($row = mysql_fetch_assoc($result)) {
+            $tasks[(int)$row['id']] = $row;
+        }
+
+        $result = mysql_query("SELECT * FROM task_log order by task_log_id", $this->db->oldDbLink);
+        $j = 0;
+        while ($row = mysql_fetch_assoc($result)) {
+            $j++;
+            //if ($j > 100) die;
+            $cols = array(
+                'id'                        => $row['task_log_id'],
+                'content'                   => mysql_real_escape_string($row['task_log_description']),
+                'user_id'                   => isset($users[$row['task_log_creator']]) ? $row['task_log_creator'] : null,
+                'organization_id'           => isset($users[$row['task_log_creator']]) ? $users[$row['task_log_creator']]['organization_id'] : null,
+                'task_id'                   => isset($tasks[(int)$row['task_log_task']]) ? $row['task_log_task'] : null,
+                'updated_at'                => $row['task_log_date'],
+                'status'                    => $this->getStatus($row),
+            );
+            //print_r($cols);
+            $this->db->insert('job', $cols);
+        }
+    }
+
+    protected $statuses = array(
+        'received'   => 'recieved',
+        'approved'   => 'ready',
+        'progressing'=> 'in progr',
+        'pending'    => 'stored',
+        'rejected'   => '',
+    );
+
+    protected function getStatus($row)
+    {
+        foreach ($this->statuses as $status=> $word) {
+            if ($word == strtolower($row['task_log_costcode'])) return $status;
+        }
+        return 'pending';
+    }
+
+}
+
+class _File extends Import
+{
+    function startImport()
+    {
+
+        $tasks = array();
+        $result = mysql_query("SELECT * FROM `task` order by id", $this->db->newDbLink);
+        while ($row = mysql_fetch_assoc($result)) {
+            $tasks[$row['id']] = $row;
+        }
+
+        $result = mysql_query("SELECT * FROM files order by file_id", $this->db->oldDbLink);
+        $j = 0;
+        while ($row = mysql_fetch_assoc($result)) {
+            $j++;
+            //if ($j > 100) die;
+            $cols = array(
+                'id'                        => $row['file_id'],
+                'realname'                  => $row['file_real_filename'],
+                'file_name'                 => mysql_real_escape_string($row['file_name']),
+                'file_type'                 => $row['file_type'],
+                'file_size'                 => $row['file_size'],
+                'created_at'                => $row['file_date'],
+                'description'               => mysql_real_escape_string($row['file_description']),
+                'task_id'                   => isset($tasks[$row['file_task']]) ? $row['file_task'] : null,
+            );
+            //print_r($cols);
+            $this->db->insert('file', $cols);
+        }
+    }
+
+}
 /**
  * @var $model Import
  */
+if ($argc > 1)
+    parse_str(implode('&', array_slice($argv, 1)), $_GET);
+
 if (isset($_GET['type'])) {
     $class = '_' . $_GET['type'];
 
