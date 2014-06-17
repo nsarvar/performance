@@ -161,6 +161,7 @@ class User extends CActiveRecord
 
     public function validatePassword($password)
     {
+        /*echo $this->encryptPassword($password);die;*/
         if ($secure = $this->password) {
             $salt = substr($secure, 0, 10);
             return $secure === $this->encryptPassword($password, $salt);

@@ -2,6 +2,8 @@
 
 class SiteController extends Controller
 {
+    public $layout = '//layouts/dashboard';
+
     public function actions()
     {
         return array(
