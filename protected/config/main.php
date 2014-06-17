@@ -5,86 +5,84 @@
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
+require_once(dirname(__FILE__) . '/../components/helpers.php');
 return array(
-    'theme'=>'basic',
-	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Web Application',
+    'theme'       => 'basic',
+    'basePath'    => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
+    'name'        => 'Performance',
+    'language'    => 'en',
+    /*'preload'     => array('log'),*/
 
-	'preload'=>array('log'),
+    'aliases'     => array(
+        'bootstrap' => 'ext.bootstrap',
+    ),
 
-	'aliases' => array(
-		'bootstrap' => 'ext.bootstrap',
-	),
+    'import'      => array(
+        'application.models.*',
+        'application.components.*',
+        'bootstrap.behaviors.*',
+        'bootstrap.helpers.*',
+        'bootstrap.widgets.*'
+    ),
 
-    'import'=>array(
-		'application.models.*',
-		'application.components.*',
-		'bootstrap.behaviors.*',
-		'bootstrap.helpers.*',
-		'bootstrap.widgets.*'
-	),
+    'modules'     => array(
+        'gii'=> array(
+            'class'          => 'system.gii.GiiModule',
+            'password'       => 'random123',
+            'ipFilters'      => array('127.0.0.1', '::1'),
+            'generatorPaths' => array('bootstrap.gii'),
+        ),
 
-	'modules'=>array(
-		'gii'=>array(
-			'class'=>'system.gii.GiiModule',
-			'password'=>'random123',
-			'ipFilters'=>array('127.0.0.1','::1'),
-			'generatorPaths' => array('bootstrap.gii'),
-		),
+    ),
 
-	),
+    'components'  => array(
+        'user'        => array(
+            'allowAutoLogin'=> true,
+        ),
 
-	// application components
-	'components'=>array(
-		'user'=>array(
-			'allowAutoLogin'=>true,
-		),
-		// uncomment the following to enable URLs in path-format
-		/*
-		'urlManager'=>array(
-			'urlFormat'=>'path',
-			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
-			),
-		),
-		*/
-		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=performance_new',
-			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '',
-			'charset' => 'utf8',
-		),
+        'urlManager'  => array(
+            'urlFormat'     => 'path',
+            'showScriptName'=> false,
+            'rules'         => array(
+                '<controller:\w+>/<id:\d+>'             => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>'=> '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>'         => '<controller>/<action>',
+            ),
+        ),
 
-		'errorHandler'=>array(
-			'errorAction'=>'site/error',
-		),
-		'log'=>array(
-			'class'=>'CLogRouter',
-			'routes'=>array(
-				array(
-					'class'=>'CFileLogRoute',
-					'levels'=>'error, warning',
-				),
-				// uncomment the following to show log messages on web pages
-				/*
-				array(
-					'class'=>'CWebLogRoute',
-				),
-				*/
-			),
-		),
-        'bootstrap' => array(
+        'db'          => array(
+            'connectionString' => 'mysql:host=localhost;dbname=performance_new',
+            'emulatePrepare'   => true,
+            'username'         => 'root',
+            'password'         => '',
+            'charset'          => 'utf8',
+        ),
+
+        'errorHandler'=> array(
+            'errorAction'=> 'site/error',
+        ),
+
+        'log'         => array(
+            'class' => 'CLogRouter',
+            'routes'=> array(
+                array(
+                    'class' => 'CFileLogRoute',
+                    'levels'=> 'error, warning',
+                ),
+
+                /*array(
+                    'class'=> 'CWebLogRoute',
+                ),*/
+            ),
+        ),
+        'bootstrap'   => array(
             'class' => 'bootstrap.components.BsApi'
         ),
-	),
+    ),
 
-	// application-level parameters that can be accessed
-	// using Yii::app()->params['paramName']
-	'params'=>array(
-		// this is used in contact page
-		'adminEmail'=>'webmaster@example.com',
-	),
+    'params'      => array(
+        //Yii::app()->params['paramName']
+        'adminEmail'=> 'homidjonov@gmail.com',
+    ),
+
 );

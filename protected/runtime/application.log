@@ -342,3 +342,89 @@ REQUEST_URI=/index.php?r=site/login
 in Z:\home\perf.lc\www\protected\extensions\bootstrap\helpers\BsHtml.php (516)
 in Z:\home\perf.lc\www\protected\extensions\bootstrap\helpers\BsHtml.php (3076)
 in Z:\home\perf.lc\www\protected\extensions\bootstrap\helpers\BsHtml.php (3052)
+2014/06/17 17:33:31 [error] [php] Cannot modify header information - headers already sent by (output started at Z:\home\perf.lc\www\protected\components\Controller.php:30) (Z:\home\perf.lc\www\protected\components\Controller.php:34)
+Stack trace:
+#0 Z:\home\perf.lc\framework\web\actions\CAction.php(108): ReflectionMethod->invokeArgs()
+#1 Z:\home\perf.lc\framework\web\actions\CInlineAction.php(47): CInlineAction->runWithParamsInternal()
+#2 Z:\home\perf.lc\framework\web\CController.php(308): CInlineAction->runWithParams()
+#3 Z:\home\perf.lc\framework\web\CController.php(286): SiteController->runAction()
+#4 Z:\home\perf.lc\framework\web\CController.php(265): SiteController->runActionWithFilters()
+#5 Z:\home\perf.lc\framework\web\CWebApplication.php(282): SiteController->run()
+#6 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController()
+#7 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#8 Z:\home\perf.lc\www\index.php(13): CWebApplication->run()
+REQUEST_URI=/index.php/site/language?lang=uz_latn
+in Z:\home\perf.lc\www\protected\components\Controller.php (34)
+in Z:\home\perf.lc\www\index.php (13)
+2014/06/17 17:34:35 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "language".' in Z:\home\perf.lc\framework\web\CController.php:483
+Stack trace:
+#0 Z:\home\perf.lc\framework\web\CController.php(270): CController->missingAction('language')
+#1 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('language')
+#2 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/language')
+#3 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#4 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/index.php/site/language?lang=uz_latn
+---
+2014/06/17 17:34:37 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "language".' in Z:\home\perf.lc\framework\web\CController.php:483
+Stack trace:
+#0 Z:\home\perf.lc\framework\web\CController.php(270): CController->missingAction('language')
+#1 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('language')
+#2 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/language')
+#3 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#4 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/index.php/site/language?lang=uz_latn
+---
+2014/06/17 17:34:41 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "language".' in Z:\home\perf.lc\framework\web\CController.php:483
+Stack trace:
+#0 Z:\home\perf.lc\framework\web\CController.php(270): CController->missingAction('language')
+#1 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('language')
+#2 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/language')
+#3 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#4 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/index.php/site/language?lang=uz_cryl
+---
+2014/06/17 17:34:49 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "language".' in Z:\home\perf.lc\framework\web\CController.php:483
+Stack trace:
+#0 Z:\home\perf.lc\framework\web\CController.php(270): CController->missingAction('language')
+#1 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('language')
+#2 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/language')
+#3 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#4 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/index.php/site/language?lang=uz_latn
+HTTP_REFERER=http://perf.lc/index.php/site/index
+---
+2014/06/17 17:35:09 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "language".' in Z:\home\perf.lc\framework\web\CController.php:483
+Stack trace:
+#0 Z:\home\perf.lc\framework\web\CController.php(270): CController->missingAction('language')
+#1 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('language')
+#2 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/language')
+#3 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#4 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/index.php/site/language?lang=uz_latn
+HTTP_REFERER=http://perf.lc/index.php/site/index
+---
+2014/06/17 17:35:21 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "language".' in Z:\home\perf.lc\framework\web\CController.php:483
+Stack trace:
+#0 Z:\home\perf.lc\framework\web\CController.php(270): CController->missingAction('language')
+#1 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('language')
+#2 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/language')
+#3 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#4 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/index.php/site/language?lang=uz_cryl
+---
+2014/06/17 17:35:27 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "language".' in Z:\home\perf.lc\framework\web\CController.php:483
+Stack trace:
+#0 Z:\home\perf.lc\framework\web\CController.php(270): CController->missingAction('language')
+#1 Z:\home\perf.lc\framework\web\CWebApplication.php(282): CController->run('language')
+#2 Z:\home\perf.lc\framework\web\CWebApplication.php(141): CWebApplication->runController('site/language')
+#3 Z:\home\perf.lc\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#4 Z:\home\perf.lc\www\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/index.php/site/language?lang=en
+---

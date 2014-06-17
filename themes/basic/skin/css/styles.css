@@ -1,0 +1,16 @@
+html {
+    height: 100%;
+}
+body {
+    background-color: #F8F8F8;
+    height: 100%;
+}
+.middle_area {
+    height: 230px;
+    margin-top: -115px;
+    position: relative;
+    top: 40%;
+}
+#login-form .control-label{
+    display: none;
+}

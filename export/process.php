@@ -69,8 +69,8 @@ class Database
         }
 
     }
-
 }
+
 abstract class Import
 {
     protected $db;
