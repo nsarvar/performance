@@ -84,7 +84,22 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                     'pull' => BsHtml::NAVBAR_NAV_PULL_RIGHT
                 )
             )
-            : array()
+            : array(
+            'class'           => 'bootstrap.widgets.BsNav',
+            'type'            => 'navbar',
+            'activateParents' => true,
+            'items'           => array(
+                array(
+                    'label' => 'Login',
+                    'url'   => array(
+                        '/site/login'
+                    ),
+                )
+            ),
+            'htmlOptions'     => array(
+                'pull' => BsHtml::NAVBAR_NAV_PULL_RIGHT
+            )
+        )
     )
 ));
 ?>
