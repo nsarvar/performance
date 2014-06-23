@@ -9,9 +9,9 @@
     'method'=> 'get',
 )); ?>
 
-<?php echo $form->dropDownListControlGroup($model, 'parent_id', Organization::getParents()); ?>
-<?php echo $form->dropDownListControlGroup($model, 'type', Organization::getTypesArray()); ?>
-<?php echo $form->dropDownListControlGroup($model, 'region_id', Region::getOptionLabels()); ?>
+<?php echo $form->dropDownListControlGroup($model, 'parent_id', Organization::getParents(), array('class'=> 'selectpicker show-tick', 'title'=> 'Parent Organization')); ?>
+<?php echo $form->dropDownListControlGroup($model, 'type', Organization::getTypesArray(), array('class'=> 'selectpicker show-tick', 'title'=> 'Organization Type')); ?>
+<?php echo $form->dropDownListControlGroup($model, 'region_id', Region::getOptionLabels(), array('class'=> 'selectpicker show-tick', 'title'=> 'Organization Region')); ?>
 
 <div class="form-actions">
     <?php echo BsHtml::submitButton('Search', array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>

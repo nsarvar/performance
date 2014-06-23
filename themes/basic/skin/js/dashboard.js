@@ -4,5 +4,6 @@ $(function () {
             document.location.href = $(this).attr('action');
         }
         return false;
-    })
+    });
+    $('.selectpicker').selectpicker();
 });

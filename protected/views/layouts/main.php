@@ -5,13 +5,15 @@ $cs
     ->registerCssFile($themePath . '/skin/css/bootstrap.css')
     ->registerCssFile($themePath . '/skin/css/bootstrap-theme.css')
     ->registerCssFile($themePath . '/skin/css/font-awesome/font-awesome.min.css')
-    ->registerCssFile($themePath . '/skin/css/styles.css');
+    ->registerCssFile($themePath . '/skin/css/styles.css')
+    ->registerCssFile($themePath . '/skin/css/bootstrap-select.min.css');
 
 $cs
     ->registerCoreScript('jquery', CClientScript::POS_END)
     ->registerCoreScript('jquery.ui', CClientScript::POS_END)
     ->registerScriptFile($themePath . '/skin/js/bootstrap.min.js', CClientScript::POS_END)
     ->registerScriptFile($themePath . '/skin/js/dashboard.js', CClientScript::POS_END)
+    ->registerScriptFile($themePath . '/skin/js/bootstrap-select.min.js', CClientScript::POS_END)
     ->registerScript('tooltip', "$('[data-toggle=\"tooltip\"]').tooltip(); $('[data-toggle=\"popover\"]').tooltip()", CClientScript::POS_READY);
 
 ?>
