@@ -95,4 +95,24 @@ class Region extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+
+    public static function getOptionLabels()
+    {
+        /**
+         * @var $organizations CDbCommand
+         */
+        $regions = Yii::app()->db->createCommand('
+        SELECT
+            *
+        FROM
+            `region`
+        ')->queryAll();
+
+        $result = array(''=> '');
+        foreach ($regions as $row) {
+            $result[$row['id']] = $row['name'];
+        }
+        return $result;
+    }
 }

@@ -15,7 +15,7 @@ class BsPager extends CBasePager
     /**
      * @var string the pager size.
      */
-    public $size = BsHtml::PAGINATION_SIZE_SMALL;
+    public $size = BsHtml::PAGINATION_SIZE_DEFAULT;
     /**
      * @var integer maximum number of page buttons that can be displayed.
      */
@@ -23,11 +23,11 @@ class BsPager extends CBasePager
     /**
      * @var string the text label for the next page button.
      */
-    public $nextPageLabel;
+    public $nextPageLabel=null;
     /**
      * @var string the text label for the previous page button.
      */
-    public $prevPageLabel;
+    public $prevPageLabel=null;
     /**
      * @var string the text label for the first page button.
      */
@@ -111,7 +111,7 @@ class BsPager extends CBasePager
             $page = 0;
         }
 
-        $links[] = $this->createPageLink($this->prevPageLabel, $page, $currentPage <= 0, false);
+        //$links[] = $this->createPageLink($this->prevPageLabel, $page, $currentPage <= 0, false);
 
         // internal pages
         for ($i = $beginPage; $i <= $endPage; ++$i) {
@@ -123,7 +123,7 @@ class BsPager extends CBasePager
             $page = $pageCount - 1;
         }
 
-        $links[] = $this->createPageLink($this->nextPageLabel, $page, $currentPage >= $pageCount - 1, false);
+        //$links[] = $this->createPageLink($this->nextPageLabel, $page, $currentPage >= $pageCount - 1, false);
 
         // last page
         if (!$this->hideFirstAndLast) {

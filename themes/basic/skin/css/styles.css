@@ -52,3 +52,10 @@ table thead{
     font-size: 12px;
 
 }
+.pagination {
+    border-radius: 4px;
+    display: inline-block;
+    float: right;
+    margin: 10px 0;
+    padding-left: 0;
+}
