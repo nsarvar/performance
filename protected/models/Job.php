@@ -10,9 +10,11 @@
  * @property string $status
  * @property string $updated_at
  * @property string $user_id
+ * @property string $task_id
  *
  * The followings are the available model relations:
  * @property File[] $files
+ * @property Task $task
  * @property Organization $organization
  * @property User $user
  */
@@ -34,12 +36,12 @@ class Job extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, content', 'required'),
-			array('id, organization_id, status, user_id', 'length', 'max'=>11),
+			array('content', 'required'),
+			array('organization_id, status, user_id, task_id', 'length', 'max'=>11),
 			array('updated_at', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, organization_id, content, status, updated_at, user_id', 'safe', 'on'=>'search'),
+			array('id, organization_id, content, status, updated_at, user_id, task_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -52,6 +54,7 @@ class Job extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'files' => array(self::HAS_MANY, 'File', 'job_id'),
+			'task' => array(self::BELONGS_TO, 'Task', 'task_id'),
 			'organization' => array(self::BELONGS_TO, 'Organization', 'organization_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'user_id'),
 		);
@@ -69,6 +72,7 @@ class Job extends CActiveRecord
 			'status' => 'Status',
 			'updated_at' => 'Updated At',
 			'user_id' => 'User',
+			'task_id' => 'Task',
 		);
 	}
 
@@ -96,6 +100,7 @@ class Job extends CActiveRecord
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('updated_at',$this->updated_at,true);
 		$criteria->compare('user_id',$this->user_id,true);
+		$criteria->compare('task_id',$this->task_id,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

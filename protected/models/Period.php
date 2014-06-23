@@ -35,7 +35,7 @@ class Period extends CActiveRecord
 			array('name, period_from', 'required'),
 			array('task_count', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>32),
-			array('status', 'length', 'max'=>9),
+			array('status', 'length', 'max'=>8),
 			array('period_to', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -61,12 +61,12 @@ class Period extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'Period ID',
+			'id' => 'ID',
 			'name' => 'Name',
 			'status' => 'Status',
 			'task_count' => 'Task Count',
-			'period_from' => 'From',
-			'period_to' => 'To',
+			'period_from' => 'Period From',
+			'period_to' => 'Period To',
 		);
 	}
 

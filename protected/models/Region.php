@@ -28,8 +28,7 @@ class Region extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, name', 'required'),
-			array('id', 'length', 'max'=>11),
+			array('name', 'required'),
 			array('name', 'length', 'max'=>32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -55,7 +54,7 @@ class Region extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'Region ID',
+			'id' => 'ID',
 			'name' => 'Name',
 		);
 	}

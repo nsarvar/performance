@@ -6,8 +6,10 @@
  * The followings are the available columns in table 'group':
  * @property string $id
  * @property string $name
+ * @property string $short_name
  *
  * The followings are the available model relations:
+ * @property Organization[] $organizations
  * @property Task[] $tasks
  * @property User[] $users
  */
@@ -29,12 +31,12 @@ class Group extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, name', 'required'),
-			array('id', 'length', 'max'=>11),
+			array('short_name', 'required'),
 			array('name', 'length', 'max'=>64),
+			array('short_name', 'length', 'max'=>32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on'=>'search'),
+			array('id, name, short_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -46,6 +48,7 @@ class Group extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'organizations' => array(self::HAS_MANY, 'Organization', 'group_id'),
 			'tasks' => array(self::HAS_MANY, 'Task', 'group_id'),
 			'users' => array(self::HAS_MANY, 'User', 'group_id'),
 		);
@@ -57,8 +60,9 @@ class Group extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'Group ID',
-			'name' => 'Group Name',
+			'id' => 'ID',
+			'name' => 'Name',
+			'short_name' => 'Short Name',
 		);
 	}
 
@@ -82,6 +86,7 @@ class Group extends CActiveRecord
 
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('short_name',$this->short_name,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
