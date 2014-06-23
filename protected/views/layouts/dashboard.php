@@ -15,7 +15,7 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                 array(
                     'label' => __('app', 'Periods'),
                     'url'   => array(
-                        '/periods'
+                        '/period'
                     ),
                 ),
                 array(
@@ -33,7 +33,7 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                 array(
                     'label' => __('app', 'Organizations'),
                     'url'   => array(
-                        '/organizations'
+                        '/organization'
                     ),
                 ),
                 array(

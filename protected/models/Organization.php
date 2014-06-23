@@ -5,7 +5,6 @@
  *
  * The followings are the available columns in table 'organization':
  * @property string $id
- * @property string $group_id
  * @property string $parent_id
  * @property string $name
  * @property string $short_name
@@ -20,7 +19,6 @@
  *
  * The followings are the available model relations:
  * @property Job[] $jobs
- * @property Group $group
  * @property Organization $parent
  * @property Organization[] $organizations
  * @property Region $region
@@ -45,7 +43,7 @@ class Organization extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('short_name', 'required'),
-			array('group_id, parent_id, region_id', 'length', 'max'=>11),
+			array('parent_id, region_id', 'length', 'max'=>11),
 			array('name, description, address, phone, web_site', 'length', 'max'=>255),
 			array('short_name', 'length', 'max'=>30),
 			array('email', 'length', 'max'=>64),
@@ -53,7 +51,7 @@ class Organization extends CActiveRecord
 			array('created_at', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, group_id, parent_id, name, short_name, description, address, phone, email, web_site, type, region_id, created_at', 'safe', 'on'=>'search'),
+			array('id, parent_id, name, short_name, description, address, phone, email, web_site, type, region_id, created_at', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -66,7 +64,6 @@ class Organization extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'jobs' => array(self::HAS_MANY, 'Job', 'organization_id'),
-			'group' => array(self::BELONGS_TO, 'Group', 'group_id'),
 			'parent' => array(self::BELONGS_TO, 'Organization', 'parent_id'),
 			'organizations' => array(self::HAS_MANY, 'Organization', 'parent_id'),
 			'region' => array(self::BELONGS_TO, 'Region', 'region_id'),
@@ -81,7 +78,6 @@ class Organization extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'group_id' => 'Group',
 			'parent_id' => 'Parent',
 			'name' => 'Name',
 			'short_name' => 'Short Name',
@@ -89,7 +85,7 @@ class Organization extends CActiveRecord
 			'address' => 'Address',
 			'phone' => 'Phone',
 			'email' => 'Email',
-			'web_site' => 'Web Site',
+			'web_site' => 'Web-site',
 			'type' => 'Type',
 			'region_id' => 'Region',
 			'created_at' => 'Created At',
@@ -115,7 +111,6 @@ class Organization extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('group_id',$this->group_id,true);
 		$criteria->compare('parent_id',$this->parent_id,true);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('short_name',$this->short_name,true);

@@ -26,7 +26,7 @@ class Controller extends CController
     public function init()
     {
         if ($lang = Yii::app()->request->getParam('lang')) {
-            if (in_array($lang, array('en', 'uz_latn', 'uz_cryl'))) {
+            if (in_array($lang, array('en', 'uz_latn', 'uz_cryl','ru'))) {
                 Yii::app()->session['language'] = $lang;
                 $this->redirect('/');
             }

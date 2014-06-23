@@ -10,7 +10,7 @@ return array(
     'theme'       => 'basic',
     'basePath'    => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name'        => 'Performance',
-    'language'    => 'en',
+    'language'    => 'ru',
     /*'preload'     => array('log'),*/
 
     'aliases'     => array(

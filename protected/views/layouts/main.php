@@ -4,6 +4,7 @@ $themePath = Yii::app()->theme->baseUrl;
 $cs
     ->registerCssFile($themePath . '/skin/css/bootstrap.css')
     ->registerCssFile($themePath . '/skin/css/bootstrap-theme.css')
+    ->registerCssFile($themePath . '/skin/css/font-awesome/font-awesome.min.css')
     ->registerCssFile($themePath . '/skin/css/styles.css');
 
 $cs

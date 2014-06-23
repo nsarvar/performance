@@ -7,6 +7,5 @@
  * To change this template use File | Settings | File Templates.
  */
 return array(
-    'Home'=> 'Bosh Sahifa',
-    'qq'=> 'So\'ngi >|'
+    'Last &gt;&gt;'=> 'So\'ngi >|'
 );

@@ -16,98 +16,93 @@
  */
 class Period extends CActiveRecord
 {
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'period';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'period';
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
-			array('name, period_from', 'required'),
-			array('task_count', 'numerical', 'integerOnly'=>true),
-			array('name', 'length', 'max'=>32),
-			array('status', 'length', 'max'=>8),
-			array('period_to', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, name, status, task_count, period_from, period_to', 'safe', 'on'=>'search'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        // NOTE: you should only define rules for those attributes that
+        // will receive user inputs.
+        return array(
+            array('name, period_from', 'required'),
+            array('task_count', 'numerical', 'integerOnly'=> true),
+            array('name', 'length', 'max'=> 32),
+            array('status', 'length', 'max'=> 8),
+            array('period_to', 'safe'),
+            array('id, name, status, task_count, period_from, period_to', 'safe', 'on'=> 'search'),
+        );
+    }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'tasks' => array(self::HAS_MANY, 'Task', 'period_id'),
-		);
-	}
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        // NOTE: you may need to adjust the relation name and the related
+        // class name for the relations automatically generated below.
+        return array(
+            'tasks' => array(self::HAS_MANY, 'Task', 'period_id'),
+        );
+    }
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'id' => 'ID',
-			'name' => 'Name',
-			'status' => 'Status',
-			'task_count' => 'Task Count',
-			'period_from' => 'Period From',
-			'period_to' => 'Period To',
-		);
-	}
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    public function attributeLabels()
+    {
+        return array(
+            'id'          => 'ID',
+            'name'        => 'Name',
+            'status'      => 'Status',
+            'task_count'  => 'Task Count',
+            'period_from' => 'Period From',
+            'period_to'   => 'Period To',
+        );
+    }
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
+    public function search()
+    {
+        $criteria = new CDbCriteria;
 
-		$criteria=new CDbCriteria;
+        if (!empty($this->period_from) && empty($this->period_to)) {
+            $criteria->condition = "period_from >= :period_from";
+            $criteria->params = array(':period_from'=> $this->period_from);
+        } elseif (!empty($this->period_to) && empty($this->period_from)) {
+            $criteria->condition = "period_from <= :period_to";
+            $criteria->params = array(':period_to'=> $this->period_to);
+        } elseif (!empty($this->period_from) && !empty($this->period_to)) {
+            $criteria->condition = "period_from  >= :period_from AND period_from <= :period_to";
+            $criteria->params = array(':period_from'=> $this->period_from, ':period_to'=> $this->period_to);
+        }
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('status',$this->status,true);
-		$criteria->compare('task_count',$this->task_count);
-		$criteria->compare('period_from',$this->period_from,true);
-		$criteria->compare('period_to',$this->period_to,true);
+        return new CActiveDataProvider($this, array(
+            'criteria'   => $criteria,
+            'sort'       => array('defaultOrder'=> 'period_from DESC',),
+            'pagination' => array(
+                'pageSize' => 13
 
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+            )
+        ));
+    }
 
-	/**
-	 * Returns the static model of the specified AR class.
-	 * Please note that you should have this exact method in all your CActiveRecord descendants!
-	 * @param string $className active record class name.
-	 * @return Period the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
+
+    function getPeriodToFormatted()
+    {
+        if ($this->period_to === null)
+            return;
+
+        return Yii::app()->dateFormatter->format("d/M/y", $this->period_to);
+    }
 }

@@ -14,3 +14,41 @@ body {
 #login-form .control-label{
     display: none;
 }
+
+.grid-view .sort-link:after {
+    content: "\f105";
+    float: right;
+    font-family: fontawesome;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 16px;
+}
+
+.grid-view .sort-link.desc:after{
+    content: "\f107";
+    float: right;
+    font-family: fontawesome;
+}
+.grid-view .sort-link.asc:after{
+    content: "\f106";
+    float: right;
+    font-family: fontawesome;
+}
+.grid-view .sort-link .caret{
+    display: none;
+}
+.grid-view .sort-link {
+    display: block;
+}
+table thead th{
+    border-left: 1px solid #e3e3e3;
+}
+
+table thead{
+    background-image: linear-gradient(#fafafa, #eaeaea);
+    color: rgba(35, 62, 70, 0.81);
+    cursor: pointer;
+    font-size: 12px;
+
+}
