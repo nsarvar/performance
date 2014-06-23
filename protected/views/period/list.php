@@ -24,7 +24,16 @@ $('.search-form form').submit(function(){
     </h3>
 </div>
 <div class="row">
-    <div class="col col-xs-9">
+    <div class="col col-md-3">
+        <?php
+        $this->renderPartial('_search', array(
+            'model'=> $model,
+        ));
+        ?>
+        <hr>
+    </div>
+
+    <div class="col col-md-9">
 
         <div class="panel panel-default">
             <div class="panel-body">
@@ -32,7 +41,6 @@ $('.search-form form').submit(function(){
                 'id'            => 'period-grid',
                 'dataProvider'  => $model->search(),
                 'template'      => '{items}{pager}',
-                'summaryText'   => '',
                 'type'          => BsHtml::GRID_TYPE_STRIPED,
                 'columns'       => array(
                     array('name'=> 'id', 'htmlOptions'=> array('width'=> '60px')),
@@ -61,13 +69,7 @@ $('.search-form form').submit(function(){
         </div>
 
     </div>
-    <div class="col col-xs-3">
-        <?php
-        $this->renderPartial('_search', array(
-            'model'=> $model,
-        ));
-        ?>
-    </div>
+
 
 </div>
 
