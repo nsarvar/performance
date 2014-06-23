@@ -15,7 +15,6 @@ class OrganizationController extends Controller
     {
         return array(
             'accessControl', // perform access control for CRUD operations
-            'postOnly + delete', // we only allow deletion via POST request
         );
     }
 
@@ -92,8 +91,13 @@ class OrganizationController extends Controller
 
         if (isset($_POST['Organization'])) {
             $model->attributes = $_POST['Organization'];
-            if ($model->save())
-                $this->redirect(array('view', 'id'=> $model->id));
+            try {
+                $model->save();
+                Yii::app()->user->setFlash('success', Yii::t('app', 'Organization ":name" is updated', array(':name'=> $model->name)));
+            } catch (Exception $e) {
+                Yii::app()->user->setFlash('danger', $e->getMessage());
+            }
+
         }
 
         $this->render('update', array(
@@ -108,15 +112,18 @@ class OrganizationController extends Controller
      */
     public function actionDelete($id)
     {
-        if (Yii::app()->request->isPostRequest) {
-            // we only allow deletion via POST request
-            $this->loadModel($id)->delete();
 
-            // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-            if (!isset($_GET['ajax']))
-                $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-        } else
-            throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
+        try {
+            $model = $this->loadModel($id);
+            if ($model->delete()) {
+                Yii::app()->user->setFlash('success', Yii::t('app', 'Organization ":name" is deleted', array(':name'=> $model->name)));
+            }
+        } catch (Exception $e) {
+            Yii::app()->user->setFlash('danger', $e->getMessage());
+
+        }
+        $this->redirect(array('organization/index'));
+
     }
 
     /**
@@ -124,10 +131,8 @@ class OrganizationController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new CActiveDataProvider('Organization');
-        $this->render('index', array(
-            'dataProvider'=> $dataProvider,
-        ));
+
+        return $this->actionAdmin();
     }
 
     /**

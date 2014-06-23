@@ -109,7 +109,7 @@ class Region extends CActiveRecord
             `region`
         ')->queryAll();
 
-        $result = array(''=> '');
+        $result = array(null=> '');
         foreach ($regions as $row) {
             $result[$row['id']] = $row['name'];
         }

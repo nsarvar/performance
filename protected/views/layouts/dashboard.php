@@ -105,11 +105,21 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
 ?>
 
 <div class="container" id="page">
+    <?php if ($flashMessages = Yii::app()->user->getFlashes()): ?>
+    <?php foreach ($flashMessages as $key => $message): ?>
+        <div class="alert alert-<?=$key?> alert-dismissable">
+            <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <?=$message?>
+        </div>
+        <?php endforeach; ?>
+    <?php endif ?>
+
     <?php if (isset($this->breadcrumbs)): ?>
     <?php $this->widget('bootstrap.widgets.BsBreadcrumb', array(
         'links' => $this->breadcrumbs,
     )); ?>
     <?php endif?>
+
     <?php echo $content; ?>
 </div>
 <?php $this->endContent(); ?>

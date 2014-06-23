@@ -42,11 +42,12 @@ class Organization extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('short_name', 'required'),
+            array('short_name,name,type,parent_id', 'required'),
             array('parent_id, region_id', 'length', 'max'=> 11),
             array('name, description, address, phone, web_site', 'length', 'max'=> 255),
             array('short_name', 'length', 'max'=> 30),
             array('email', 'length', 'max'=> 64),
+            array('email', 'email', 'message'=> "The email isn't correct"),
             array('type', 'length', 'max'=> 10),
             array('created_at', 'safe'),
             // The following rule is used by search().
@@ -163,6 +164,35 @@ class Organization extends CActiveRecord
         return $result;
     }
 
+    public static function getOptionLabels()
+    {
+        /**
+         * @var $organizations CDbCommand
+         */
+        $organizations = Yii::app()->db->createCommand('
+        SELECT
+            p.id,
+            p.`name`
+            FROM
+                `organization` AS p
+            ORDER BY
+            (
+                SELECT
+                    count(id)
+                FROM
+                    organization AS ch
+                WHERE
+                    ch.parent_id = p.id
+            ) DESC ,`name` ASC
+        ')->queryAll();
+
+        $result = array(''=> '');
+        foreach ($organizations as $o) {
+            $result[$o['id']] = $o['name'];
+        }
+        return $result;
+    }
+
     const TYPE_MINISTRY = 'ministry';
     const TYPE_UNIVERSITY = 'university';
     const TYPE_COMITTE = 'comitte';
@@ -178,5 +208,10 @@ class Organization extends CActiveRecord
             self::TYPE_COMITTE   => __('app', ucfirst(self::TYPE_COMITTE)),
             self::TYPE_CENTER    => __('app', ucfirst(self::TYPE_CENTER)),
         );
+    }
+
+    public function beforeSave()
+    {
+        if (empty($this->region_id)) $this->region_id = null;
     }
 }

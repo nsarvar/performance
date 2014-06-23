@@ -47,7 +47,11 @@ $('.search-form form').submit(function(){
                 'type'          => BsHtml::GRID_TYPE_STRIPED,
                 'columns'       => array(
                     'id',
-                    'name',
+                    array(
+                        'name'  => 'name',
+                        'value' => 'CHtml::link($data->name, Yii::app()->createUrl("organization/update",array("id"=>$data->primaryKey)))',
+                        'type'  => 'raw',
+                    ),
                     /*array(
                         'class'=> 'bootstrap.widgets.BsButtonColumn',
                     ),*/
