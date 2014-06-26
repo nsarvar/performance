@@ -11,11 +11,9 @@
 <div class="row">
     <div class="col col-md-4 col-lg-12">
         <?php echo $form->dropDownListControlGroup($model, 'parent_id', Organization::getParents(), array('class'=> 'selectpicker show-tick', 'title'=> 'Parent Organization')); ?>
-
     </div>
     <div class="col col-md-4 col-lg-12">
         <?php echo $form->dropDownListControlGroup($model, 'type', Organization::getTypesArray(), array('class'=> 'selectpicker show-tick', 'title'=> 'Organization Type')); ?>
-
     </div>
     <div class="col col-md-4 col-lg-12">
         <?php echo $form->dropDownListControlGroup($model, 'region_id', Region::getOptionLabels(), array('class'=> 'selectpicker show-tick', 'title'=> 'Organization Region')); ?>

@@ -4,17 +4,15 @@
 ?>
 
 <?php
-$this->breadcrumbs=array(
-	'Users'=>array('index'),
-	'Create',
-);
-
-$this->menu=array(
-    array('icon' => 'glyphicon glyphicon-list','label'=>'List User', 'url'=>array('index')),
-	array('icon' => 'glyphicon glyphicon-tasks','label'=>'Manage User', 'url'=>array('admin')),
+$this->breadcrumbs = array(
+    'Users'     => array('index'),
+    'Create New User',
 );
 ?>
+<div class="page-header">
+    <h3>
+        <?=$model->name?>
+    </h3>
+</div>
 
-<?php echo BsHtml::pageHeader('Create','User') ?>
-
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=> $model)); ?>

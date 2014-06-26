@@ -16,20 +16,28 @@
     <div class="col col-md-12 col-lg-6">
         <div class="panel panel-default">
             <div class="panel-body">
-                <?php echo $form->textFieldControlGroup($model, 'login', array('maxlength'=> 30, 'disabled'=> 'disabled')); ?>
-                <div class="input-group" style="position: static;">
+                <?php echo $form->textFieldControlGroup($model, 'login', array('maxlength'=> 30, 'disabled'=> $model->scenario == 'update' ? 'disabled' : '')); ?>
+                <div class="input-group" style="width: 100%;">
+                    <?php if ($model->scenario == 'update'): ?>
 
-                    <?php echo $form->passwordField($model, 'password', array('value'=> '', 'class'=> 'disabled col-sm-3', 'style'=> 'width: 50%;', 'disabled'=> 'disabled')); ?>
-                    <?php echo $form->passwordField($model, 'password_repeat', array('value'=> '', 'class'=> 'disabled col-sm-3', 'style'=> 'width: 50%;margin-left:-2px', 'disabled'=> 'disabled')); ?>
-
+                    <?php echo $form->passwordField($model, 'password', array('value'=> '', 'class'=> 'disabled ', 'style'=> 'width: 50%;', 'disabled'=> 'disabled')); ?>
+                    <?php echo $form->passwordField($model, 'password_repeat', array('value'=> '', 'class'=> 'disabled ', 'style'=> 'width: 50%;margin-left:-2px', 'disabled'=> 'disabled')); ?>
                     <span class="input-group-btn btn-group" data-toggle="buttons">
                         <label class="btn btn-primary" style="height: 34px;margin-left: -2px;">
                             <input type="checkbox" name="change_password" id="change_password" value="1"
-                                   autocomplete="off" >
+                                   autocomplete="off">
                             Change Password
                         </label>
                     </span>
+
+                    <?php else: ?>
+
+                    <?php echo $form->passwordField($model, 'password', array('value'=> '', 'autocomplete'=> 'off', 'style'=> 'width: 50%;',)); ?>
+                    <?php echo $form->passwordField($model, 'password_repeat', array('value'=> '', 'autocomplete'=> 'off', 'style'=> 'width: 50%;margin-left:-2px',)); ?>
+
+                    <?php endif?>
                 </div>
+
                 <hr>
                 <?php echo $form->dropDownListControlGroup($model, 'status', User::getStatusArray(false), array('class'=> 'selectpicker show-tick', 'title'=> 'Choose Role')); ?>
 
@@ -65,10 +73,11 @@
 <hr>
 <p class="text-muted pull-left">Fields with <span class="required">*</span> are required.</p>
 <p class="pull-right">
-    <button type="button" name="yt10" class="btn btn-default btn-lg btn-delete"
+    <button type="button" name="yt10" class="btn btn-default btn-lg btn-delete <?=$model->scenario == 'update' ? '' : 'hidden'?>"
             action="<?=Yii::app()->createUrl("user/delete", array("id"=> $model->primaryKey))?>">Delete
     </button>
-    <button type="submit" name="save" class="btn btn-success btn-lg">Update</button>
+    <button type="submit" name="save"
+            class="btn btn-success btn-lg"><?=$model->scenario == 'update' ? 'Update' : 'Create User'?></button>
 </p>
 <?php $this->endWidget(); ?>
 <script type="text/javascript">

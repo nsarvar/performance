@@ -53,7 +53,10 @@ class User extends CActiveRecord
         return array(
             array('login, email, role, organization_id, status', 'required', 'on'=> array('update', 'insert')),
             array('password, password_repeat', 'required', 'on'=> array('insert')),
-            array('password_repeat', 'compare', 'compareAttribute'=> 'password', 'allowEmpty'=> true, 'message'=> "Passwords doesn't match", 'on'=> array('insert', 'update')),
+            array('password_repeat', 'compare', 'compareAttribute'=> 'password',
+                                                'allowEmpty'      => true,
+                                                'message'         => "Passwords doesn't match",
+                                                'on'              => array('insert', 'update')),
 
             array('status', 'numerical', 'integerOnly'=> true),
             array('password, login, name', 'length', 'max'=> 128),
@@ -67,6 +70,10 @@ class User extends CActiveRecord
             array('login, name, organization_id, role', 'safe', 'on'=> 'search'),
 
             array('created_at', 'default', 'value'=> new CDbExpression('NOW()'), 'setOnEmpty'=> false, 'on'=> 'insert'),
+            array('login', 'unique', 'className'     => 'User',
+                                     'attributeName' => 'login',
+                                     'message'       => 'This login is already in use',
+                                     'on'            => array('insert'))
         );
     }
 

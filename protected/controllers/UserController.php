@@ -15,7 +15,6 @@ class UserController extends Controller
     {
         return array(
             'accessControl', // perform access control for CRUD operations
-            'postOnly + delete', // we only allow deletion via POST request
         );
     }
 
@@ -63,14 +62,16 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model           = new User;
-        $model->scenario = 'create';
+        $model->scenario = 'insert';
         $this->performAjaxValidation($model);
 
         if (isset($_POST['User'])) {
-            $model->attributes = $_POST['User'];
-            if (isset($_POST['User']['password_repeat'])) $model->password_repeat = $_POST['User']['password_repeat'];
-            if ($model->save())
+            $model->attributes      = $_POST['User'];
+            $model->password_repeat = $_POST['User']['password_repeat'];
+            if ($model->save()) {
+                Yii::app()->user->setFlash('success', Yii::t('app', 'User ":login" is crated', array(':login'=> $model->login)));
                 $this->redirect(array('update', 'id'=> $model->id));
+            }
         }
 
         $this->render('create', array(
@@ -105,7 +106,10 @@ class UserController extends Controller
 
     public function actionDelete($id)
     {
-        $this->loadModel($id)->delete();
+        $model = $this->loadModel($id);
+        if ($model->delete()) {
+            Yii::app()->user->setFlash('success', Yii::t('app', 'User ":login" is deleted', array(':login'=> $model->login)));
+        }
         if (!isset($_GET['ajax']))
             $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
     }
