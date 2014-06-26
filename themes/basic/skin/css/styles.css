@@ -83,3 +83,6 @@ table thead{
     width: 100%;
     z-index: 10000000;
 }
+#user-grid td:nth-child(3){
+    white-space: nowrap;
+}
