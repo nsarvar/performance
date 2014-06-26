@@ -164,7 +164,7 @@ class Organization extends CActiveRecord
         return $result;
     }
 
-    public static function getOptionLabels()
+    public static function getOptionLabels($empty = true)
     {
         /**
          * @var $organizations CDbCommand
@@ -186,12 +186,12 @@ class Organization extends CActiveRecord
             ) DESC ,`name` ASC
         ')->queryAll();
 
-        $result = array(''=> '');
+        $result = array();
         foreach ($organizations as $o) {
             $result[$o['id']] = $o['name'];
         }
 
-        return $result;
+        return $empty ? array_merge(array(''=> ''), $result) : $result;
     }
 
     public static function getOptionLabelsForUsers()
@@ -242,5 +242,7 @@ class Organization extends CActiveRecord
     public function beforeSave()
     {
         if (empty($this->region_id)) $this->region_id = null;
+
+        return parent::beforeSave();
     }
 }

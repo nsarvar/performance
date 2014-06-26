@@ -64,7 +64,7 @@ class OrganizationController extends Controller
         $model = new Organization;
 
         // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
+        $this->performAjaxValidation($model);
 
         if (isset($_POST['Organization'])) {
             $model->attributes = $_POST['Organization'];
@@ -87,7 +87,7 @@ class OrganizationController extends Controller
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
+         $this->performAjaxValidation($model);
 
         if (isset($_POST['Organization'])) {
             $model->attributes = $_POST['Organization'];

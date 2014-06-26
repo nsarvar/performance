@@ -41,10 +41,17 @@ $('.search-form form').submit(function(){
                 'template'    => "{items}\n{pager}<div class='defender'></div>",
                 'columns'     => array(
                     array('name'=> 'id', 'header'=> 'ID', 'htmlOptions'=> array('width'=> '60px')),
-                    array('name'=> 'login', 'header'=> 'Login', 'htmlOptions'=> array('width'=> '150px')),
+                    array(
+                        'name'       => 'login',
+                        'header'     => 'Login',
+                        'value'      => 'CHtml::link($data->login, Yii::app()->createUrl("user/update",array("id"=>$data->primaryKey)))',
+                        'htmlOptions'=> array('width'=> '150px'),
+                        'type'       => 'raw'
+                    ),
                     array(
                         'header'=> 'Organization',
                         'name'  => 'organization_name',
+                        'value' => 'CHtml::link($data->organization_name, Yii::app()->createUrl("user/update",array("id"=>$data->primaryKey)))',
                         'type'  => 'raw'
                     ),
                 ),

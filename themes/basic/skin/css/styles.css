@@ -86,3 +86,13 @@ table thead{
 #user-grid td:nth-child(3){
     white-space: nowrap;
 }
+.form-control{
+    /*height: 35px;*/
+}
+#user-form .bootstrap-select {
+    margin-bottom: 0!important;
+}
+.bootstrap-select.btn-group .dropdown-menu {
+    overflow-x: hidden;
+    width: 100%;
+}

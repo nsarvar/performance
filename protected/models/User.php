@@ -27,11 +27,15 @@
 class User extends CActiveRecord
 {
     public $organization_name;
+    public $password_repeat;
 
     const ROLE_USER        = 'user';
     const ROLE_MODERATOR   = 'moderator';
     const ROLE_ADMIN       = 'admin';
     const ROLE_SUPER_ADMIN = 'superadmin';
+
+    const STATUS_ENABLED  = 1;
+    const STATUS_DISABLED = 0;
 
     /**
      * @return string the associated database table name
@@ -46,22 +50,23 @@ class User extends CActiveRecord
      */
     public function rules()
     {
-        // NOTE: you should only define rules for those attributes that
-        // will receive user inputs.
         return array(
-            array('login, password, email', 'required'),
+            array('login, email, role, organization_id, status', 'required', 'on'=> array('update', 'insert')),
+            array('password, password_repeat', 'required', 'on'=> array('insert')),
+            array('password_repeat', 'compare', 'compareAttribute'=> 'password', 'allowEmpty'=> true, 'message'=> "Passwords doesn't match", 'on'=> array('insert', 'update')),
+
             array('status', 'numerical', 'integerOnly'=> true),
-            array('login', 'length', 'max'=> 30),
-            array('password, name', 'length', 'max'=> 128),
+            array('password, login, name', 'length', 'max'=> 128),
+            array('password, login', 'length', 'min'=> 5),
             array('organization_id, group_id', 'length', 'max'=> 11),
             array('email', 'length', 'max'=> 64),
             array('telephone, mobile', 'length', 'max'=> 14),
             array('picture', 'length', 'max'=> 255),
             array('role', 'length', 'max'=> 10),
             array('created_at', 'safe'),
-            // The following rule is used by search().
-            // @todo Please remove those attributes that should not be searched.
-            array('id, login, password, name, organization_id, group_id, email, telephone, mobile, picture, status, created_at, role', 'safe', 'on'=> 'search'),
+            array('login, name, organization_id, role', 'safe', 'on'=> 'search'),
+
+            array('created_at', 'default', 'value'=> new CDbExpression('NOW()'), 'setOnEmpty'=> false, 'on'=> 'insert'),
         );
     }
 
@@ -70,8 +75,6 @@ class User extends CActiveRecord
      */
     public function relations()
     {
-        // NOTE: you may need to adjust the relation name and the related
-        // class name for the relations automatically generated below.
         return array(
             'jobs'         => array(self::HAS_MANY, 'Job', 'user_id'),
             'tasks'        => array(self::HAS_MANY, 'Task', 'user_id'),
@@ -99,25 +102,15 @@ class User extends CActiveRecord
             'status'          => 'Status',
             'created_at'      => 'Created At',
             'role'            => 'Role',
+            'password_repeat' => 'Confirmation',
         );
     }
 
     /**
-     * Retrieves a list of models based on the current search/filter conditions.
-     *
-     * Typical usecase:
-     * - Initialize the model fields with values from filter form.
-     * - Execute this method to get CActiveDataProvider instance which will filter
-     * models according to data in model fields.
-     * - Pass data provider to CGridView, CListView or any similar widget.
-     *
-     * @return CActiveDataProvider the data provider that can return the models
-     * based on the search/filter conditions.
+     * @return CActiveDataProvider
      */
     public function search()
     {
-        // @todo Please modify the following code to remove attributes that should not be searched.
-
         $criteria         = new CDbCriteria;
         $criteria->alias  = 'u';
         $criteria->select = 'u.id,u.login,u.organization_id,u.role,u.name,o.name as organization_name';
@@ -183,15 +176,36 @@ class User extends CActiveRecord
         return false;
     }
 
-    public static function getRolesArray()
+    public function beforeSave()
     {
-        return array(
-            ''                     => '',
+        if ($this->scenario == 'create' || $this->scenario == 'update' && !is_null($this->password_repeat)) {
+            $this->password = $this->encryptPassword($this->password);
+        }
+        if (empty($this->group_id)) $this->group_id = null;
+
+        return parent::beforeSave();
+    }
+
+    public static function getRolesArray($empty = true)
+    {
+        $roles = array(
+            self::ROLE_USER        => __('app', ucfirst(self::ROLE_USER)),
+            self::ROLE_MODERATOR   => __('app', ucfirst(self::ROLE_MODERATOR)),
             self::ROLE_ADMIN       => __('app', ucfirst(self::ROLE_ADMIN)),
             self::ROLE_SUPER_ADMIN => __('app', ucfirst(self::ROLE_SUPER_ADMIN)),
-            self::ROLE_MODERATOR   => __('app', ucfirst(self::ROLE_MODERATOR)),
-            self::ROLE_USER        => __('app', ucfirst(self::ROLE_USER)),
         );
+
+        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
+    }
+
+    public static function getStatusArray($empty = true)
+    {
+        $roles = array(
+            self::STATUS_ENABLED         => __('app', 'Enabled'),
+            self::STATUS_DISABLED        => __('app', 'Disabled'),
+        );
+
+        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
     }
 
 }
