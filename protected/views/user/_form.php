@@ -17,8 +17,8 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <?php echo $form->textFieldControlGroup($model, 'login', array('maxlength'=> 30, 'disabled'=> $model->scenario == 'update' ? 'disabled' : '')); ?>
+                <?php if ($model->scenario == 'update'): ?>
                 <div class="input-group" style="width: 100%;">
-                    <?php if ($model->scenario == 'update'): ?>
 
                     <?php echo $form->passwordField($model, 'password', array('value'=> '', 'class'=> 'disabled ', 'style'=> 'width: 50%;', 'disabled'=> 'disabled')); ?>
                     <?php echo $form->passwordField($model, 'password_repeat', array('value'=> '', 'class'=> 'disabled ', 'style'=> 'width: 50%;margin-left:-2px', 'disabled'=> 'disabled')); ?>
@@ -29,16 +29,20 @@
                             Change Password
                         </label>
                     </span>
-
-                    <?php else: ?>
-
-                    <?php echo $form->passwordField($model, 'password', array('value'=> '', 'autocomplete'=> 'off', 'style'=> 'width: 50%;',)); ?>
-                    <?php echo $form->passwordField($model, 'password_repeat', array('value'=> '', 'autocomplete'=> 'off', 'style'=> 'width: 50%;margin-left:-2px',)); ?>
-
-                    <?php endif?>
+                </div>
+                <hr>
+                <?php else: ?>
+                <div class="row">
+                    <div class="col col-sm-6">
+                        <?php echo $form->passwordFieldControlGroup($model, 'password', array('value'=> '', 'autocomplete'=> 'off', 'style'=> '',)); ?>
+                    </div>
+                    <div class="col col-sm-6">
+                        <?php echo $form->passwordFieldControlGroup($model, 'password_repeat', array('value'=> '', 'autocomplete'=> 'off', 'style'=> '',)); ?>
+                    </div>
                 </div>
 
-                <hr>
+                <?php endif?>
+
                 <?php echo $form->dropDownListControlGroup($model, 'status', User::getStatusArray(false), array('class'=> 'selectpicker show-tick', 'title'=> 'Choose Role')); ?>
 
             </div>
@@ -73,7 +77,8 @@
 <hr>
 <p class="text-muted pull-left">Fields with <span class="required">*</span> are required.</p>
 <p class="pull-right">
-    <button type="button" name="yt10" class="btn btn-default btn-lg btn-delete <?=$model->scenario == 'update' ? '' : 'hidden'?>"
+    <button type="button" name="yt10"
+            class="btn btn-default btn-lg btn-delete <?=$model->scenario == 'update' ? '' : 'hidden'?>"
             action="<?=Yii::app()->createUrl("user/delete", array("id"=> $model->primaryKey))?>">Delete
     </button>
     <button type="submit" name="save"

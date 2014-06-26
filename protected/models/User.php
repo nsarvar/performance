@@ -57,6 +57,7 @@ class User extends CActiveRecord
                                                 'allowEmpty'      => true,
                                                 'message'         => "Passwords doesn't match",
                                                 'on'              => array('insert', 'update')),
+            array('email', 'email'),
 
             array('status', 'numerical', 'integerOnly'=> true),
             array('password, login, name', 'length', 'max'=> 128),
