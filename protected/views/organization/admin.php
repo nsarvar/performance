@@ -2,12 +2,6 @@
 /* @var $this OrganizationController */
 /* @var $model Organization */
 
-
-$this->breadcrumbs = array(
-    'Organizations'=> array('index'),
-    'Manage',
-);
-
 Yii::app()->clientScript->registerScript('search', "
 $('.search-form form').submit(function(){
 	$('#organization-grid').yiiGridView('update', {
@@ -17,6 +11,14 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
+<ol class="breadcrumb">
+    <li><a href="/">Home</a></li>
+    <li>Organizations</li>
+    <span class="pull-right admin_action">
+        <a href="/organization/create"><i class="fa fa-plus"></i> <?=__('app', 'Add New Organization')?></a>
+    </span>
+
+</ol>
 
 <div class="page-header">
     <h3>
@@ -39,7 +41,7 @@ $('.search-form form').submit(function(){
                 <?php $this->widget('bootstrap.widgets.BsGridView', array(
                 'id'            => 'organization-grid',
                 'dataProvider'  => $model->search(),
-                'template'    => "{items}\n{pager}<div class='defender'></div>",
+                'template'      => "{items}\n{pager}<div class='defender'></div>",
                 'type'          => BsHtml::GRID_TYPE_STRIPED,
                 'columns'       => array(
                     'id',

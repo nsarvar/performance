@@ -2,11 +2,6 @@
 /* @var $this UserController */
 /* @var $model User */
 
-
-$this->breadcrumbs = array(
-    'Users'=> array('index'),
-    'Manage',
-);
 Yii::app()->clientScript->registerScript('search', "
 $('.search-form form').submit(function(){
 	$('#user-grid').yiiGridView('update', {
@@ -16,10 +11,16 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-
+<ol class="breadcrumb">
+    <li><a href="/">Home</a></li>
+    <li>Users</li>
+    <span class="pull-right admin_action">
+        <a href="/user/create"><i class="fa fa-plus"></i> <?=__('app', 'Create New User')?></a>
+    </span>
+</ol>
 <div class="page-header">
     <h3>
-        Organizations
+        Users
     </h3>
 </div>
 <div class="row">
