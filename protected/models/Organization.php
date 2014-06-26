@@ -120,7 +120,6 @@ class Organization extends CActiveRecord
             'sort'       => array('defaultOrder'=> 'ID ASC',),
             'pagination' => array(
                 'pageSize' => 20
-
             )
         ));
     }
@@ -161,6 +160,7 @@ class Organization extends CActiveRecord
         foreach ($organizations as $o) {
             $result[$o['id']] = $o['name'];
         }
+
         return $result;
     }
 
@@ -190,13 +190,42 @@ class Organization extends CActiveRecord
         foreach ($organizations as $o) {
             $result[$o['id']] = $o['name'];
         }
+
         return $result;
     }
 
-    const TYPE_MINISTRY = 'ministry';
+    public static function getOptionLabelsForUsers()
+    {
+        /**
+         * @var $organizations CDbCommand
+         */
+        $organizations = Yii::app()->db->createCommand('
+         SELECT
+            p.id,
+            p.`name`
+            FROM
+                `organization` AS p
+            WHERE
+                (SELECT count(id)
+                    FROM
+                        `user` AS u
+                    WHERE
+                        u.organization_id = p.id) > 0
+            ORDER BY `name`
+        ')->queryAll();
+
+        $result = array(''=> '');
+        foreach ($organizations as $o) {
+            $result[$o['id']] = $o['name'];
+        }
+
+        return $result;
+    }
+
+    const TYPE_MINISTRY   = 'ministry';
     const TYPE_UNIVERSITY = 'university';
-    const TYPE_COMITTE = 'comitte';
-    const TYPE_CENTER = 'center';
+    const TYPE_COMITTE    = 'comitte';
+    const TYPE_CENTER     = 'center';
 
 
     public static function getTypesArray()

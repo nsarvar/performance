@@ -39,7 +39,7 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                 array(
                     'label' => __('app', 'Users'),
                     'url'   => array(
-                        '/users'
+                        '/user'
                     ),
                 ),
                 array(

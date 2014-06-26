@@ -55,14 +55,6 @@ $('.search-form form').submit(function(){
                         'value' => 'Yii::app()->dateFormatter->format("MMMM, y",strtotime($data->period_from))'
                     ),
                     'status',
-                    /*array(
-                        'name'  => 'period_to',
-                        'header'=> 'To',
-                        'value' => '$data->periodToFormatted',
-                    ),*/
-                    /*array(
-                        'class'=> 'bootstrap.widgets.BsButtonColumn',
-                    ),*/
                 ),
             )); ?>
             </div>

@@ -40,6 +40,7 @@ body {
 }
 .grid-view .sort-link {
     display: block;
+    padding: 8px 4px;
 }
 table thead th{
     border-left: 1px solid #e3e3e3;
@@ -58,4 +59,27 @@ table thead{
     float: right;
     margin: 10px 0;
     padding-left: 0;
+}
+.grid-view .table th{
+    padding: 3px;
+}
+.grid-view-loading .defender{
+    display: block;
+}
+.defender{
+    background-color: #ffffff;
+    background-image: url('../img/loader.gif');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    bottom: 0;
+    display: none;
+    height: 100%;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    opacity: 0.6;
+    right: 0;
+    top: 0;
+    width: 100%;
+    z-index: 10000000;
 }

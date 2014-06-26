@@ -26,126 +26,140 @@
  */
 class User extends CActiveRecord
 {
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'user';
-	}
+    public $organization_name;
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
-			array('login, password, email', 'required'),
-			array('status', 'numerical', 'integerOnly'=>true),
-			array('login', 'length', 'max'=>30),
-			array('password, name', 'length', 'max'=>128),
-			array('organization_id, group_id', 'length', 'max'=>11),
-			array('email', 'length', 'max'=>64),
-			array('telephone, mobile', 'length', 'max'=>14),
-			array('picture', 'length', 'max'=>255),
-			array('role', 'length', 'max'=>10),
-			array('created_at', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, login, password, name, organization_id, group_id, email, telephone, mobile, picture, status, created_at, role', 'safe', 'on'=>'search'),
-		);
-	}
+    const ROLE_USER        = 'user';
+    const ROLE_MODERATOR   = 'moderator';
+    const ROLE_ADMIN       = 'admin';
+    const ROLE_SUPER_ADMIN = 'superadmin';
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'jobs' => array(self::HAS_MANY, 'Job', 'user_id'),
-			'tasks' => array(self::HAS_MANY, 'Task', 'user_id'),
-			'group' => array(self::BELONGS_TO, 'Group', 'group_id'),
-			'organization' => array(self::BELONGS_TO, 'Organization', 'organization_id'),
-		);
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'user';
+    }
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'id' => 'User ID',
-			'login' => 'Login',
-			'password' => 'Password',
-			'name' => 'Full Name',
-			'organization_id' => 'Organization',
-			'group_id' => 'Group',
-			'email' => 'Email',
-			'telephone' => 'Phone',
-			'mobile' => 'Mobile Phone',
-			'picture' => 'Picture',
-			'status' => 'Status',
-			'created_at' => 'Created At',
-			'role' => 'Role',
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        // NOTE: you should only define rules for those attributes that
+        // will receive user inputs.
+        return array(
+            array('login, password, email', 'required'),
+            array('status', 'numerical', 'integerOnly'=> true),
+            array('login', 'length', 'max'=> 30),
+            array('password, name', 'length', 'max'=> 128),
+            array('organization_id, group_id', 'length', 'max'=> 11),
+            array('email', 'length', 'max'=> 64),
+            array('telephone, mobile', 'length', 'max'=> 14),
+            array('picture', 'length', 'max'=> 255),
+            array('role', 'length', 'max'=> 10),
+            array('created_at', 'safe'),
+            // The following rule is used by search().
+            // @todo Please remove those attributes that should not be searched.
+            array('id, login, password, name, organization_id, group_id, email, telephone, mobile, picture, status, created_at, role', 'safe', 'on'=> 'search'),
+        );
+    }
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        // NOTE: you may need to adjust the relation name and the related
+        // class name for the relations automatically generated below.
+        return array(
+            'jobs'         => array(self::HAS_MANY, 'Job', 'user_id'),
+            'tasks'        => array(self::HAS_MANY, 'Task', 'user_id'),
+            'group'        => array(self::BELONGS_TO, 'Group', 'group_id'),
+            'organization' => array(self::BELONGS_TO, 'Organization', 'organization_id'),
+        );
+    }
 
-		$criteria=new CDbCriteria;
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    public function attributeLabels()
+    {
+        return array(
+            'id'              => 'User ID',
+            'login'           => 'Login',
+            'password'        => 'Password',
+            'name'            => 'Full Name',
+            'organization_id' => 'Organization',
+            'group_id'        => 'Group',
+            'email'           => 'Email',
+            'telephone'       => 'Phone',
+            'mobile'          => 'Mobile Phone',
+            'picture'         => 'Picture',
+            'status'          => 'Status',
+            'created_at'      => 'Created At',
+            'role'            => 'Role',
+        );
+    }
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('login',$this->login,true);
-		$criteria->compare('password',$this->password,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('organization_id',$this->organization_id,true);
-		$criteria->compare('group_id',$this->group_id,true);
-		$criteria->compare('email',$this->email,true);
-		$criteria->compare('telephone',$this->telephone,true);
-		$criteria->compare('mobile',$this->mobile,true);
-		$criteria->compare('picture',$this->picture,true);
-		$criteria->compare('status',$this->status);
-		$criteria->compare('created_at',$this->created_at,true);
-		$criteria->compare('role',$this->role,true);
+    /**
+     * Retrieves a list of models based on the current search/filter conditions.
+     *
+     * Typical usecase:
+     * - Initialize the model fields with values from filter form.
+     * - Execute this method to get CActiveDataProvider instance which will filter
+     * models according to data in model fields.
+     * - Pass data provider to CGridView, CListView or any similar widget.
+     *
+     * @return CActiveDataProvider the data provider that can return the models
+     * based on the search/filter conditions.
+     */
+    public function search()
+    {
+        // @todo Please modify the following code to remove attributes that should not be searched.
 
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+        $criteria         = new CDbCriteria;
+        $criteria->alias  = 'u';
+        $criteria->select = 'u.id,u.login,u.organization_id,u.role,u.name,o.name as organization_name';
+        $criteria->join   = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = u.organization_id';
+        $criteria->compare('login', $this->login, true);
+        $criteria->compare('name', $this->name, true);
+        $criteria->compare('organization_id', $this->organization_id, true);
+        $criteria->compare('role', $this->role, true);
+        $criteria->compare('o.name', $this->organization_name, true);
 
-	/**
-	 * Returns the static model of the specified AR class.
-	 * Please note that you should have this exact method in all your CActiveRecord descendants!
-	 * @param string $className active record class name.
-	 * @return User the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}
+        return new CActiveDataProvider($this, array(
+            'criteria'   => $criteria,
+            'sort'       => array(
+                'defaultOrder'=> 'id ASC',
+                'attributes'  => array(
+                    'organization_name'=> array(
+                        'asc' => 'o.name',
+                        'desc'=> 'o.name DESC',
+                    ),
+                    '*',
+                ),
+            ),
+            'pagination' => array(
+                'pageSize' => 20
+            )
+        ));
+    }
+
+    /**
+     * Returns the static model of the specified AR class.
+     * Please note that you should have this exact method in all your CActiveRecord descendants!
+     * @param string $className active record class name.
+     * @return User the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
     public static function loadByLogin($login)
     {
-        return self::model()->findByAttributes(array('login'=>$login));
+        return self::model()->findByAttributes(array('login'=> $login));
     }
 
     protected static $hashKey = 'd737b577e1534a5abf650ae446129181';
@@ -153,6 +167,7 @@ class User extends CActiveRecord
     protected function encryptPassword($password, $salt = false)
     {
         if (!$salt) $salt = substr(md5(time()), 0, 10);
+
         return $salt . hash('sha256', $salt . $password . self::$hashKey);
     }
 
@@ -161,8 +176,22 @@ class User extends CActiveRecord
         /*echo $this->encryptPassword($password);die;*/
         if ($secure = $this->password) {
             $salt = substr($secure, 0, 10);
+
             return $secure === $this->encryptPassword($password, $salt);
         }
+
         return false;
     }
+
+    public static function getRolesArray()
+    {
+        return array(
+            ''                     => '',
+            self::ROLE_ADMIN       => __('app', ucfirst(self::ROLE_ADMIN)),
+            self::ROLE_SUPER_ADMIN => __('app', ucfirst(self::ROLE_SUPER_ADMIN)),
+            self::ROLE_MODERATOR   => __('app', ucfirst(self::ROLE_MODERATOR)),
+            self::ROLE_USER        => __('app', ucfirst(self::ROLE_USER)),
+        );
+    }
+
 }
