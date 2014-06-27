@@ -131,7 +131,7 @@ class OrganizationController extends Controller
      */
     public function actionIndex()
     {
-        return $this->actionAdmin();
+        return $this->render('index');
     }
 
     /**

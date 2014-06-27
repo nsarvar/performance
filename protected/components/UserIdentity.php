@@ -29,9 +29,18 @@ class UserIdentity extends CUserIdentity
         } else {
             $this->errorCode = self::ERROR_NONE;
             $this->userModel = $user;
-            $this->role = $user->role;
         }
 
         return !$this->errorCode;
+    }
+
+    public function getPersistentStates()
+    {
+        $states = array();
+        if ($this->userModel) {
+            foreach (array('role', 'login', 'group_id') as $state)
+                $states[$state] = $this->userModel->$state;
+        }
+        return $states;
     }
 }

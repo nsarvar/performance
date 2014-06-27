@@ -1,17 +1,20 @@
 html {
     height: 100%;
 }
+
 body {
     height: 100%;
     padding-top: 70px;
 }
+
 .middle_area {
     height: 230px;
     margin-top: -115px;
     position: relative;
     top: 40%;
 }
-#login-form .control-label{
+
+#login-form .control-label {
     display: none;
 }
 
@@ -25,34 +28,39 @@ body {
     line-height: 16px;
 }
 
-.grid-view .sort-link.desc:after{
+.grid-view .sort-link.desc:after {
     content: "\f107";
     float: right;
     font-family: fontawesome;
 }
-.grid-view .sort-link.asc:after{
+
+.grid-view .sort-link.asc:after {
     content: "\f106";
     float: right;
     font-family: fontawesome;
 }
-.grid-view .sort-link .caret{
+
+.grid-view .sort-link .caret {
     display: none;
 }
+
 .grid-view .sort-link {
     display: block;
     padding: 8px 4px;
 }
-table thead th{
+
+table thead th {
     border-left: 1px solid #e3e3e3;
 }
 
-table thead{
+table thead {
     background-image: linear-gradient(#fafafa, #eaeaea);
     color: rgba(35, 62, 70, 0.81);
     cursor: pointer;
     font-size: 12px;
 
 }
+
 .pagination {
     border-radius: 4px;
     display: inline-block;
@@ -60,13 +68,16 @@ table thead{
     margin: 10px 0;
     padding-left: 0;
 }
-.grid-view .table th{
+
+.grid-view .table th {
     padding: 3px;
 }
-.grid-view-loading .defender{
+
+.grid-view-loading .defender {
     display: block;
 }
-.defender{
+
+.defender {
     background-color: #ffffff;
     background-image: url('../img/loader.gif');
     background-repeat: no-repeat;
@@ -83,16 +94,51 @@ table thead{
     width: 100%;
     z-index: 10000000;
 }
-#user-grid td:nth-child(3){
+
+#user-grid td:nth-child(3) {
     white-space: nowrap;
 }
-.form-control{
+
+.form-control {
     /*height: 35px;*/
 }
+
 #user-form .bootstrap-select {
-    margin-bottom: 0!important;
+    margin-bottom: 0 !important;
 }
+
 .bootstrap-select.btn-group .dropdown-menu {
     overflow-x: hidden;
     width: 100%;
+}
+
+.action_admin {
+    display: none;
+    float: right;
+}
+
+.user_role_admin .action_admin {
+    display: inline-block;
+}
+
+.user_role_admin #list_organizations .action_admin {
+    display: none;
+}
+
+
+.user_role_admin .hider:hover .action_admin {
+    display: inline-block!important;
+}
+.info_block:hover{
+    text-decoration: underline;
+}
+.info_block_src th:first-child{
+    width: 220px;
+}
+.info_block_src{
+    display: none;
+}
+.info_block{
+    margin-left: 15px;
+    cursor: pointer;
 }

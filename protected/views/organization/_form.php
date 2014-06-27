@@ -15,10 +15,9 @@
     <div class="col col-sm-6">
         <?php echo $form->textFieldControlGroup($model, 'name', array('maxlength'=> 255)); ?>
         <?php echo $form->textFieldControlGroup($model, 'short_name', array('maxlength'=> 30)); ?>
-        <?php echo $form->dropDownListControlGroup($model, 'parent_id', Organization::getOptionLabels(),array('class'=> 'selectpicker show-tick', 'title'=> 'Choose Parent Organization')); ?>
-        <?php echo $form->dropDownListControlGroup($model, 'type', Organization::getTypesArray(),array('class'=> 'selectpicker show-tick', 'title'=> 'Choose Type')); ?>
+        <?php echo $form->dropDownListControlGroup($model, 'parent_id', Organization::getOptionLabels(false),array('class'=> 'selectpicker show-tick', 'title'=> 'Choose Parent Organization')); ?>
+        <?php echo $form->dropDownListControlGroup($model, 'type', Organization::getTypesArray(false),array('class'=> 'selectpicker show-tick', 'title'=> 'Choose Type')); ?>
         <hr>
-
         <div class="row">
             <div class="col col-xs-6">
                 <?php echo $form->textFieldControlGroup($model, 'phone', array('maxlength'=> 255)); ?>

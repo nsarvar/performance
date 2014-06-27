@@ -52,7 +52,7 @@ class Organization extends CActiveRecord
             array('created_at', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, parent_id, name, short_name, description, address, phone, email, web_site, type, region_id, created_at', 'safe', 'on'=> 'search'),
+            array('parent_id, type, region_id', 'safe', 'on'=> 'search'),
         );
     }
 
@@ -175,23 +175,15 @@ class Organization extends CActiveRecord
             p.`name`
             FROM
                 `organization` AS p
-            ORDER BY
-            (
-                SELECT
-                    count(id)
-                FROM
-                    organization AS ch
-                WHERE
-                    ch.parent_id = p.id
-            ) DESC ,`name` ASC
+            ORDER BY id
         ')->queryAll();
 
-        $result = array();
+        $result = $empty ? array(null=> '') : array();
         foreach ($organizations as $o) {
             $result[$o['id']] = $o['name'];
         }
 
-        return $empty ? array_merge(array(''=> ''), $result) : $result;
+        return $result;
     }
 
     public static function getOptionLabelsForUsers()
@@ -222,27 +214,92 @@ class Organization extends CActiveRecord
         return $result;
     }
 
+    public static function getListByType()
+    {
+        $types = self::getTypesArray(false);
+        foreach ($types as $key=> $value) {
+            $types[$key] = array();
+        }
+        $organizations = Yii::app()->db->createCommand('
+        SELECT
+            p.id,
+            p.`type`,
+            p.`name`,
+            p.parent_id
+            FROM
+                `organization` AS p
+            ORDER BY path DESC, `name`
+        ')->queryAll();
+
+        foreach ($organizations as $o) {
+            if (isset($types[$o['type']])) {
+                $types[$o['type']][$o['id']]           = $o;
+                $types[$o['type']][$o['id']]['childs'] = array();
+            }
+/*
+            $org       = self::model()->findByPk($o['id']);
+            $org->save(false);*/
+        }
+
+        /*foreach ($types as $type=> $orgs) {
+            foreach ($orgs as $id=> $org) {
+                if (isset($types[$type][$org['parent_id']])) {
+                    $types[$type][$org['parent_id']]['childs'][$org['id']] = $org;
+                    unset($types[$type][$id]);
+                }
+            }
+        }
+        foreach ($types[self::TYPE_UNIVERSITY] as $id=> $org) {
+            foreach ($org['childs'] as $chid=> $child) {
+                if (isset($types[self::TYPE_UNIVERSITY][$id]['childs'][$child['parent_id']])) {
+                    $types[self::TYPE_UNIVERSITY][$id]['childs'][$child['parent_id']]['childs'][$child['id']] = $child;
+                    unset($types[self::TYPE_UNIVERSITY][$id]['childs'][$child['parent_id']]);
+                }
+            }
+        }*/
+
+        return $types;
+    }
+
     const TYPE_MINISTRY   = 'ministry';
     const TYPE_UNIVERSITY = 'university';
-    const TYPE_COMITTE    = 'comitte';
+    const TYPE_DEPARTMENT = 'department';
     const TYPE_CENTER     = 'center';
 
 
-    public static function getTypesArray()
+    public static function getTypesArray($empty = true)
     {
-        return array(
-            ''                   => '',
-            self::TYPE_MINISTRY  => __('app', ucfirst(self::TYPE_MINISTRY)),
-            self::TYPE_UNIVERSITY=> __('app', ucfirst(self::TYPE_UNIVERSITY)),
-            self::TYPE_COMITTE   => __('app', ucfirst(self::TYPE_COMITTE)),
-            self::TYPE_CENTER    => __('app', ucfirst(self::TYPE_CENTER)),
+        $types = array(
+            self::TYPE_MINISTRY     => __('app', ucfirst(self::TYPE_MINISTRY)),
+            self::TYPE_DEPARTMENT   => __('app', ucfirst(self::TYPE_DEPARTMENT)),
+            self::TYPE_UNIVERSITY   => __('app', ucfirst(self::TYPE_UNIVERSITY)),
+            self::TYPE_CENTER       => __('app', ucfirst(self::TYPE_CENTER)),
         );
+
+        return $empty ? array_merge(array(''=> ''), $types) : $types;
     }
 
     public function beforeSave()
     {
         if (empty($this->region_id)) $this->region_id = null;
 
+        if ($this->parent_id != null) {
+            $path       = self::getParentPath('', $this->parent_id);
+            $this->path = $path.'/Z';
+        }else{
+            $this->path = '/Z';
+        }
+
         return parent::beforeSave();
+    }
+
+    public static function getParentPath($path, $parent_id)
+    {
+        $org = self::model()->findByPk($parent_id);
+        if ($org->parent_id && $org->id != $org->parent_id) {
+            $path .= self::getParentPath($path, $org->parent_id);
+        }
+
+        return $path . '/' . $parent_id;
     }
 }

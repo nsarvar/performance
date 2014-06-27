@@ -1,10 +1,10 @@
 <?php
-$cs = Yii::app()->clientScript;
+$cs        = Yii::app()->clientScript;
 $themePath = Yii::app()->theme->baseUrl;
 $cs
     ->registerCssFile($themePath . '/skin/css/bootstrap.css')
     ->registerCssFile($themePath . '/skin/css/bootstrap-theme.css')
-    ->registerCssFile($themePath . '/skin/css/font-awesome/font-awesome.min.css')
+    ->registerCssFile($themePath . '/skin/css/font-awesome.min.css')
     ->registerCssFile($themePath . '/skin/css/styles.css')
     ->registerCssFile($themePath . '/skin/css/bootstrap-select.min.css');
 
@@ -35,7 +35,7 @@ $cs
     <![endif]-->
 </head>
 
-<body>
+<body class="user_role_<?=Yii::app()->user->hasState('role') ? Yii::app()->user->role : 'none'?>">
 <?php echo $content; ?>
 </body>
 </html>

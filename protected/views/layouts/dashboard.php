@@ -13,6 +13,12 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
             'activateParents' => true,
             'items'           => array(
                 array(
+                    'label' => __('app', 'Organizations'),
+                    'url'   => array(
+                        '/organization'
+                    ),
+                ),
+                array(
                     'label' => __('app', 'Periods'),
                     'url'   => array(
                         '/period'
@@ -30,12 +36,7 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                         '/tasks/calendar'
                     ),
                 ),
-                array(
-                    'label' => __('app', 'Organizations'),
-                    'url'   => array(
-                        '/organization'
-                    ),
-                ),
+
                 array(
                     'label' => __('app', 'Users'),
                     'url'   => array(
@@ -56,6 +57,11 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                 'type'            => 'navbar',
                 'activateParents' => true,
                 'items'           => array(
+                    array(
+                        'label'=> 'Notifications',
+                        'url'  => array('notification'),
+                        'icon'=>'glyphicons fa fa-bell'
+                    ),
                     array(
                         'label' => Yii::app()->user->name,
                         'url'   => array(

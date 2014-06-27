@@ -14,15 +14,14 @@ $('.search-form form').submit(function(){
 <ol class="breadcrumb">
     <li><a href="/">Home</a></li>
     <li>Organizations</li>
-    <span class="pull-right admin_action">
-        <a href="/organization/create"><i class="fa fa-plus"></i> <?=__('app', 'Add New Organization')?></a>
+    <span class="pull-right action_admin">
+        <a href="/organization/create"><i class="fa fa-plus"></i> <?=__('app', 'Add Organization')?></a>
     </span>
-
 </ol>
 
 <div class="page-header">
     <h3>
-        Organizations
+        <i class="fa fa-university"></i> Organizations
     </h3>
 </div>
 <div class="row">
@@ -50,9 +49,6 @@ $('.search-form form').submit(function(){
                         'value' => 'CHtml::link($data->name, Yii::app()->createUrl("organization/update",array("id"=>$data->primaryKey)))',
                         'type'  => 'raw',
                     ),
-                    /*array(
-                        'class'=> 'bootstrap.widgets.BsButtonColumn',
-                    ),*/
                 ),
             )); ?>
             </div>
