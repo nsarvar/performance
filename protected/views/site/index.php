@@ -9,6 +9,7 @@ $this->pageTitle = Yii::app()->name;
 
 <ol class="breadcrumb">
     <li><a href="/">Home</a></li>
+    <li>Organizations</li>
 </ol>
 
 <div class="page-header">
@@ -24,7 +25,7 @@ $this->pageTitle = Yii::app()->name;
 </ul>
 
 
-<div class="tab-content">
+<div class="tab-content" id="list_organizations">
     <?php foreach ($organizations as $type=> $data) { ?>
     <div class="tab-pane <?=$type == 'ministry' ? 'active' : ''?>" id="organization_<?=$type?>">
         <table class="table table-bordered table-responsible table-striped table-hover" style="border-top: none;">
@@ -35,7 +36,7 @@ $this->pageTitle = Yii::app()->name;
             </thead>
             <?php foreach ($data as $organization): ?>
             <tr>
-                <td class="col_name">
+                <td class="col_name hider">
                     <a href='/organization/view/<?=$organization['id']?>'><?=$organization['name']?></a>
                     <span class="action action_admin">
                         <a href="/organization/update/<?=$organization['id']?>">Edit</a>

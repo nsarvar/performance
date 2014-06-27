@@ -216,4 +216,27 @@ class User extends CActiveRecord
         return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
     }
 
+
+    public static function getUsers($organization = false)
+    {
+        /**
+         * @var $organizations CDbCommand
+         */
+        $criteria = new CDbCriteria;
+        if ($organization) $criteria->compare('organization_id', $organization);
+
+        return new CActiveDataProvider(self::model(), array(
+            'criteria'   => $criteria,
+            'sort'       => array(
+                'defaultOrder'=> 'name',
+                'route'       => 'user/ajax/organization/' . $organization
+            ),
+            'pagination' => array(
+                'pageSize' => 20,
+                'route'    => 'user/ajax/organization/' . $organization
+            ),
+        ));
+    }
+
+
 }

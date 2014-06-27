@@ -27,7 +27,7 @@ class OrganizationController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions'=> array('index', 'view'),
+                'actions'=> array('index', 'view','parent'),
                 'users'  => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -174,5 +174,13 @@ class OrganizationController extends Controller
             echo CActiveForm::validate($model);
             Yii::app()->end();
         }
+    }
+
+
+    public function actionParent($id)
+    {
+        $this->renderPartial('parent', array(
+            'parent'=> $id,
+        ));
     }
 }

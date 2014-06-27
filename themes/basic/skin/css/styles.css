@@ -125,7 +125,6 @@ table thead {
     display: none;
 }
 
-
 .user_role_admin .hider:hover .action_admin {
     display: inline-block!important;
 }
@@ -141,4 +140,10 @@ table thead {
 .info_block{
     margin-left: 15px;
     cursor: pointer;
+}
+.grid-view{
+    position: relative;
+}
+body{
+    overflow-y: scroll;
 }

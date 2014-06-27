@@ -15,7 +15,6 @@ class PeriodController extends Controller
     {
         return array(
             'accessControl', // perform access control for CRUD operations
-            'postOnly + delete', // we only allow deletion via POST request
         );
     }
 
@@ -28,7 +27,7 @@ class PeriodController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions'=> array('index', 'view'),
+                'actions'=> array('index', 'view', 'ajax'),
                 'users'  => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -55,6 +54,13 @@ class PeriodController extends Controller
 
         $this->render('list', array(
             'model'=> $model,
+        ));
+    }
+
+    public function actionAjax($status)
+    {
+        $this->renderPartial('ajax', array(
+            'status'=> $status,
         ));
     }
 

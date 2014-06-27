@@ -28,7 +28,7 @@
         ),
         array(
             'name' => 'name',
-            'value'=> $model->name.'<span class="action_admin">'.CHtml::link('Edit', Yii::app()->createUrl("organization/update", array("id"=> $model->id))).'</span>',
+            'value'=> $model->name . '<span class="action_admin">' . CHtml::link('Edit', Yii::app()->createUrl("organization/update", array("id"=> $model->id))) . '</span>',
             'type' => 'raw',
         ),
     );
@@ -67,15 +67,15 @@
 <!-- Tab panes -->
 <div class="tab-content">
     <div class="tab-pane active" id="tab_active_periods">
-        AP
+        <?php $this->renderPartial('/period/ajax', array('status'=> Period::STATUS_ACTIVE))?>
     </div>
     <div class="tab-pane" id="tab_archive_periods">
-        AR
+        <?php $this->renderPartial('/period/ajax', array('status'=> Period::STATUS_ARCHIVED))?>
     </div>
     <div class="tab-pane" id="tab_organizations">
-        OR
+        <?php $this->renderPartial('/organization/parent', array('parent'=> $model->primaryKey))?>
     </div>
     <div class="tab-pane" id="tab_users">
-        US
+        <?php $this->renderPartial('/user/ajax', array('organization'=> $model->primaryKey))?>
     </div>
 </div>

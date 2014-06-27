@@ -236,27 +236,11 @@ class Organization extends CActiveRecord
                 $types[$o['type']][$o['id']]           = $o;
                 $types[$o['type']][$o['id']]['childs'] = array();
             }
-/*
-            $org       = self::model()->findByPk($o['id']);
-            $org->save(false);*/
+            /*
+                        $org       = self::model()->findByPk($o['id']);
+                        $org->save(false);*/
         }
 
-        /*foreach ($types as $type=> $orgs) {
-            foreach ($orgs as $id=> $org) {
-                if (isset($types[$type][$org['parent_id']])) {
-                    $types[$type][$org['parent_id']]['childs'][$org['id']] = $org;
-                    unset($types[$type][$id]);
-                }
-            }
-        }
-        foreach ($types[self::TYPE_UNIVERSITY] as $id=> $org) {
-            foreach ($org['childs'] as $chid=> $child) {
-                if (isset($types[self::TYPE_UNIVERSITY][$id]['childs'][$child['parent_id']])) {
-                    $types[self::TYPE_UNIVERSITY][$id]['childs'][$child['parent_id']]['childs'][$child['id']] = $child;
-                    unset($types[self::TYPE_UNIVERSITY][$id]['childs'][$child['parent_id']]);
-                }
-            }
-        }*/
 
         return $types;
     }
@@ -285,13 +269,14 @@ class Organization extends CActiveRecord
 
         if ($this->parent_id != null) {
             $path       = self::getParentPath('', $this->parent_id);
-            $this->path = $path.'/Z';
-        }else{
+            $this->path = $path . '/Z';
+        } else {
             $this->path = '/Z';
         }
 
         return parent::beforeSave();
     }
+
 
     public static function getParentPath($path, $parent_id)
     {
@@ -301,5 +286,26 @@ class Organization extends CActiveRecord
         }
 
         return $path . '/' . $parent_id;
+    }
+
+    public static function getChilds($parent_id = false)
+    {
+        /**
+         * @var $organizations CDbCommand
+         */
+        $criteria = new CDbCriteria;
+        if ($parent_id) $criteria->compare('parent_id', $parent_id);
+
+        return new CActiveDataProvider(self::model(), array(
+            'criteria'   => $criteria,
+            'sort'       => array(
+                'defaultOrder'=> 'name',
+                'route'       => 'organization/parent/id/' . $parent_id
+            ),
+            'pagination' => array(
+                'pageSize' => 20,
+                'route'    => 'organization/parent/id/' . $parent_id
+            ),
+        ));
     }
 }

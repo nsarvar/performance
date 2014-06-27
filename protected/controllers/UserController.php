@@ -27,7 +27,7 @@ class UserController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions'=> array('index', 'view'),
+                'actions'=> array('index', 'view','ajax'),
                 'users'  => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -158,5 +158,12 @@ class UserController extends Controller
             echo CActiveForm::validate($model);
             Yii::app()->end();
         }
+    }
+
+    public function actionAjax($organization)
+    {
+        $this->renderPartial('ajax', array(
+            'organization'=> $organization,
+        ));
     }
 }

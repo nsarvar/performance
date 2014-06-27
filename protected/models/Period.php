@@ -74,13 +74,13 @@ class Period extends CActiveRecord
 
         if (!empty($this->period_from) && empty($this->period_to)) {
             $criteria->condition = "period_from >= :period_from";
-            $criteria->params = array(':period_from'=> $this->period_from);
+            $criteria->params    = array(':period_from'=> $this->period_from);
         } elseif (!empty($this->period_to) && empty($this->period_from)) {
             $criteria->condition = "period_from <= :period_to";
-            $criteria->params = array(':period_to'=> $this->period_to);
+            $criteria->params    = array(':period_to'=> $this->period_to);
         } elseif (!empty($this->period_from) && !empty($this->period_to)) {
             $criteria->condition = "period_from  >= :period_from AND period_from <= :period_to";
-            $criteria->params = array(':period_from'=> $this->period_from, ':period_to'=> $this->period_to);
+            $criteria->params    = array(':period_from'=> $this->period_from, ':period_to'=> $this->period_to);
         }
 
         return new CActiveDataProvider($this, array(
@@ -105,4 +105,30 @@ class Period extends CActiveRecord
 
         return Yii::app()->dateFormatter->format("d/M/y", $this->period_to);
     }
+
+
+    public static function getPeriods($status = null)
+    {
+        /**
+         * @var $organizations CDbCommand
+         */
+        $criteria = new CDbCriteria;
+        if ($status) $criteria->compare('status', $status);
+
+        return new CActiveDataProvider(self::model(), array(
+            'criteria'   => $criteria,
+            'sort'       => array(
+                'defaultOrder'=> 'period_from DESC',
+                'route'       => 'period/ajax/status/'.$status
+            ),
+            'pagination' => array(
+                'pageSize' => 13,
+                'route'    => 'period/ajax/status/'.$status
+            ),
+        ));
+
+    }
+
+    const STATUS_ACTIVE   = 'active';
+    const STATUS_ARCHIVED = 'archived';
 }
