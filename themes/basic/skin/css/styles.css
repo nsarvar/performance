@@ -5,8 +5,12 @@ html {
 body {
     height: 100%;
     padding-top: 70px;
-}
+    font-size: 120%;
 
+}
+.container{
+    width: 100%;
+}
 .middle_area {
     height: 230px;
     margin-top: -115px;
