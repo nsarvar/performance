@@ -91,7 +91,7 @@ class Task extends CActiveRecord
             'type'        => 'Type',
             'parent_id'   => 'Parent',
             'group_id'    => 'Group',
-            'user_id'     => 'User',
+            'user_id'     => 'Creator',
             'period_id'   => 'Period',
             'status'      => 'Status',
             'priority'    => 'Priority',

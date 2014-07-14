@@ -9,5 +9,5 @@
 
 function __($category, $message, $params = array(), $source = null, $language = null)
 {
-    return Yii::t($category, $message, $params = array(), $source = null, $language = null);
+    return Yii::t($category, $message, $params, $source = null, $language = null);
 }
