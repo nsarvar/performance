@@ -62,6 +62,12 @@ class TaskController extends Controller
      */
     public function actionCreate()
     {
+        $search = new Task('search');
+        $search->unsetAttributes();
+        if (isset($_GET['Task']))
+            $search->attributes = $_GET['Task'];
+
+
         $model = new Task;
 
         // Uncomment the following line if AJAX validation is needed
@@ -75,6 +81,7 @@ class TaskController extends Controller
 
         $this->render('create', array(
             'model'=> $model,
+            'search'=> $search,
         ));
     }
 
@@ -195,7 +202,13 @@ class TaskController extends Controller
 
     public function actionAjax()
     {
+        $search = new Task('search');
+        $search->unsetAttributes();
+        if (isset($_GET['Task']))
+            $search->attributes = $_GET['Task'];
+
         $this->renderPartial('ajax', array(
+            'search'=> $search,
         ));
     }
 }

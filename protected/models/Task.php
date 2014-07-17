@@ -32,6 +32,7 @@
  */
 class Task extends CActiveRecord
 {
+    public $parent_name;
     /**
      * @return string the associated database table name
      */
@@ -275,13 +276,13 @@ class Task extends CActiveRecord
     }
 
 
-    public static function getTasks()
+    public function getTasks()
     {
         /**
          * @var $organizations CDbCommand
          */
         $criteria = new CDbCriteria;
-
+        if($this->number) $criteria->compare('t.number', $this->number, true);
         return new CActiveDataProvider(self::model(), array(
             'criteria'   => $criteria,
             'sort'       => array(
