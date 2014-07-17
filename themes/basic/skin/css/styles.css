@@ -151,3 +151,15 @@ table thead {
 body{
     overflow-y: scroll;
 }
+.modal-open{
+    overflow-y: auto;
+}
+.modal{
+    overflow-y: auto;
+}
+.modal-dialog .pagination{
+    margin: 10px 10px 0 0;
+}
+.modal-dialog .table{
+    margin-bottom: 0;
+}

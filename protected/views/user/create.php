@@ -11,7 +11,7 @@ $this->breadcrumbs = array(
 ?>
 <div class="page-header">
     <h3>
-        <?=$model->name?>
+        <?=__('app','Create New User')?>
     </h3>
 </div>
 

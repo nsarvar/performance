@@ -199,6 +199,31 @@ class Task extends CActiveRecord
         return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
     }
 
+    const TYPE_HAT    = 'hat';
+    const TYPE_BUYRUQ = 'buruq';
+    const TYPE_FISHKA = 'fishka';
+
+    public static function getTypeArray($empty = true)
+    {
+        $roles = array(
+            self::TYPE_HAT             => __('app', ucfirst(self::TYPE_HAT)),
+            self::TYPE_BUYRUQ          => __('app', ucfirst(self::TYPE_BUYRUQ)),
+            self::TYPE_FISHKA          => __('app', ucfirst(self::TYPE_FISHKA)),
+        );
+
+        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
+    }
+
+    public static function getYesNoArray($empty = true)
+    {
+        $roles = array(
+            1             => __('app', 'Yes'),
+            0             => __('app', 'No'),
+        );
+
+        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
+    }
+
     public static function getUserOptions()
     {
         /**
@@ -247,5 +272,27 @@ class Task extends CActiveRecord
         }
 
         return $result;
+    }
+
+
+    public static function getTasks()
+    {
+        /**
+         * @var $organizations CDbCommand
+         */
+        $criteria = new CDbCriteria;
+
+        return new CActiveDataProvider(self::model(), array(
+            'criteria'   => $criteria,
+            'sort'       => array(
+                'defaultOrder'=> 'created_at DESC',
+                'route'       => 'task/ajax/'
+            ),
+            'pagination' => array(
+                'pageSize' => 10,
+                'route'       => 'task/ajax/'
+            ),
+        ));
+
     }
 }

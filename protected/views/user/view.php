@@ -8,14 +8,6 @@ $this->breadcrumbs=array(
 	'Users'=>array('index'),
 	$model->name,
 );
-
-$this->menu=array(
-    array('icon' => 'glyphicon glyphicon-list','label'=>'List User', 'url'=>array('index')),
-	array('icon' => 'glyphicon glyphicon-plus-sign','label'=>'Create User', 'url'=>array('create')),
-	array('icon' => 'glyphicon glyphicon-edit','label'=>'Update User', 'url'=>array('update', 'id'=>$model->id)),
-	array('icon' => 'glyphicon glyphicon-minus-sign','label'=>'Delete User', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
-    array('icon' => 'glyphicon glyphicon-tasks','label'=>'Manage User', 'url'=>array('admin')),
-);
 ?>
 
 <?php echo BsHtml::pageHeader('View','User '.$model->id) ?>
