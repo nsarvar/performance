@@ -54,8 +54,8 @@ return array(
         'db'          => array(
             'connectionString' => 'mysql:host=localhost;dbname=performance_new',
             'emulatePrepare'   => true,
-            'username'         => 'root',
-            'password'         => '',
+            'username'         => 'performance',
+            'password'         => 'perf0rm@nce',
             'charset'          => 'utf8',
         ),
 

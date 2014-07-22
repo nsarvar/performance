@@ -100,25 +100,41 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
         </div>
     </div>
 
+
     <div class="col col-sm-12">
-        <div class="row">
-            <div class="col col-md-6 col-lg-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading visible-sm visible-xs">
-                        <h4><?=__('app', 'Full Information')?></h4>
-                    </div>
-                    <div class="panel-body">
+        <div class="panel panel-default">
+            <div class="panel-heading visible-sm visible-xs">
+                <h4><?=__('app', 'Full Information')?></h4>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col col-md-8 col-lg-8">
                         <?php echo $form->textAreaControlGroup($model, 'description', array('rows'=> 6)); ?>
                     </div>
-                </div>
-            </div>
-            <div class="col col-md-6 col-lg-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading visible-sm visible-xs">
-                        <h4><?=__('app', 'Executors')?></h4>
-                    </div>
-                    <div class="panel-body">
+                    <div class="col col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label class="control-label"><?=__('app', 'Files')?></label>
+                            <? $this->widget('ext.EAjaxUpload.EAjaxUpload',
+                            array(
+                                'id'    => 'uploadFile',
+                                'config'=> array(
+                                    'action'           => Yii::app()->createUrl('task/upload'),
+                                    'allowedExtensions'=> File::$allowedExt,
+                                    'sizeLimit'        => 10 * 1024 * 1024,
+                                    'minSizeLimit'     => 10,
+                                    'onComplete'       => "js:function(id, fileName, responseJSON){ addFileToTask(id,fileName,responseJSON) }",
+                                    'messages'         => array(
+                                        'typeError'   => "{file} has invalid extension. Only {extensions} are allowed.",
+                                        'sizeError'   => "{file} is too large, maximum file size is {sizeLimit}.",
+                                        'minSizeError'=> "{file} is too small, minimum file size is {minSizeLimit}.",
+                                        'emptyError'  => "{file} is empty, please select files again without it.",
+                                        'onLeave'     => "The files are being uploaded, if you leave now the upload will be cancelled."
+                                    ),
+                                    //'showMessage'      => "js:function(message){ alert(message); }"
+                                )
+                            )); ?>
 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -157,10 +173,16 @@ $('.form-task-parent-search form').submit(function(){
 
 ");
 ?>
-
+<script type="text/javascript">
+    function addFileToTask(id, fileName, r) {
+        if (r.success) {
+            $('#uploadFile').append("<input type='hidden' name='task_files[]' value='" + fileName + "'>");
+        }
+    }
+</script>
 
 <div class="modal fade" id="modal_task_parent" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog " >
+    <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
@@ -181,7 +203,7 @@ $('.form-task-parent-search form').submit(function(){
     function selectParent() {
         var s = $('.task_parent_selector:checked');
         if (s.length > 0) {
-            $('input[name="Task[parent_name]"]').val(s.attr('data-number')?s.attr('data-number'):s.attr('data-name'))
+            $('input[name="Task[parent_name]"]').val(s.attr('data-number') ? s.attr('data-number') : s.attr('data-name'))
             $('input[name="Task[parent_id]"]').val(s.val())
             $('#modal_task_parent').modal('hide');
         }

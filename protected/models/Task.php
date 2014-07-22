@@ -33,6 +33,7 @@
 class Task extends CActiveRecord
 {
     public $parent_name;
+
     /**
      * @return string the associated database table name
      */
@@ -49,9 +50,10 @@ class Task extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('description', 'required'),
+            array('description, number', 'required'),
             array('attachable', 'numerical', 'integerOnly'=> true),
-            array('number, name', 'length', 'max'=> 64),
+            array('name', 'length', 'max'=> 64),
+            array('number', 'validNumber'),
             array('type, priority', 'length', 'max'=> 6),
             array('parent_id, group_id, user_id, period_id', 'length', 'max'=> 11),
             array('status', 'length', 'max'=> 8),
@@ -60,6 +62,14 @@ class Task extends CActiveRecord
             // @todo Please remove those attributes that should not be searched.
             array('id, number, name, type, parent_id, group_id, user_id, period_id, status, priority, start_date, end_date, description, attachable, created_at, updated_at', 'safe', 'on'=> 'search'),
         );
+    }
+
+    public function validNumber($attribute, $params)
+    {
+
+        $pattern = '/^[0-9]{0,3}[-]?[0-9]{0,2}[\/]?[0-9]{0,2}[-]?[0-9]{1,4}$/';
+        if (!preg_match($pattern, $this->$attribute))
+            $this->addError($attribute, 'Invalid Task Number');
     }
 
     /**
@@ -177,7 +187,7 @@ class Task extends CActiveRecord
         $roles = array(
             self::STATUS_ENABLED        => __('app', ucfirst(self::STATUS_ENABLED)),
             self::STATUS_DISABLED       => __('app', ucfirst(self::STATUS_DISABLED)),
-            self::STATUS_ARCHIVED       => __('app', ucfirst(self::STATUS_ARCHIVED)),
+            //self::STATUS_ARCHIVED       => __('app', ucfirst(self::STATUS_ARCHIVED)),
         );
 
         return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
@@ -282,7 +292,8 @@ class Task extends CActiveRecord
          * @var $organizations CDbCommand
          */
         $criteria = new CDbCriteria;
-        if($this->number) $criteria->compare('t.number', $this->number, true);
+        if ($this->number) $criteria->compare('t.number', $this->number, true);
+
         return new CActiveDataProvider(self::model(), array(
             'criteria'   => $criteria,
             'sort'       => array(
@@ -290,7 +301,7 @@ class Task extends CActiveRecord
                 'route'       => 'task/ajax/'
             ),
             'pagination' => array(
-                'pageSize' => 10,
+                'pageSize'    => 10,
                 'route'       => 'task/ajax/'
             ),
         ));

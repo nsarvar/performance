@@ -173,3 +173,17 @@ body{
 table thead th:first-child {
     border-left: none;
 }
+.qq-upload-list {
+    border-top: 1px solid #e3e3e3;
+    list-style: disc outside none;
+    margin: 2px 0 15px;
+    padding: 10px 10px 0;
+}
+.qq-upload-list li{
+    padding: 3px 0;
+
+}
+.qq-upload-success .qq-upload-file {
+    display: inline-block;
+    width: 80%;
+}

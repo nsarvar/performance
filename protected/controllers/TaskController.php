@@ -28,11 +28,11 @@ class TaskController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions'=> array('index', 'view','ajax'),
+                'actions'=> array('index', 'view', 'ajax'),
                 'users'  => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions'=> array('create', 'update', 'admin', 'period'),
+                'actions'=> array('create', 'update', 'admin', 'period', 'upload'),
                 'users'  => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -62,16 +62,17 @@ class TaskController extends Controller
      */
     public function actionCreate()
     {
+        $model = new Task;
+        $this->performAjaxValidation($model);
+
         $search = new Task('search');
         $search->unsetAttributes();
         if (isset($_GET['Task']))
             $search->attributes = $_GET['Task'];
 
 
-        $model = new Task;
 
         // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
 
         if (isset($_POST['Task'])) {
             $model->attributes = $_POST['Task'];
@@ -80,7 +81,7 @@ class TaskController extends Controller
         }
 
         $this->render('create', array(
-            'model'=> $model,
+            'model' => $model,
             'search'=> $search,
         ));
     }
@@ -210,5 +211,21 @@ class TaskController extends Controller
         $this->renderPartial('ajax', array(
             'search'=> $search,
         ));
+    }
+
+    public function actionUpload()
+    {
+        Yii::import("ext.EAjaxUpload.qqFileUploader");
+
+        $folder            = 'temp/';
+        $allowedExtensions = File::$allowedExt;
+        $sizeLimit         = 10 * 1024 * 1024;
+        $uploader          = new qqFileUploader($allowedExtensions, $sizeLimit);
+        $result            = $uploader->handleUpload($folder);
+        sleep(4);
+        $fileSize = filesize($folder . $result['filename']); //GETTING FILE SIZE
+        $fileName = $result['filename']; //GETTING FILE NAME
+
+        echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
     }
 }
