@@ -62,7 +62,7 @@ class TaskController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Task;
+        $model = new Task();
         $this->performAjaxValidation($model);
 
         $search = new Task('search');

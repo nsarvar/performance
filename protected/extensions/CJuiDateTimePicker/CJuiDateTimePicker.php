@@ -11,6 +11,7 @@ class CJuiDateTimePicker extends CJuiDatePicker
     const ASSETS_NAME = '/jquery-ui-timepicker-addon';
 
     public $mode = 'datetime';
+    public $hidden;
 
     public function init()
     {
@@ -18,6 +19,7 @@ class CJuiDateTimePicker extends CJuiDatePicker
             throw new CException('unknow mode "' . $this->mode . '"');
         if (!isset($this->language))
             $this->language = 'ru';
+
         return parent::init();
     }
 
@@ -28,16 +30,16 @@ class CJuiDateTimePicker extends CJuiDatePicker
         if (isset($this->htmlOptions['id']))
             $id = $this->htmlOptions['id'];
         else
-            $this->htmlOptions['id'] = $id;
+            $this->htmlOptions['id'] = $id . $this->hidden ? '_hidden' : '';
         if (isset($this->htmlOptions['name']))
             $name = $this->htmlOptions['name'];
         else
-            $this->htmlOptions['name'] = $name;
+            $this->htmlOptions['name'] = $name . $this->hidden ? '_hidden' : '';;
 
         if ($this->hasModel())
-            echo BsHtml::activeDateFieldControlGroup($this->model, $this->attribute, $this->htmlOptions);
+            echo $this->hidden ? BsHtml::activeHiddenField($this->model, $this->attribute, $this->htmlOptions) : BsHtml::activeTelFieldControlGroup($this->model, $this->attribute, $this->htmlOptions);
         else
-            echo CHtml::textField($name, $this->value, $this->htmlOptions);
+            echo $this->hidden ? CHtml::hiddenField($name, $this->value, $this->htmlOptions) : CHtml::textField($name, $this->value, $this->htmlOptions);
 
 
         $options = CJavaScript::encode($this->options);

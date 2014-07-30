@@ -71,24 +71,29 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
 
                 <div class="row">
                     <div class="col col-md-12">
+                        <?php echo $form->textFieldControlGroup($model, 'start_date', array('maxlength' => 64)); ?>
+
                         <?php
 
                         $this->widget('CJuiDateTimePicker', array(
+                            'hidden'    => true,
                             'model'     => $model, //Model object
                             'attribute' => 'start_date', //attribute name
                             'mode'      => 'date', //use "time","date" or "datetime" (default)
                             'options'   => array(
-                                //'dateFormat' => 'dd M, yy',
-                                'dateFormat'=>'dd-mm-yy',  // show format
+                                'dateFormat' => 'dd-mm-yy', // show format
                             ) // jquery plugin options
                         ));
 
                         ?>
                     </div>
                     <div class="col col-md-12">
+                        <?php echo $form->textFieldControlGroup($model, 'end_date', array('maxlength' => 64)); ?>
+
                         <?php
 
                         $this->widget('CJuiDateTimePicker', array(
+                            'hidden'    => true,
                             'model'     => $model, //Model object
                             'attribute' => 'end_date', //attribute name
                             'mode'      => 'date', //use "time","date" or "datetime" (default)

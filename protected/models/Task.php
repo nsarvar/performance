@@ -50,17 +50,18 @@ class Task extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('description, number', 'required'),
-            array('attachable', 'numerical', 'integerOnly'=> true),
-            array('name', 'length', 'max'=> 64),
+            array('description, number, start_date, end_date', 'required'),
+            array('attachable', 'numerical', 'integerOnly' => true),
+            array('name', 'length', 'max' => 64),
+            array('start_date, end_date', 'validDate'),
             array('number', 'validNumber'),
-            array('type, priority', 'length', 'max'=> 6),
-            array('parent_id, group_id, user_id, period_id', 'length', 'max'=> 11),
-            array('status', 'length', 'max'=> 8),
+            array('type, priority', 'length', 'max' => 6),
+            array('parent_id, group_id, user_id, period_id', 'length', 'max' => 11),
+            array('status', 'length', 'max' => 8),
             array('start_date, end_date, created_at, updated_at', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, number, name, type, parent_id, group_id, user_id, period_id, status, priority, start_date, end_date, description, attachable, created_at, updated_at', 'safe', 'on'=> 'search'),
+            array('id, number, name, type, parent_id, group_id, user_id, period_id, status, priority, start_date, end_date, description, attachable, created_at, updated_at', 'safe', 'on' => 'search'),
         );
     }
 
@@ -70,6 +71,13 @@ class Task extends CActiveRecord
         $pattern = '/^[0-9]{0,3}[-]?[0-9]{0,2}[\/]?[0-9]{0,2}[-]?[0-9]{1,4}$/';
         if (!preg_match($pattern, $this->$attribute))
             $this->addError($attribute, 'Invalid Task Number');
+    }
+    public function validDate($attribute, $params)
+    {
+
+        $pattern = '/^[0-3][0-9][-][0-1][0-9][-][2][0-9]{3}$/';
+        if (!preg_match($pattern, $this->$attribute))
+            $this->addError($attribute, 'Invalid Date Format, use dd-mm-yy');
     }
 
     /**
@@ -152,11 +160,11 @@ class Task extends CActiveRecord
         return new CActiveDataProvider($this, array(
             'criteria'   => $criteria,
             'sort'       => array(
-                'defaultOrder'=> 'id DESC',
-                'attributes'  => array(
-                    'user_name'=> array(
-                        'asc' => 'u.name',
-                        'desc'=> 'u.name DESC',
+                'defaultOrder' => 'id DESC',
+                'attributes'   => array(
+                    'user_name' => array(
+                        'asc'  => 'u.name',
+                        'desc' => 'u.name DESC',
                     ),
                     '*',
                 ),
@@ -185,12 +193,12 @@ class Task extends CActiveRecord
     public static function getStatusArray($empty = true)
     {
         $roles = array(
-            self::STATUS_ENABLED        => __('app', ucfirst(self::STATUS_ENABLED)),
-            self::STATUS_DISABLED       => __('app', ucfirst(self::STATUS_DISABLED)),
+            self::STATUS_ENABLED  => __('app', ucfirst(self::STATUS_ENABLED)),
+            self::STATUS_DISABLED => __('app', ucfirst(self::STATUS_DISABLED)),
             //self::STATUS_ARCHIVED       => __('app', ucfirst(self::STATUS_ARCHIVED)),
         );
 
-        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
+        return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
     }
 
     const PRIORITY_URGENT = 'urgent';
@@ -201,13 +209,13 @@ class Task extends CActiveRecord
     public static function getPriorityArray($empty = true)
     {
         $roles = array(
-            self::PRIORITY_URGENT        => __('app', ucfirst(self::PRIORITY_URGENT)),
-            self::PRIORITY_HIGH          => __('app', ucfirst(self::PRIORITY_HIGH)),
-            self::PRIORITY_NORMAL        => __('app', ucfirst(self::PRIORITY_NORMAL)),
-            self::PRIORITY_LOW           => __('app', ucfirst(self::PRIORITY_LOW)),
+            self::PRIORITY_URGENT => __('app', ucfirst(self::PRIORITY_URGENT)),
+            self::PRIORITY_HIGH   => __('app', ucfirst(self::PRIORITY_HIGH)),
+            self::PRIORITY_NORMAL => __('app', ucfirst(self::PRIORITY_NORMAL)),
+            self::PRIORITY_LOW    => __('app', ucfirst(self::PRIORITY_LOW)),
         );
 
-        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
+        return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
     }
 
     const TYPE_HAT    = 'hat';
@@ -217,22 +225,22 @@ class Task extends CActiveRecord
     public static function getTypeArray($empty = true)
     {
         $roles = array(
-            self::TYPE_HAT             => __('app', ucfirst(self::TYPE_HAT)),
-            self::TYPE_BUYRUQ          => __('app', ucfirst(self::TYPE_BUYRUQ)),
-            self::TYPE_FISHKA          => __('app', ucfirst(self::TYPE_FISHKA)),
+            self::TYPE_HAT    => __('app', ucfirst(self::TYPE_HAT)),
+            self::TYPE_BUYRUQ => __('app', ucfirst(self::TYPE_BUYRUQ)),
+            self::TYPE_FISHKA => __('app', ucfirst(self::TYPE_FISHKA)),
         );
 
-        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
+        return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
     }
 
     public static function getYesNoArray($empty = true)
     {
         $roles = array(
-            1             => __('app', 'Yes'),
-            0             => __('app', 'No'),
+            1 => __('app', 'Yes'),
+            0 => __('app', 'No'),
         );
 
-        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
+        return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
     }
 
     public static function getUserOptions()
@@ -255,7 +263,7 @@ class Task extends CActiveRecord
             ORDER BY `name`
         ')->queryAll();
 
-        $result = array(''=> '');
+        $result = array('' => '');
         foreach ($users as $user) {
             $result[$user['id']] = $user['name'];
         }
@@ -277,7 +285,7 @@ class Task extends CActiveRecord
             ORDER BY `id` DESC
         ')->queryAll();
 
-        $result = array(''=> '');
+        $result = array('' => '');
         foreach ($periods as $period) {
             $result[$period['id']] = $period['name'];
         }
@@ -297,14 +305,25 @@ class Task extends CActiveRecord
         return new CActiveDataProvider(self::model(), array(
             'criteria'   => $criteria,
             'sort'       => array(
-                'defaultOrder'=> 'created_at DESC',
-                'route'       => 'task/ajax/'
+                'defaultOrder' => 'created_at DESC',
+                'route'        => 'task/ajax/'
             ),
             'pagination' => array(
-                'pageSize'    => 10,
-                'route'       => 'task/ajax/'
+                'pageSize' => 10,
+                'route'    => 'task/ajax/'
             ),
         ));
 
+    }
+
+    public function init()
+    {
+        if ($this->getScenario() == 'insert') {
+            $date=new DateTime();
+            $this->start_date = $date->format('d-m-Y');
+            $this->end_date = $date->add(new DateInterval("P1D"))->format('d-m-Y');
+        }
+
+        return parent::init();
     }
 }
