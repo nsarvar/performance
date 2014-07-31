@@ -191,7 +191,7 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?= __('Close') ?></button>
                 <button type="button" class="btn btn-primary"
-                        onclick="selectOrganizations()"><?= __('Select') ?></button>
+                        onclick="selectOrganizations()"><?= __('Add Selected') ?></button>
             </div>
         </div>
     </div>
@@ -298,9 +298,9 @@ $('#form_selected_org').submit(function(){
             $('#so_ids').val(o);
             $('input[name="Organization[so_ids]"]').val(o);
             $('#form_selected_org').submit();
+            $('.form-task-organizations-search form').submit();
         }
-
-
+        //$('#modal_task_organizations').modal('hide');
     }
     function selectParent() {
         var s = $('.t_p_s:checked');
