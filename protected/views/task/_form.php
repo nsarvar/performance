@@ -6,19 +6,23 @@
 Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
 ?>
 
-<?php $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
-    'id'                     => 'task-form',
-    'enableAjaxValidation'   => true,
-    'enableClientValidation' => true,
-    'clientOptions'          => array('validateOnSubmit' => true)
-)); ?>
-<?php echo $form->errorSummary($model); ?>
 
 <div class="row">
+
+    <?php $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
+        'id'                     => 'task-form',
+        'enableAjaxValidation'   => true,
+        'enableClientValidation' => true,
+        'clientOptions'          => array('validateOnSubmit' => true)
+    )); ?>
+    <div class="col col-lg-12">
+        <?php echo $form->errorSummary($model); ?>
+    </div>
+
     <div class="col col-sm-6 ">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4><?= __('app', 'Task Details') ?></h4>
+                <h4><?= __('Task Details') ?></h4>
             </div>
             <div class="panel-body">
                 <div class="row">
@@ -37,16 +41,16 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
                         <?php echo $form->textField($model, 'parent_name', array('maxlength' => 11, 'class' => 'disabled ', 'disabled' => 'disabled')); ?>
                         <span class="input-group-btn">
                             <button class="btn btn-primary" id="btn_task_parent"
-                                    type="button"><?= __('app', 'Select Parent') ?></button>
+                                    type="button"><?= __('Select Parent') ?></button>
                         </span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col col-sm-6">
-                        <?php echo $form->dropDownListControlGroup($model, 'type', Task::getTypeArray(false), array('class' => 'selectpicker show-tick', 'onchange' => 'generateTaskName()', 'title' => __('app', 'Choose Type'))); ?>
+                        <?php echo $form->dropDownListControlGroup($model, 'type', Task::getTypeArray(false), array('class' => 'selectpicker show-tick', 'onchange' => 'generateTaskName()', 'title' => __('Choose Type'))); ?>
                     </div>
                     <div class="col col-sm-6">
-                        <?php echo $form->dropDownListControlGroup($model, 'priority', Task::getPriorityArray(false), array('class' => 'selectpicker show-tick', 'title' => __('app', 'Choose Type'))); ?>
+                        <?php echo $form->dropDownListControlGroup($model, 'priority', Task::getPriorityArray(false), array('class' => 'selectpicker show-tick', 'title' => __('Choose Type'))); ?>
                     </div>
                 </div>
 
@@ -57,15 +61,15 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
     <div class="col col-sm-6 ">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4><?= __('app', 'Access Options') ?></h4>
+                <h4><?= __('Access Options') ?></h4>
             </div>
             <div class="panel-body">
                 <div class="row">
                     <div class="col col-md-6">
-                        <?php echo $form->dropDownListControlGroup($model, 'attachable', Task::getYesNoArray(false), array('class' => 'selectpicker show-tick', 'title' => __('app', 'Choose Type'))); ?>
+                        <?php echo $form->dropDownListControlGroup($model, 'attachable', Task::getYesNoArray(false), array('class' => 'selectpicker show-tick', 'title' => __('Choose Type'))); ?>
                     </div>
                     <div class="col col-md-6">
-                        <?php echo $form->dropDownListControlGroup($model, 'status', Task::getStatusArray(false), array('class' => 'selectpicker show-tick', 'title' => __('app', 'Choose Type'))); ?>
+                        <?php echo $form->dropDownListControlGroup($model, 'status', Task::getStatusArray(false), array('class' => 'selectpicker show-tick', 'title' => __('Choose Type'))); ?>
                     </div>
                 </div>
 
@@ -108,11 +112,10 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
         </div>
     </div>
 
-
     <div class="col col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading visible-sm visible-xs">
-                <h4><?= __('app', 'Full Information') ?></h4>
+                <h4><?= __('Full Information') ?></h4>
             </div>
             <div class="panel-body">
                 <div class="row">
@@ -121,7 +124,7 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
                     </div>
                     <div class="col col-md-4 col-lg-4">
                         <div class="form-group">
-                            <label class="control-label"><?= __('app', 'Files') ?></label>
+                            <label class="control-label"><?= __('Files') ?></label>
                             <?php $this->widget('ext.EAjaxUpload.EAjaxUpload',
                                 array(
                                     'id'     => 'uploadFile',
@@ -138,7 +141,6 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
                                             'emptyError'   => "{file} is empty, please select files again without it.",
                                             'onLeave'      => "The files are being uploaded, if you leave now the upload will be cancelled."
                                         ),
-                                        //'showMessage'      => "js:function(message){ alert(message); }"
                                     )
                                 )); ?>
 
@@ -148,46 +150,20 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
             </div>
         </div>
     </div>
+    <?php $this->endWidget(); ?>
     <div class="col col-sm-12">
-        <?php
-        $dataTree1=Organization::getTreeViewData();
-        $dataTree = array(
-            array(
-                'text'     => '<label><input type="checkbox">Grampa</label>', //must using 'text' key to show the text
-                'expanded' => true,
-                'children' => array( //using 'children' key to indicate there are children
-                    array(
-                        'text'     => 'Father',
-                        'expanded' => true,
-                        'children' => array(
-                            array('text' => 'me'),
-                            array('text' => 'big sis'),
-                            array('text' => 'little brother'),
-                        )
-                    ),
-                    array(
-                        'text'     => 'Uncle',
-                        'children' => array(
-                            array('text' => 'Ben'),
-                            array('text' => 'Sally'),
-                        )
-                    ),
-                    array(
-                        'text' => 'Aunt',
-                    )
-                )
-            )
-        );
-
-        $this->widget('CTreeView', array(
-            'data'        => $dataTree1,
-            'animated'    => 'fast', //quick animation
-            'collapsed'   => 'false', //remember must giving quote for boolean value in here
-            'htmlOptions' => array(
-                'class' => 'treeview', //there are some classes that ready to use
-            ),
-        ));
-        ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>
+                    <?= __('Organizations') ?>
+                    <button style="margin-left: 20px" class="btn btn-sm btn-primary" id="btn_task_organizations"><i
+                            class="fa fa-plus"></i> <?= __('Add') ?></button>
+                </h4>
+            </div>
+            <div style="max-height: 420px;overflow-y: scroll">
+                <?php $this->renderPartial('/task/ajax/selectedOrg', array('search' => $searchSelectedOrg)) ?>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -201,13 +177,57 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
     <button type="submit" name="save"
             class="btn btn-success btn-lg"><?= $model->scenario == 'update' ? 'Update' : 'Save' ?></button>
 </p>
-<?php $this->endWidget(); ?>
+
+
+<div class="modal fade" id="modal_task_organizations" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only"><?= __('Close') ?></span></button>
+                <h4 class="modal-title" id="myModalLabel"><?= __('Choose Executors') ?></h4>
+            </div>
+            <?php $this->renderPartial('/task/ajax/organizations', array('search' => $searchOrganizations)) ?>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?= __('Close') ?></button>
+                <button type="button" class="btn btn-primary"
+                        onclick="selectOrganizations()"><?= __('Select') ?></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_task_parent" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only"><?= __('Close') ?></span></button>
+                <h4 class="modal-title" id="myModalLabel"><?= __('Choose Task Parent') ?></h4>
+            </div>
+
+            <?php $this->renderPartial('/task/ajax/tasks', array('search' => $searchTasks)) ?>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?= __('Close') ?></button>
+                <button type="button" class="btn btn-primary"
+                        onclick="selectParent()"><?= __('Select') ?></button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php
 Yii::app()->clientScript->registerScript('task_functions', "
 $('#btn_task_parent').click(function(){
 	$('#modal_task_parent').modal('show').on('hidden.bs.modal', function (e) {
         selectParent()
+    })
+	return false;
+});
+$('#btn_task_organizations').click(function(){
+    $('.form-task-organizations-search form').submit();
+	$('#modal_task_organizations').modal('show').on('hidden.bs.modal', function (e) {
+        selectOrganizations()
     })
 	return false;
 });
@@ -219,9 +239,24 @@ $('.form-task-parent-search form').submit(function(){
 	return false;
 });
 
+$('.form-task-organizations-search form').submit(function(){
+	$('#task-organizations-grid').yiiGridView('update', {
+		data: $(this).serialize()
+	});
+	return false;
+});
+
+$('#form_selected_org').submit(function(){
+	$('#task-organizations-selected-grid').yiiGridView('update', {
+		data: $(this).serialize()
+	});
+	return false;
+});
+
 
 ");
 ?>
+
 <script type="text/javascript">
     function addFileToTask(id, fileName, r) {
         if (r.success) {
@@ -235,34 +270,36 @@ $('.form-task-parent-search form').submit(function(){
         var name = type + " #" + number + " - " + date.toLocaleDateString();
         $('input[name="Task[name]"]').val(name);
     }
-</script>
+    function selectOrganizations() {
+        var s = $('#task-organizations-grid').yiiGridView('getSelection', 'selectedOrganizationIds');
+        var o = $('#so_ids').val().split(',');
 
-<div class="modal fade" id="modal_task_parent" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog ">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                        class="sr-only"><?= __('app', 'Close') ?></span></button>
-                <h4 class="modal-title" id="myModalLabel"><?= __('app', 'Choose Task Parent') ?></h4>
-            </div>
+        if (!$('#so_ids').val()) {
+            o.length = 0;
+        }
+        var i = o.length, a = i;
+        for (var k in s) {
+            if (o.indexOf(s[k]) == -1) {
+                o[i++] = s[k];
+            }
+        }
+        if(a!=i){
+            $('#so_ids').val(o);
+            $('input[name="Organization[so_ids]"]').val(o);
+            $('#form_selected_org').submit();
+        }
 
-            <?php $this->renderPartial('/task/ajax', array('search' => $search)) ?>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><?= __('app', 'Close') ?></button>
-                <button type="button" class="btn btn-primary"
-                        onclick="selectParent()"><?= __('app', 'Select') ?></button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script type="text/javascript">
+    }
     function selectParent() {
-        var s = $('.task_parent_selector:checked');
-        if (s.length > 0) {
-            $('input[name="Task[parent_name]"]').val(s.attr('data-number') ? s.attr('data-number') : s.attr('data-name'))
-            $('input[name="Task[parent_id]"]').val(s.val())
-            $('#modal_task_parent').modal('hide');
+        var s = $('.t_p_s:checked');
+        if (s != undefined && s.length > 0) {
+            var val = s.val().split('|');
+            if (val[0] != undefined) {
+                if (val[1] != undefined)$('input[name="Task[parent_name]"]').val(val[1])
+                $('input[name="Task[parent_id]"]').val(val[0])
+                $('#modal_task_parent').modal('hide');
+            }
         }
     }
 </script>

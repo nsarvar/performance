@@ -24,7 +24,7 @@ $('.search-form form').submit(function(){
     </h3>
 </div>
 <div class="row">
-    <div class="col col-md-3">
+    <div class="col col-md-3 search-form">
         <?php
         $this->renderPartial('_search', array(
             'model'=> $model,

@@ -15,7 +15,7 @@ $('.search-form form').submit(function(){
     <li><a href="/">Home</a></li>
     <li>Users</li>
     <span class="pull-right admin_action">
-        <a href="/user/create"><i class="fa fa-plus"></i> <?=__('app', 'Create New User')?></a>
+        <a href="/user/create"><i class="fa fa-plus"></i> <?=__( 'Create New User')?></a>
     </span>
 </ol>
 <div class="page-header">

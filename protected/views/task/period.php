@@ -17,12 +17,12 @@ $('.search-form form').submit(function(){
     <li><a href="/task">Tasks</a></li>
     <li><?=$period->name?></li>
     <span class="pull-right action_admin">
-        <a href="/task/create"><i class="fa fa-plus"></i> <?=__('app', 'Create New Task')?></a>
+        <a href="/task/create"><i class="fa fa-plus"></i> <?=__( 'Create New Task')?></a>
     </span>
 </ol>
 <div class="page-header">
     <h3>
-        <?=__('app', "Tasks on %period", array('%period'=> $period->name))?>
+        <?=__( "Tasks on %period", array('%period'=> $period->name))?>
     </h3>
 </div>
 <div class="row">

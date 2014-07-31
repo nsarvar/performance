@@ -197,10 +197,10 @@ class User extends CActiveRecord
     public static function getRolesArray($empty = true)
     {
         $roles = array(
-            self::ROLE_USER        => __('app', ucfirst(self::ROLE_USER)),
-            self::ROLE_MODERATOR   => __('app', ucfirst(self::ROLE_MODERATOR)),
-            self::ROLE_ADMIN       => __('app', ucfirst(self::ROLE_ADMIN)),
-            self::ROLE_SUPER_ADMIN => __('app', ucfirst(self::ROLE_SUPER_ADMIN)),
+            self::ROLE_USER        => __( ucfirst(self::ROLE_USER)),
+            self::ROLE_MODERATOR   => __( ucfirst(self::ROLE_MODERATOR)),
+            self::ROLE_ADMIN       => __( ucfirst(self::ROLE_ADMIN)),
+            self::ROLE_SUPER_ADMIN => __( ucfirst(self::ROLE_SUPER_ADMIN)),
         );
 
         return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
@@ -209,8 +209,8 @@ class User extends CActiveRecord
     public static function getStatusArray($empty = true)
     {
         $roles = array(
-            self::STATUS_ENABLED         => __('app', 'Enabled'),
-            self::STATUS_DISABLED        => __('app', 'Disabled'),
+            self::STATUS_ENABLED         => __( 'Enabled'),
+            self::STATUS_DISABLED        => __( 'Disabled'),
         );
 
         return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;

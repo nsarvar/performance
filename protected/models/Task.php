@@ -193,9 +193,9 @@ class Task extends CActiveRecord
     public static function getStatusArray($empty = true)
     {
         $roles = array(
-            self::STATUS_ENABLED  => __('app', ucfirst(self::STATUS_ENABLED)),
-            self::STATUS_DISABLED => __('app', ucfirst(self::STATUS_DISABLED)),
-            //self::STATUS_ARCHIVED       => __('app', ucfirst(self::STATUS_ARCHIVED)),
+            self::STATUS_ENABLED  => __( ucfirst(self::STATUS_ENABLED)),
+            self::STATUS_DISABLED => __( ucfirst(self::STATUS_DISABLED)),
+            //self::STATUS_ARCHIVED       => __( ucfirst(self::STATUS_ARCHIVED)),
         );
 
         return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
@@ -209,10 +209,10 @@ class Task extends CActiveRecord
     public static function getPriorityArray($empty = true)
     {
         $roles = array(
-            self::PRIORITY_URGENT => __('app', ucfirst(self::PRIORITY_URGENT)),
-            self::PRIORITY_HIGH   => __('app', ucfirst(self::PRIORITY_HIGH)),
-            self::PRIORITY_NORMAL => __('app', ucfirst(self::PRIORITY_NORMAL)),
-            self::PRIORITY_LOW    => __('app', ucfirst(self::PRIORITY_LOW)),
+            self::PRIORITY_URGENT => __( ucfirst(self::PRIORITY_URGENT)),
+            self::PRIORITY_HIGH   => __( ucfirst(self::PRIORITY_HIGH)),
+            self::PRIORITY_NORMAL => __( ucfirst(self::PRIORITY_NORMAL)),
+            self::PRIORITY_LOW    => __( ucfirst(self::PRIORITY_LOW)),
         );
 
         return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
@@ -225,9 +225,9 @@ class Task extends CActiveRecord
     public static function getTypeArray($empty = true)
     {
         $roles = array(
-            self::TYPE_HAT    => __('app', ucfirst(self::TYPE_HAT)),
-            self::TYPE_BUYRUQ => __('app', ucfirst(self::TYPE_BUYRUQ)),
-            self::TYPE_FISHKA => __('app', ucfirst(self::TYPE_FISHKA)),
+            self::TYPE_HAT    => __( ucfirst(self::TYPE_HAT)),
+            self::TYPE_BUYRUQ => __( ucfirst(self::TYPE_BUYRUQ)),
+            self::TYPE_FISHKA => __( ucfirst(self::TYPE_FISHKA)),
         );
 
         return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
@@ -236,8 +236,8 @@ class Task extends CActiveRecord
     public static function getYesNoArray($empty = true)
     {
         $roles = array(
-            1 => __('app', 'Yes'),
-            0 => __('app', 'No'),
+            1 => __( 'Yes'),
+            0 => __( 'No'),
         );
 
         return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
@@ -294,7 +294,7 @@ class Task extends CActiveRecord
     }
 
 
-    public function getTasks()
+    public function getTasksForTaskCreate()
     {
         /**
          * @var $organizations CDbCommand
@@ -306,11 +306,11 @@ class Task extends CActiveRecord
             'criteria'   => $criteria,
             'sort'       => array(
                 'defaultOrder' => 'created_at DESC',
-                'route'        => 'task/ajax/'
+                'route'        => 'task/tasks/'
             ),
             'pagination' => array(
                 'pageSize' => 10,
-                'route'    => 'task/ajax/'
+                'route'    => 'task/tasks/'
             ),
         ));
 

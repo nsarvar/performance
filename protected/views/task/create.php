@@ -5,14 +5,20 @@
 
 <?php
 $this->breadcrumbs = array(
-    __('app','Tasks')     => array('index'),
-    __('app','Create New Task'),
+    __('Tasks') => array('index'),
+    __('Create New Task'),
 );
 ?>
-<div class="page-header">
-    <h3>
-        <?=__('app','Create New Task')?>
-    </h3>
-</div>
+    <div class="page-header">
+        <h3>
+            <?= __('Create New Task') ?>
+        </h3>
+    </div>
 
-<?php $this->renderPartial('_form', array('model'=> $model,'search'=> $search)); ?>
+<?php $this->renderPartial('_form',
+    array(
+        'model'               => $model,
+        'searchOrganizations' => $searchOrganizations,
+        'searchTasks'         => $searchTasks,
+        'searchSelectedOrg'   => $searchSelectedOrg,
+    )); ?>

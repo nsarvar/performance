@@ -8,7 +8,7 @@
     <li><a href="/organization">Organizations</a></li>
     <li><?=$model->name?></li>
     <span class="pull-right action_admin">
-        <a href="/organization/create"><i class="fa fa-plus"></i> <?=__('app', 'Add Organization')?></a>
+        <a href="/organization/create"><i class="fa fa-plus"></i> <?=__( 'Add Organization')?></a>
     </span>
 </ol>
 

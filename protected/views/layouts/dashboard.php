@@ -13,38 +13,38 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
             'activateParents' => true,
             'items'           => array(
                 array(
-                    'label' => __('app', 'Organizations'),
+                    'label' => __( 'Organizations'),
                     'url'   => array(
                         '/organization'
                     ),
                 ),
                 array(
-                    'label' => __('app', 'Periods'),
+                    'label' => __( 'Periods'),
                     'url'   => array(
                         '/period'
                     ),
                 ),
                 array(
-                    'label' => __('app', 'Tasks'),
+                    'label' => __( 'Tasks'),
                     'url'   => array(
                         '/task'
                     ),
                 ),
                 array(
-                    'label' => __('app', 'Calendar'),
+                    'label' => __( 'Calendar'),
                     'url'   => array(
                         '/tasks/calendar'
                     ),
                 ),
 
                 array(
-                    'label' => __('app', 'Users'),
+                    'label' => __( 'Users'),
                     'url'   => array(
                         '/user'
                     ),
                 ),
                 array(
-                    'label' => __('app', 'Reports'),
+                    'label' => __( 'Reports'),
                     'url'   => array(
                         '/reports'
                     ),

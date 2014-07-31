@@ -16,7 +16,7 @@ $('.search-form form').submit(function(){
     <li><a href="/">Home</a></li>
     <li>Tasks</li>
     <span class="pull-right admin_action">
-        <a href="/task/create"><i class="fa fa-plus"></i> <?=__('app', 'Create New Task')?></a>
+        <a href="/task/create"><i class="fa fa-plus"></i> <?=__( 'Create New Task')?></a>
     </span>
 </ol>
 <div class="page-header">
@@ -41,6 +41,7 @@ $('.search-form form').submit(function(){
                 'id'          => 'task-grid',
                 'dataProvider'=> $model->search(),
                 'template'    => "{items}\n{pager}<div class='defender'></div>",
+                'type'         => BsHtml::GRID_TYPE_STRIPED,
                 'columns'     => array(
                     array('name'=> 'id', 'header'=> 'ID', 'htmlOptions'=> array('width'=> '60px')),
                     array('name'=> 'number', 'header'=> 'Number'),

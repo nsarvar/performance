@@ -28,19 +28,19 @@ class TaskController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions'=> array('index', 'view', 'ajax'),
-                'users'  => array('*'),
+                'actions' => array('index', 'view'),
+                'users'   => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions'=> array('create', 'update', 'admin', 'period', 'upload'),
-                'users'  => array('@'),
+                'actions' => array('create', 'update', 'admin', 'period', 'upload', 'tasks', 'organizations', 'selectedOrg'),
+                'users'   => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions'=> array('admin', 'delete'),
-                'users'  => array('admin'),
+                'actions' => array('admin', 'delete'),
+                'users'   => array('admin'),
             ),
             array('deny', // deny all users
-                'users'=> array('*'),
+                'users' => array('*'),
             ),
         );
     }
@@ -52,7 +52,7 @@ class TaskController extends Controller
     public function actionView($id)
     {
         $this->render('view', array(
-            'model'=> $this->loadModel($id),
+            'model' => $this->loadModel($id),
         ));
     }
 
@@ -65,26 +65,76 @@ class TaskController extends Controller
         $model = new Task();
         $this->performAjaxValidation($model);
 
+        $searchTasks = new Task('search');
+        $searchTasks->unsetAttributes();
+        if (isset($_GET['Task']))
+            $searchTasks->attributes = $_GET['Task'];
+
+
+        $searchOrganizations = new Organization('search');
+        $searchOrganizations->unsetAttributes();
+        $searchOrganizations->type = Organization::TYPE_UNIVERSITY;
+        if (isset($_GET['Organization']))
+            $searchOrganizations->attributes = $_GET['Organization'];
+
+
+        $searchSelectedOrg = new Organization('search');
+        $searchSelectedOrg->unsetAttributes();
+        if (isset($_GET['so_ids']))
+            $searchSelectedOrg->so_ids = $_GET['so_ids'];
+
+
+        if (isset($_POST['Task'])) {
+            $model->attributes = $_POST['Task'];
+            if ($model->save())
+                $this->redirect(array('view', 'id' => $model->id));
+        }
+
+        $this->render('create', array(
+            'model'               => $model,
+            'searchSelectedOrg'   => $searchSelectedOrg,
+            'searchTasks'         => $searchTasks,
+            'searchOrganizations' => $searchOrganizations,
+        ));
+    }
+
+
+    public function actionOrganizations()
+    {
+        $searchOrganizations = new Organization('search');
+        $searchOrganizations->unsetAttributes();
+        if (isset($_GET['Organization']))
+            $searchOrganizations->attributes = $_GET['Organization'];
+
+        $this->renderPartial('ajax/organizations', array(
+            'search' => $searchOrganizations,
+        ));
+    }
+
+    public function actionSelectedOrg()
+    {
+        $searchOrganizations = new Organization('search');
+        $searchOrganizations->unsetAttributes();
+        if (isset($_GET['so_ids']))
+            $searchOrganizations->so_ids = $_GET['so_ids'];
+
+        $this->renderPartial('ajax/selectedOrg', array(
+            'search' => $searchOrganizations,
+        ));
+    }
+
+    public function actionTasks()
+    {
         $search = new Task('search');
         $search->unsetAttributes();
         if (isset($_GET['Task']))
             $search->attributes = $_GET['Task'];
 
-
-
-        // Uncomment the following line if AJAX validation is needed
-
-        if (isset($_POST['Task'])) {
-            $model->attributes = $_POST['Task'];
-            if ($model->save())
-                $this->redirect(array('view', 'id'=> $model->id));
-        }
-
-        $this->render('create', array(
-            'model' => $model,
-            'search'=> $search,
+        $this->renderPartial('ajax/tasks', array(
+            'search' => $search,
         ));
     }
+
 
     /**
      * Updates a particular model.
@@ -101,11 +151,11 @@ class TaskController extends Controller
         if (isset($_POST['Task'])) {
             $model->attributes = $_POST['Task'];
             if ($model->save())
-                $this->redirect(array('view', 'id'=> $model->id));
+                $this->redirect(array('view', 'id' => $model->id));
         }
 
         $this->render('update', array(
-            'model'=> $model,
+            'model' => $model,
         ));
     }
 
@@ -146,7 +196,7 @@ class TaskController extends Controller
             $model->attributes = $_GET['Task'];
 
         $this->render('admin', array(
-            'model'=> $model,
+            'model' => $model,
         ));
     }
 
@@ -156,7 +206,7 @@ class TaskController extends Controller
     public function actionPeriod($periodId)
     {
         $period = Period::model()->findByPk($periodId);
-        if ($period === null)
+        if ($period === NULL)
             throw new CHttpException(404, 'The requested page does not exist.');
         $model = new Task('search');
         $model->unsetAttributes(); // clear any default values
@@ -167,8 +217,8 @@ class TaskController extends Controller
 
 
         $this->render('period', array(
-            'model' => $model,
-            'period'=> $period
+            'model'  => $model,
+            'period' => $period
         ));
     }
 
@@ -182,7 +232,7 @@ class TaskController extends Controller
     public function loadModel($id)
     {
         $model = Task::model()->findByPk($id);
-        if ($model === null)
+        if ($model === NULL)
             throw new CHttpException(404, 'The requested page does not exist.');
 
         return $model;
@@ -200,18 +250,6 @@ class TaskController extends Controller
         }
     }
 
-
-    public function actionAjax()
-    {
-        $search = new Task('search');
-        $search->unsetAttributes();
-        if (isset($_GET['Task']))
-            $search->attributes = $_GET['Task'];
-
-        $this->renderPartial('ajax', array(
-            'search'=> $search,
-        ));
-    }
 
     public function actionUpload()
     {

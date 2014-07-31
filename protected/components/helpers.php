@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-function __($category, $message, $params = array(), $source = null, $language = null)
+function __($message, $params = array(), $source = null, $language = null)
 {
-    return Yii::t($category, $message, $params, $source = null, $language = null);
+    return Yii::t('app', $message, $params, $source = null, $language = null);
 }

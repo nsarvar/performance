@@ -52,7 +52,7 @@ class Organization extends CActiveRecord
             array('created_at', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('parent_id, type, region_id', 'safe', 'on' => 'search'),
+            array('parent_id, type, region_id,so_ids', 'safe', 'on' => 'search'),
         );
     }
 
@@ -121,6 +121,50 @@ class Organization extends CActiveRecord
             'pagination' => array(
                 'pageSize' => 20
             )
+        ));
+    }
+
+    public function getOrganizationsForTaskCreate()
+    {
+        $criteria = new CDbCriteria;
+        if ($this->so_ids)
+            $criteria->addNotInCondition('id', explode(',', $this->so_ids), true);
+
+        $criteria->compare('name', $this->name, true);
+        $criteria->compare('type', $this->type, true);
+        $criteria->compare('region_id', $this->region_id, true);
+
+        return new CActiveDataProvider($this, array(
+            'criteria'   => $criteria,
+            'sort'       => array(
+                'defaultOrder' => 'name',
+                'route'        => 'task/organizations/'
+            ),
+            'pagination' => array(
+                'pageSize' => 1000,
+                'route'    => 'task/organizations/'
+            ),
+        ));
+    }
+
+    public $so_ids;
+
+    public function getSelectedOrganizationsForTaskCreate()
+    {
+        $criteria = new CDbCriteria;
+
+        $criteria->addInCondition('id', explode(',', $this->so_ids), true);
+
+        return new CActiveDataProvider($this, array(
+            'criteria'   => $criteria,
+            'sort'       => array(
+                'defaultOrder' => 'name',
+                'route'        => 'task/selectedOrg/'
+            ),
+            'pagination' => array(
+                'pageSize' => 1000,
+                'route'    => 'task/selectedOrg/'
+            ),
         ));
     }
 
@@ -254,10 +298,10 @@ class Organization extends CActiveRecord
     public static function getTypesArray($empty = true)
     {
         $types = array(
-            self::TYPE_MINISTRY   => __('app', ucfirst(self::TYPE_MINISTRY)),
-            self::TYPE_DEPARTMENT => __('app', ucfirst(self::TYPE_DEPARTMENT)),
-            self::TYPE_UNIVERSITY => __('app', ucfirst(self::TYPE_UNIVERSITY)),
-            self::TYPE_CENTER     => __('app', ucfirst(self::TYPE_CENTER)),
+            self::TYPE_MINISTRY   => __(ucfirst(self::TYPE_MINISTRY)),
+            self::TYPE_DEPARTMENT => __(ucfirst(self::TYPE_DEPARTMENT)),
+            self::TYPE_UNIVERSITY => __(ucfirst(self::TYPE_UNIVERSITY)),
+            self::TYPE_CENTER     => __(ucfirst(self::TYPE_CENTER)),
         );
 
         return $empty ? array_merge(array('' => ''), $types) : $types;

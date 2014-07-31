@@ -167,8 +167,9 @@ body{
     margin-bottom: 0;
     margin-top: 10px;
 }
-#task-parent-grid table tr td:first-child{
+table .checkbox-column{
     text-align: center;
+    width: 60px;
 }
 table thead th:first-child {
     border-left: none;

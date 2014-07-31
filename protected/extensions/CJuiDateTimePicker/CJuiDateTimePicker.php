@@ -30,11 +30,11 @@ class CJuiDateTimePicker extends CJuiDatePicker
         if (isset($this->htmlOptions['id']))
             $id = $this->htmlOptions['id'];
         else
-            $this->htmlOptions['id'] = $id . $this->hidden ? '_hidden' : '';
+            $this->htmlOptions['id'] =  $this->hidden ? $id .'_hidden' : $id;
         if (isset($this->htmlOptions['name']))
             $name = $this->htmlOptions['name'];
         else
-            $this->htmlOptions['name'] = $name . $this->hidden ? '_hidden' : '';;
+            $this->htmlOptions['name'] = $this->hidden ? $name.'_hidden' : $name;
 
         if ($this->hasModel())
             echo $this->hidden ? BsHtml::activeHiddenField($this->model, $this->attribute, $this->htmlOptions) : BsHtml::activeTelFieldControlGroup($this->model, $this->attribute, $this->htmlOptions);
