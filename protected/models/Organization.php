@@ -43,16 +43,16 @@ class Organization extends CActiveRecord
         // will receive user inputs.
         return array(
             array('short_name,name,type,parent_id', 'required'),
-            array('parent_id, region_id', 'length', 'max'=> 11),
-            array('name, description, address, phone, web_site', 'length', 'max'=> 255),
-            array('short_name', 'length', 'max'=> 30),
-            array('email', 'length', 'max'=> 64),
-            array('email', 'email', 'message'=> "The email isn't correct"),
-            array('type', 'length', 'max'=> 10),
+            array('parent_id, region_id', 'length', 'max' => 11),
+            array('name, description, address, phone, web_site', 'length', 'max' => 255),
+            array('short_name', 'length', 'max' => 30),
+            array('email', 'length', 'max' => 64),
+            array('email', 'email', 'message' => "The email isn't correct"),
+            array('type', 'length', 'max' => 10),
             array('created_at', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('parent_id, type, region_id', 'safe', 'on'=> 'search'),
+            array('parent_id, type, region_id', 'safe', 'on' => 'search'),
         );
     }
 
@@ -117,7 +117,7 @@ class Organization extends CActiveRecord
 
         return new CActiveDataProvider($this, array(
             'criteria'   => $criteria,
-            'sort'       => array('defaultOrder'=> 'ID ASC',),
+            'sort'       => array('defaultOrder' => 'ID ASC',),
             'pagination' => array(
                 'pageSize' => 20
             )
@@ -156,7 +156,7 @@ class Organization extends CActiveRecord
 		ch.parent_id = p.id) > 0
         ')->queryAll();
 
-        $result = array(''=> '');
+        $result = array('' => '');
         foreach ($organizations as $o) {
             $result[$o['id']] = $o['name'];
         }
@@ -178,7 +178,7 @@ class Organization extends CActiveRecord
             ORDER BY id
         ')->queryAll();
 
-        $result = $empty ? array(null=> '') : array();
+        $result = $empty ? array(NULL => '') : array();
         foreach ($organizations as $o) {
             $result[$o['id']] = $o['name'];
         }
@@ -206,7 +206,7 @@ class Organization extends CActiveRecord
             ORDER BY `name`
         ')->queryAll();
 
-        $result = array(''=> '');
+        $result = array('' => '');
         foreach ($organizations as $o) {
             $result[$o['id']] = $o['name'];
         }
@@ -217,7 +217,7 @@ class Organization extends CActiveRecord
     public static function getListByType()
     {
         $types = self::getTypesArray(false);
-        foreach ($types as $key=> $value) {
+        foreach ($types as $key => $value) {
             $types[$key] = array();
         }
         $organizations = Yii::app()->db->createCommand('
@@ -254,20 +254,20 @@ class Organization extends CActiveRecord
     public static function getTypesArray($empty = true)
     {
         $types = array(
-            self::TYPE_MINISTRY     => __('app', ucfirst(self::TYPE_MINISTRY)),
-            self::TYPE_DEPARTMENT   => __('app', ucfirst(self::TYPE_DEPARTMENT)),
-            self::TYPE_UNIVERSITY   => __('app', ucfirst(self::TYPE_UNIVERSITY)),
-            self::TYPE_CENTER       => __('app', ucfirst(self::TYPE_CENTER)),
+            self::TYPE_MINISTRY   => __('app', ucfirst(self::TYPE_MINISTRY)),
+            self::TYPE_DEPARTMENT => __('app', ucfirst(self::TYPE_DEPARTMENT)),
+            self::TYPE_UNIVERSITY => __('app', ucfirst(self::TYPE_UNIVERSITY)),
+            self::TYPE_CENTER     => __('app', ucfirst(self::TYPE_CENTER)),
         );
 
-        return $empty ? array_merge(array(''=> ''), $types) : $types;
+        return $empty ? array_merge(array('' => ''), $types) : $types;
     }
 
     public function beforeSave()
     {
-        if (empty($this->region_id)) $this->region_id = null;
+        if (empty($this->region_id)) $this->region_id = NULL;
 
-        if ($this->parent_id != null) {
+        if ($this->parent_id != NULL) {
             $path       = self::getParentPath('', $this->parent_id);
             $this->path = $path . '/Z';
         } else {
@@ -299,8 +299,8 @@ class Organization extends CActiveRecord
         return new CActiveDataProvider(self::model(), array(
             'criteria'   => $criteria,
             'sort'       => array(
-                'defaultOrder'=> 'name',
-                'route'       => 'organization/parent/id/' . $parent_id
+                'defaultOrder' => 'name',
+                'route'        => 'organization/parent/id/' . $parent_id
             ),
             'pagination' => array(
                 'pageSize' => 20,
@@ -308,4 +308,77 @@ class Organization extends CActiveRecord
             ),
         ));
     }
+
+    public static function getTreeViewData()
+    {
+        $organizations = Yii::app()->db->createCommand('
+        SELECT * FROM `organization` AS p ORDER BY path DESC
+        ')->queryAll();
+
+        $result = array();
+        foreach ($organizations as $o) {
+            $o['id']                      = intval($o['id']);
+            $o['text']                    = $o['name'];
+            $o['expanded']                = true;
+            $result[$o['id']]             = $o;
+            $result[$o['id']]['children'] = array();
+        }
+
+        $data = array();
+        foreach ($result as $key => $o) {
+            $path = array_reverse(explode('/', $o['path']));
+            if (count($path) > 2) {
+                $child  = $o;
+                $parent = false;
+                foreach ($path as $id) {
+                    if (intval($id) && isset($result[$id]) && !isset($parent['children'][$child['id']])) {
+                        $result[$id]['children'][$child['id']] = $child['id'];
+                        $child                                 = $result[$id];
+                    }
+                }
+            }
+        }
+
+        foreach ($result as $key => &$o) {
+            foreach ($o['children'] as $id1) {
+                if (isset($result[$id1])) {
+                    $o['children'][$id1] = $result[$id1];
+                    foreach ($o['children'][$id1]['children'] as $id2) {
+                        if (isset($result[$id2])) {
+                            $o['children'][$id1]['children'][$id2] = $result[$id2];
+                            foreach ($o['children'][$id1]['children'][$id2]['children'] as $id3) {
+                                if (isset($result[$id3])) {
+                                    $o['children'][$id1]['children'][$id2]['children'][$id3] = $result[$id3];
+                                    foreach ($o['children'][$id1]['children'][$id2]['children'][$id3]['children'] as $id4) {
+                                        if (isset($result[$id4])) {
+                                            $o['children'][$id1]['children'][$id2]['children'][$id3]['children'][$id4] = $result[$id4];
+                                            foreach ($o['children'][$id1]['children'][$id2]['children'][$id3]['children'][$id4]['children'] as $id5) {
+                                                if (isset($result[$id5])) {
+                                                    $o['children'][$id1]['children'][$id2]['children'][$id3]['children'][$id4]['children'][$id5] = $result[$id5];
+                                                    foreach ($o['children'][$id1]['children'][$id2]['children'][$id3]['children'][$id4]['children'][$id5]['children'] as $id6) {
+                                                        if (isset($result[$id6])) {
+                                                            $o['children'][$id1]['children'][$id2]['children'][$id3]['children'][$id4]['children'][$id5]['children'] [$id6] = $result[$id6];
+                                                            unset($result[$id6]);
+                                                        }
+                                                    }
+                                                    unset($result[$id5]);
+                                                }
+                                            }
+                                            unset($result[$id4]);
+                                        }
+                                    }
+                                    unset($result[$id3]);
+                                }
+                            }
+                            unset($result[$id2]);
+                        }
+                    }
+                    unset($result[$id1]);
+                }
+            }
+        }
+
+        return $result;
+    }
+
 }

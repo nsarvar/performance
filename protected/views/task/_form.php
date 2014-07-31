@@ -150,9 +150,10 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
     </div>
     <div class="col col-sm-12">
         <?php
+        $dataTree1=Organization::getTreeViewData();
         $dataTree = array(
             array(
-                'text'     => '<input type="checkbox">Grampa', //must using 'text' key to show the text
+                'text'     => '<label><input type="checkbox">Grampa</label>', //must using 'text' key to show the text
                 'expanded' => true,
                 'children' => array( //using 'children' key to indicate there are children
                     array(
@@ -179,11 +180,11 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
         );
 
         $this->widget('CTreeView', array(
-            'data'        => $dataTree,
+            'data'        => $dataTree1,
             'animated'    => 'fast', //quick animation
             'collapsed'   => 'false', //remember must giving quote for boolean value in here
             'htmlOptions' => array(
-                'class' => 'treeview-red', //there are some classes that ready to use
+                'class' => 'treeview', //there are some classes that ready to use
             ),
         ));
         ?>
