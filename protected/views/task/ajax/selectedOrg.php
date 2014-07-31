@@ -17,13 +17,17 @@
         'selectableRows' => 1000,
         'columns'        => array(
             array(
-                'id'                  => 'selectedOrganizationIds',
                 'class'               => 'CCheckBoxColumn',
-                'checked'             => '$data->id>0',
-                'checkBoxHtmlOptions' => array('name'    => 't_orgs_selected[]',
-                                               ),
+                'checked'            => '$data->id>0',
+                'checkBoxHtmlOptions' => array('name' => 't_s_orgs[]',),
             ),
             'name',
+            array(
+                'class'           => 'CLinkColumn',
+                'linkHtmlOptions' => array(),
+                'urlExpression'   => '"javascript:removeOrganization(".$data->id.")"',
+                'label'           => "<i class='fa fa-minus'> </i>" . __(' Remove')
+            ),
         ),
     )); ?>
     <div class="clearfix"></div>

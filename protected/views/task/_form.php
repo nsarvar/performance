@@ -270,6 +270,17 @@ $('#form_selected_org').submit(function(){
         var name = type + " #" + number + " - " + date.toLocaleDateString();
         $('input[name="Task[name]"]').val(name);
     }
+
+    function removeOrganization(id) {
+        var o = $('#so_ids').val().split(',');
+        var index = o.indexOf(id + "");
+        if (index > -1) {
+            o.splice(index, 1);
+            $('#so_ids').val(o);
+            $('input[name="Organization[so_ids]"]').val(o);
+            $('#form_selected_org').submit();
+        }
+    }
     function selectOrganizations() {
         var s = $('#task-organizations-grid').yiiGridView('getSelection', 'selectedOrganizationIds');
         var o = $('#so_ids').val().split(',');
@@ -283,7 +294,7 @@ $('#form_selected_org').submit(function(){
                 o[i++] = s[k];
             }
         }
-        if(a!=i){
+        if (a != i) {
             $('#so_ids').val(o);
             $('input[name="Organization[so_ids]"]').val(o);
             $('#form_selected_org').submit();
