@@ -28,7 +28,7 @@ class TaskController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view'),
+                'actions' => array('index', 'view', 'test'),
                 'users'   => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -86,8 +86,15 @@ class TaskController extends Controller
 
         if (isset($_POST['Task'])) {
             $model->attributes = $_POST['Task'];
-            if ($model->save())
+            if (isset($_POST['Task']['task_files']))
+                $model->task_files = $_POST['Task']['task_files'];
+
+
+            if ($model->save()) {
+                Yii::app()->user->setFlash('success', __('Task ":name" created successfully', array(':name' => $model->number)));
                 $this->redirect(array('view', 'id' => $model->id));
+            }
+
         }
 
         $this->render('create', array(
@@ -255,7 +262,7 @@ class TaskController extends Controller
     {
         Yii::import("ext.EAjaxUpload.qqFileUploader");
 
-        $folder            = 'temp/';
+        $folder            = UPLOAD_TEMP_DIR;
         $allowedExtensions = File::$allowedExt;
         $sizeLimit         = 10 * 1024 * 1024;
         $uploader          = new qqFileUploader($allowedExtensions, $sizeLimit);
@@ -271,15 +278,21 @@ class TaskController extends Controller
                          'fa-file-powerpoint-o' => array('ppt', 'pptx'),
                          'fa-file-image-o'      => array('jpg', 'jpeg', 'gif', 'png', 'tif'),
                          'fa-file-zip-o'        => array('rar', 'zip', 'gz', 'tar', 'tgz'),
-                     ) as $cl=>$exts) {
+                     ) as $cl => $exts) {
                 if (in_array($result['ext'], $exts)) {
                     $class = $cl;
                     break;
                 }
 
             }
-            $result['filename']  = "<i class='fa $class'></i> " . $result['orgname'];
+            $result['filename'] = "<i class='fa $class'></i> " . $result['orgname'];
         }
         echo json_encode($result);
+    }
+
+    public function actionTest()
+    {
+        $start = date_create_from_format('d-m-Y H:i:s', '12-08-2014 23:59:59');
+        echo $start->format('Y-m-d H:i:s');
     }
 }

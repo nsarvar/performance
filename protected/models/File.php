@@ -37,15 +37,16 @@ class File extends CActiveRecord
         // will receive user inputs.
         return array(
             array('realname', 'required'),
-            array('file_size', 'numerical', 'integerOnly'=> true),
-            array('realname', 'length', 'max'=> 32),
-            array('task_id, job_id', 'length', 'max'=> 11),
-            array('description, file_name', 'length', 'max'=> 128),
-            array('file_type', 'length', 'max'=> 64),
+            array('file_size', 'numerical', 'integerOnly' => true),
+            array('realname', 'length', 'max' => 64),
+            array('task_id, job_id', 'length', 'max' => 11),
+            array('description, file_name', 'length', 'max' => 256),
+            array('file_type', 'length', 'max' => 64),
             array('created_at', 'safe'),
+            array('created_at', 'default', 'value' => new CDbExpression('NOW()'), 'setOnEmpty' => false, 'on' => 'insert'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, realname, task_id, job_id, description, created_at, file_size, file_name, file_type', 'safe', 'on'=> 'search'),
+            array('id, realname, task_id, job_id, description, created_at, file_size, file_name, file_type', 'safe', 'on' => 'search'),
         );
     }
 
@@ -109,7 +110,7 @@ class File extends CActiveRecord
         $criteria->compare('file_type', $this->file_type, true);
 
         return new CActiveDataProvider($this, array(
-            'criteria'=> $criteria,
+            'criteria' => $criteria,
         ));
     }
 
@@ -141,4 +142,46 @@ class File extends CActiveRecord
         'rar',
         'zip'
     );
+
+    protected function afterDelete()
+    {
+        $file = UPLOAD_DIR . $this->task_id . DS . $this->realname;
+        if (is_file($file)) {
+            try {
+                unlink($file);
+            } catch (Exception $e) {
+
+            }
+        }
+
+        return parent::afterDelete();
+    }
+
+    protected function afterSave()
+    {
+        if ($this->isNewRecord) {
+            $taskDir  = UPLOAD_DIR . $this->task_id . DS;
+            $tempFile = UPLOAD_TEMP_DIR . $this->realname;
+            if (is_dir($taskDir) && is_file($tempFile)) {
+                if (!rename($tempFile, $taskDir . $this->realname)) {
+                    $this->delete();
+                }
+            }
+        }
+
+        return parent::afterSave();
+    }
+
+    protected function beforeSave()
+    {
+        $tempFile = UPLOAD_TEMP_DIR . $this->realname;
+        if ($this->isNewRecord) {
+            if (is_file($tempFile)) {
+                $this->file_size = filesize($tempFile);
+                $this->file_type = mime_content_type($tempFile);
+            }
+        }
+
+        return parent::beforeSave();
+    }
 }

@@ -22,7 +22,7 @@ class UserIdentity extends CUserIdentity
          */
         $user = User::loadByLogin($this->username);
 
-        if ($user->id === null)
+        if ($user === NULL)
             $this->errorCode = self::ERROR_USERNAME_INVALID;
         elseif ($user->validatePassword($this->password) == false) {
             $this->errorCode = self::ERROR_PASSWORD_INVALID;
@@ -40,7 +40,9 @@ class UserIdentity extends CUserIdentity
         if ($this->userModel) {
             foreach (array('role', 'login', 'group_id') as $state)
                 $states[$state] = $this->userModel->$state;
+            $states['user_id'] = $this->userModel->id;
         }
+
         return $states;
     }
 }

@@ -52,7 +52,7 @@ class Organization extends CActiveRecord
             array('created_at', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('parent_id, type, region_id,so_ids', 'safe', 'on' => 'search'),
+            array('parent_id, type, region_id, so_ids', 'safe', 'on' => 'search'),
         );
     }
 

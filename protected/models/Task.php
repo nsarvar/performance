@@ -33,6 +33,8 @@
 class Task extends CActiveRecord
 {
     public $parent_name;
+    public $organization_ids;
+    public $task_files;
 
     /**
      * @return string the associated database table name
@@ -55,13 +57,14 @@ class Task extends CActiveRecord
             array('name', 'length', 'max' => 64),
             array('start_date, end_date', 'validDate'),
             array('number', 'validNumber'),
+            array('number', 'unique'),
             array('type, priority', 'length', 'max' => 6),
             array('parent_id, group_id, user_id, period_id', 'length', 'max' => 11),
             array('status', 'length', 'max' => 8),
             array('start_date, end_date, created_at, updated_at', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, number, name, type, parent_id, group_id, user_id, period_id, status, priority, start_date, end_date, description, attachable, created_at, updated_at', 'safe', 'on' => 'search'),
+            array('id, number, name, type, parent_id, group_id, user_id, period_id, status, priority, start_date, end_date, description, attachable, created_at, updated_at,organization_ids,task_files', 'safe', 'on' => 'search'),
         );
     }
 
@@ -72,6 +75,7 @@ class Task extends CActiveRecord
         if (!preg_match($pattern, $this->$attribute))
             $this->addError($attribute, 'Invalid Task Number');
     }
+
     public function validDate($attribute, $params)
     {
 
@@ -193,8 +197,8 @@ class Task extends CActiveRecord
     public static function getStatusArray($empty = true)
     {
         $roles = array(
-            self::STATUS_ENABLED  => __( ucfirst(self::STATUS_ENABLED)),
-            self::STATUS_DISABLED => __( ucfirst(self::STATUS_DISABLED)),
+            self::STATUS_ENABLED  => __(ucfirst(self::STATUS_ENABLED)),
+            self::STATUS_DISABLED => __(ucfirst(self::STATUS_DISABLED)),
             //self::STATUS_ARCHIVED       => __( ucfirst(self::STATUS_ARCHIVED)),
         );
 
@@ -209,10 +213,10 @@ class Task extends CActiveRecord
     public static function getPriorityArray($empty = true)
     {
         $roles = array(
-            self::PRIORITY_URGENT => __( ucfirst(self::PRIORITY_URGENT)),
-            self::PRIORITY_HIGH   => __( ucfirst(self::PRIORITY_HIGH)),
-            self::PRIORITY_NORMAL => __( ucfirst(self::PRIORITY_NORMAL)),
-            self::PRIORITY_LOW    => __( ucfirst(self::PRIORITY_LOW)),
+            self::PRIORITY_URGENT => __(ucfirst(self::PRIORITY_URGENT)),
+            self::PRIORITY_HIGH   => __(ucfirst(self::PRIORITY_HIGH)),
+            self::PRIORITY_NORMAL => __(ucfirst(self::PRIORITY_NORMAL)),
+            self::PRIORITY_LOW    => __(ucfirst(self::PRIORITY_LOW)),
         );
 
         return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
@@ -225,9 +229,9 @@ class Task extends CActiveRecord
     public static function getTypeArray($empty = true)
     {
         $roles = array(
-            self::TYPE_HAT    => __( ucfirst(self::TYPE_HAT)),
-            self::TYPE_BUYRUQ => __( ucfirst(self::TYPE_BUYRUQ)),
-            self::TYPE_FISHKA => __( ucfirst(self::TYPE_FISHKA)),
+            self::TYPE_HAT    => __(ucfirst(self::TYPE_HAT)),
+            self::TYPE_BUYRUQ => __(ucfirst(self::TYPE_BUYRUQ)),
+            self::TYPE_FISHKA => __(ucfirst(self::TYPE_FISHKA)),
         );
 
         return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
@@ -236,8 +240,8 @@ class Task extends CActiveRecord
     public static function getYesNoArray($empty = true)
     {
         $roles = array(
-            1 => __( 'Yes'),
-            0 => __( 'No'),
+            1 => __('Yes'),
+            0 => __('No'),
         );
 
         return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
@@ -305,7 +309,7 @@ class Task extends CActiveRecord
         return new CActiveDataProvider(self::model(), array(
             'criteria'   => $criteria,
             'sort'       => array(
-                'defaultOrder' => 'created_at DESC',
+                'defaultOrder' => 'id DESC',
                 'route'        => 'task/tasks/'
             ),
             'pagination' => array(
@@ -319,11 +323,74 @@ class Task extends CActiveRecord
     public function init()
     {
         if ($this->getScenario() == 'insert') {
-            $date=new DateTime();
+            $date             = new DateTime();
             $this->start_date = $date->format('d-m-Y');
-            $this->end_date = $date->add(new DateInterval("P1D"))->format('d-m-Y');
+            $this->end_date   = $date->add(new DateInterval("P1D"))->format('d-m-Y');
         }
 
         return parent::init();
+    }
+
+    protected $saveFiles;
+
+    protected function beforeSave()
+    {
+        if ($this->isNewRecord) {
+            $this->saveFiles = true;
+        }
+        if (!$this->parent_id) {
+            $this->parent_id = NULL;
+        }
+        $this->description = strip_tags($this->description);
+        try {
+
+            if ($date = date_create_from_format('d-m-Y H:i:s', $this->start_date . ' 00:00:00')) {
+                $this->start_date = $date->format('Y-m-d H:i:s');
+            }
+            if ($date = date_create_from_format('d-m-Y H:i:s', $this->end_date . ' 23:59:59')) {
+                $this->end_date = $date->format('Y-m-d H:i:s');
+            }
+        } catch (Exception $e) {
+            Yii::app()->user->setFlash('danger', __('Incorrect Date Format'));
+        }
+
+
+        $this->user_id = Yii::app()->user->user_id;
+
+        return parent::beforeSave();
+    }
+
+    protected function afterSave()
+    {
+        if ($this->saveFiles) {
+            $taskDir = UPLOAD_DIR . $this->id . DS;
+            if (!is_dir($taskDir)) {
+                try {
+                    mkdir($taskDir);
+                } catch (Exception $e) {
+                    Yii::app()->user->setFlash('danger', $e->getMessage());
+                }
+            }
+            if (is_dir($taskDir)) {
+                $files = $this->task_files;
+                if ($files && count($files))
+                    foreach ($files as $realname => $orgname) {
+                        $file            = new File();
+                        $file->realname  = $realname;
+                        $file->file_name = $orgname;
+                        $file->task_id   = $this->id;
+                        try {
+                            if (!$file->save()) {
+                                print_r($file->getErrors());
+                                die;
+                            }
+                        } catch (Exception $e) {
+                            Yii::app()->user->setFlash('danger', $e->getMessage());
+                        }
+                    }
+            }
+        }
+
+        return parent::afterSave();
     }
 }

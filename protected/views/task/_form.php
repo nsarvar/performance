@@ -153,6 +153,7 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
             </div>
         </div>
     </div>
+    <?php echo $form->hiddenField($model, 'organization_ids'); ?>
     <?php $this->endWidget(); ?>
     <div class="col col-sm-12">
         <div class="panel panel-default">
@@ -177,7 +178,7 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
             class="btn btn-default btn-lg btn-delete <?= $model->scenario == 'update' ? '' : 'hidden' ?>"
             action="<?= Yii::app()->createUrl("user/delete", array("id" => $model->primaryKey)) ?>">Delete
     </button>
-    <button type="submit" name="save"
+    <button type="submit" onclick="$('#task-form').submit()" name="save"
             class="btn btn-success btn-lg"><?= $model->scenario == 'update' ? 'Update' : 'Save' ?></button>
 </p>
 
@@ -267,7 +268,7 @@ $('#form_selected_org').submit(function(){
     }
     function addFileToTask(id, fileName, r) {
         if (r.success) {
-            $('#uploadFile').append("<input type='hidden' name='task_files[]' value='" + r.realname + "'>");
+            $('#uploadFile').append("<input type='hidden' name='Task[task_files]["+r.realname+"]' value='" + r.orgname + "'>");
             $('.qq-upload-list .qq-upload-file').each(function (el) {
 
                 if ($(this).text().trim() == r.orgname) {
@@ -290,6 +291,7 @@ $('#form_selected_org').submit(function(){
         if (index > -1) {
             o.splice(index, 1);
             $('#so_ids').val(o);
+            $('input[name="Task[organization_ids]"]').val(o);
             $('input[name="Organization[so_ids]"]').val(o);
             $('#form_selected_org').submit();
         }
@@ -311,6 +313,7 @@ $('#form_selected_org').submit(function(){
         if (a != i) {
             $('#so_ids').val(o);
             $('input[name="Organization[so_ids]"]').val(o);
+            $('input[name="Task[organization_ids]"]').val(o);
             $('#form_selected_org').submit();
             $('.form-task-organizations-search form').submit();
         }

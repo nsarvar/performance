@@ -71,9 +71,9 @@ return array(
                     'levels'=> 'error, warning',
                 ),
 
-                /*array(
+                array(
                     'class'=> 'CWebLogRoute',
-                ),*/
+                ),
             ),
         ),
         'bootstrap'   => array(
