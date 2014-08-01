@@ -10,6 +10,7 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
 <div class="row">
 
     <?php $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
+        'method'                 => 'post',
         'id'                     => 'task-form',
         'enableAjaxValidation'   => true,
         'enableClientValidation' => true,
@@ -125,6 +126,8 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
                     <div class="col col-md-4 col-lg-4">
                         <div class="form-group">
                             <label class="control-label"><?= __('Files') ?></label>
+                            <a href="#fileUpload" class="pull-right" onclick="addFile()"><i
+                                    class="fa fa-plus"></i> <?= __('Add File') ?> </a>
                             <?php $this->widget('ext.EAjaxUpload.EAjaxUpload',
                                 array(
                                     'id'     => 'uploadFile',
@@ -258,12 +261,16 @@ $('#form_selected_org').submit(function(){
 ?>
 
 <script type="text/javascript">
+    function addFile() {
+        $('#uploadFile input[name="file"]').click();
+        return false;
+    }
     function addFileToTask(id, fileName, r) {
         if (r.success) {
             $('#uploadFile').append("<input type='hidden' name='task_files[]' value='" + r.realname + "'>");
-            $('.qq-upload-list .qq-upload-file').each(function(el){
+            $('.qq-upload-list .qq-upload-file').each(function (el) {
 
-                if($(this).text().trim() == r.orgname){
+                if ($(this).text().trim() == r.orgname) {
                     $(this).html(r.filename)
                 }
             })
@@ -287,6 +294,7 @@ $('#form_selected_org').submit(function(){
             $('#form_selected_org').submit();
         }
     }
+
     function selectOrganizations() {
         var s = $('#task-organizations-grid').yiiGridView('getSelection', 'selectedOrganizationIds');
         var o = $('#so_ids').val().split(',');
