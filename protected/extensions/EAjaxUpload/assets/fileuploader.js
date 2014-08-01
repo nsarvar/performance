@@ -140,8 +140,8 @@ qq.removeClass = function(element, name){
     element.className = element.className.replace(re, ' ').replace(/^\s+|\s+$/g, "");
 };
 qq.setText = function(element, text){
-    element.innerText = text;
-    element.textContent = text;
+    element.innerHTML = text;
+    element.innerHTML = text;
 };
 
 //
@@ -627,7 +627,7 @@ qq.extend(qq.FileUploader.prototype, {
         item.qqFileId = id;
 
         var fileElement = this._find(item, 'file');
-        qq.setText(fileElement, this._formatFileName(fileName));
+        qq.setText(fileElement, '<i class="fa fa-file-o"></i> '+this._formatFileName(fileName));
         this._find(item, 'size').style.display = 'none';
 
         this._listElement.appendChild(item);

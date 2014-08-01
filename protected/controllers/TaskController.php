@@ -260,10 +260,26 @@ class TaskController extends Controller
         $sizeLimit         = 10 * 1024 * 1024;
         $uploader          = new qqFileUploader($allowedExtensions, $sizeLimit);
         $result            = $uploader->handleUpload($folder);
-        sleep(4);
-        $fileSize = filesize($folder . $result['filename']); //GETTING FILE SIZE
-        $fileName = $result['filename']; //GETTING FILE NAME
+        //sleep(1);
+        if (isset($result['ext'])) {
+            $class = 'fa-file-o';
+            foreach (array(
+                         'fa-file-word-o'       => array('doc', 'docx'),
+                         'fa-file-excel-o'      => array('xls', 'xlsx'),
+                         'fa-file-text-o'       => array('dat', 'txt'),
+                         'fa-file-pdf-o'        => array('pdf'),
+                         'fa-file-powerpoint-o' => array('ppt', 'pptx'),
+                         'fa-file-image-o'      => array('jpg', 'jpeg', 'gif', 'png', 'tif'),
+                         'fa-file-zip-o'        => array('rar', 'zip', 'gz', 'tar', 'tgz'),
+                     ) as $cl=>$exts) {
+                if (in_array($result['ext'], $exts)) {
+                    $class = $cl;
+                    break;
+                }
 
-        echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+            }
+            $result['filename']  = "<i class='fa $class'></i> " . $result['orgname'];
+        }
+        echo json_encode($result);
     }
 }

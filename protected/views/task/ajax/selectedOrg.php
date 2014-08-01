@@ -15,10 +15,11 @@
         'template'       => "{items}\n{pager}<div class='defender'></div>",
         'type'           => BsHtml::GRID_TYPE_STRIPED,
         'selectableRows' => 1000,
+        'emptyText'      => '',
         'columns'        => array(
             array(
                 'class'               => 'CCheckBoxColumn',
-                'checked'            => '$data->id>0',
+                'checked'             => '$data->id>0',
                 'checkBoxHtmlOptions' => array('name' => 't_s_orgs[]',),
             ),
             'name',

@@ -180,9 +180,14 @@ table thead th:first-child {
     margin: 2px 0 15px;
     padding: 10px 10px 0;
 }
+.qq-upload-list li i{
+    font-size: 14px;
+    margin: 0 10px 0 0;
+
+}
 .qq-upload-list li{
     padding: 3px 0;
-
+    list-style: none;
 }
 .qq-upload-success .qq-upload-file {
     display: inline-block;

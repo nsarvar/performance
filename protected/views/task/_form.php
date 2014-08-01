@@ -260,7 +260,13 @@ $('#form_selected_org').submit(function(){
 <script type="text/javascript">
     function addFileToTask(id, fileName, r) {
         if (r.success) {
-            $('#uploadFile').append("<input type='hidden' name='task_files[]' value='" + fileName + "'>");
+            $('#uploadFile').append("<input type='hidden' name='task_files[]' value='" + r.realname + "'>");
+            $('.qq-upload-list .qq-upload-file').each(function(el){
+
+                if($(this).text().trim() == r.orgname){
+                    $(this).html(r.filename)
+                }
+            })
         }
     }
     function generateTaskName() {
