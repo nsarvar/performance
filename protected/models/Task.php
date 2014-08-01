@@ -365,12 +365,14 @@ class Task extends CActiveRecord
 
     protected function beforeSave()
     {
-        if ($this->isNewRecord) {
-            $this->saveFiles = true;
-        }
-        //$this->parent_id = 1;
+
         if (!$this->parent_id) {
             $this->parent_id = NULL;
+        }
+        if ($this->isNewRecord) {
+            $this->created_at = date_create()->format(self::DF_INTER);
+        } else {
+            $this->updated_at = date_create()->format(self::DF_INTER);
         }
         $this->description = strip_tags($this->description);
         try {
@@ -398,7 +400,7 @@ class Task extends CActiveRecord
     protected function afterSave()
     {
         $files = $this->task_files;
-        if ($this->saveFiles && $files && count($files)) {
+        if ($this->isNewRecord && $files && count($files)) {
             $taskDir = UPLOAD_DIR . $this->id . DS;
             if (!is_dir($taskDir)) {
                 try {
