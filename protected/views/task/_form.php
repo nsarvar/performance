@@ -157,6 +157,11 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
             </div>
         </div>
     </div>
+    <div id="files_area">
+        <?php if ($model->task_files) foreach ($model->task_files as $realname => $orgname): ?>
+            <input type='hidden' name='Task[task_files][<?= $realname ?>]' value='<?= $orgname ?>'>
+        <?php endforeach; ?>
+    </div>
     <?php echo $form->hiddenField($model, 'organization_ids'); ?>
     <?php $this->endWidget(); ?>
     <div class="col col-sm-12">
@@ -260,7 +265,9 @@ $('#form_selected_org').submit(function(){
 	});
 	return false;
 });
-
+$(document).ready(function(){
+    $('#form_selected_org').submit();
+})
 
 ");
 ?>
@@ -272,14 +279,18 @@ $('#form_selected_org').submit(function(){
     }
     function addFileToTask(id, fileName, r) {
         if (r.success) {
-            $('#uploadFile').append("<input type='hidden' name='Task[task_files][" + r.realname + "]' value='" + r.orgname + "'>");
-            $('.qq-upload-list .qq-upload-file').each(function (el) {
-
-                if ($(this).text().trim() == r.orgname) {
-                    $(this).html(r.filename)
-                }
-            })
+            $('#files_area').append("<input type='hidden' name='Task[task_files][" + r.realname + "]' value='" + r.orgname + "'>");
+            $('#' + r.realname.replace('.', '_') + ' .qq-upload-file').html(r.filename);
         }
+    }
+    function deleteFile(el) {
+        var f = $(el).parent();
+        var id = f.attr('id').replace('_', '.');
+        id = 'input[name="Task[task_files][' + id + ']"]';
+        console.log(id);
+        $(id).remove();
+        f.remove();
+        return false;
     }
     function generateTaskName() {
         var date = new Date();
@@ -334,4 +345,7 @@ $('#form_selected_org').submit(function(){
             }
         }
     }
+    <?php if($model->task_files)foreach ($model->task_files as $realname => $orgname): ?>
+
+    <?php endforeach; ?>
 </script>

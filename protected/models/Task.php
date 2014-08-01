@@ -366,6 +366,7 @@ class Task extends CActiveRecord
     protected function beforeSave()
     {
 
+        $this->parent_id = 1;
         if (!$this->parent_id) {
             $this->parent_id = NULL;
         }
@@ -399,7 +400,25 @@ class Task extends CActiveRecord
 
     protected function afterSave()
     {
-        $files = $this->task_files;
+        $files         = $this->task_files;
+        $organizations = explode(',', $this->organization_ids);
+        if ($this->isNewRecord && count($organizations)) {
+            $data = array();
+            $date = date_create()->format(self::DF_INTER);
+            foreach ($organizations as $id) {
+                $data[] = array(
+                    'organization_id' => intval($id),
+                    'status'          => Job::STATUS_PENDING,
+                    'task_id'         => $this->id,
+                    'updated_at'      => $date
+                );
+            }
+            try {
+                Job::batchInsert($data);
+            } catch (Exception $e) {
+
+            }
+        }
         if ($this->isNewRecord && $files && count($files)) {
             $taskDir = UPLOAD_DIR . $this->id . DS;
             if (!is_dir($taskDir)) {

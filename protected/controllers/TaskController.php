@@ -88,6 +88,8 @@ class TaskController extends Controller
             $model->attributes = $_POST['Task'];
             if (isset($_POST['Task']['task_files']))
                 $model->task_files = $_POST['Task']['task_files'];
+            if (isset($_POST['Task']['organization_ids']))
+                $model->organization_ids = $_POST['Task']['organization_ids'];
 
             try {
                 if ($model->save()) {
@@ -98,7 +100,7 @@ class TaskController extends Controller
                 Yii::app()->user->setFlash('danger', $e->getMessage());
             }
 
-
+            $searchSelectedOrg->so_ids = $model->organization_ids;
         }
 
         $this->render('create', array(

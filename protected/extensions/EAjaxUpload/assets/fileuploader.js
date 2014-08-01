@@ -494,9 +494,11 @@ qq.FileUploader = function(o){
         // template for one item in file list
         fileTemplate: '<li>' +
                 '<span class="qq-upload-file"></span>' +
+                '<span class="qq-upload-realfile hidden"></span>' +
                 '<span class="qq-upload-spinner"></span>' +
                 '<span class="qq-upload-size"></span>' +
                 '<a class="qq-upload-cancel" href="#">Cancel</a>' +
+                '<a class="qq-upload-delete" href="#" onclick="return deleteFile(this)">Delete</a>' +
                 '<span class="qq-upload-failed-text">Failed</span>' +
             '</li>',
 
@@ -618,6 +620,7 @@ qq.extend(qq.FileUploader.prototype, {
 
         if (result.success){
             qq.addClass(item, this._classes.success);
+            item.id=result.realname.replace('.','_');
         } else {
             qq.addClass(item, this._classes.fail);
         }

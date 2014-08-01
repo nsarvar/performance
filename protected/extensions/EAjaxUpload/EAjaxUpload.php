@@ -37,7 +37,7 @@
 	public function actionUpload()
 	{
 	        Yii::import("ext.EAjaxUpload.qqFileUploader");
-	        
+
                 $folder='upload/';// folder for uploaded files
                 $allowedExtensions = array("jpg"),//array("jpg","jpeg","gif","exe","mov" and etc...
                 $sizeLimit = 10 * 1024 * 1024;// maximum file size in bytes
@@ -54,7 +54,7 @@ class EAjaxUpload extends CWidget
 	public $postParams=array();
 	public $config=array();
 	public $css=null;
-        
+
         public function run()
         {
 		if(empty($this->config['action']))
