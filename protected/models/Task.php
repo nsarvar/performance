@@ -76,12 +76,45 @@ class Task extends CActiveRecord
             $this->addError($attribute, 'Invalid Task Number');
     }
 
+    const DF_LOCAL = 'd-m-Y H:i:s';
+    const DF_INTER = 'Y-m-d H:i:s';
+    //const DF_JS    = 'yy-mm-dd';
+    const DF_JS = 'dd-mm-yy';
+
     public function validDate($attribute, $params)
     {
 
-        $pattern = '/^[0-3][0-9][-][0-1][0-9][-][2][0-9]{3}$/';
-        if (!preg_match($pattern, $this->$attribute))
-            $this->addError($attribute, 'Invalid Date Format, use dd-mm-yy');
+        if ($date = date_create_from_format(self::DF_LOCAL, $this->$attribute /*. ' 00:00:00'*/)) {
+            if ($this->$attribute == $date->format(self::DF_LOCAL)) return;
+        } elseif ($date = date_create_from_format(self::DF_INTER, $this->$attribute /*. ' 00:00:00'*/)) {
+            if ($this->$attribute == $date->format(self::DF_INTER)) return;
+        }
+        $this->addError($attribute, 'Invalid Date Format, use as 31-12-2014');
+
+    }
+
+
+    public function getFormattedDate($value)
+    {
+        if ($date = date_create_from_format(self::DF_LOCAL, $value)) {
+            return $date->format(self::DF_LOCAL);
+        }
+        if ($date = date_create_from_format(self::DF_INTER, $value)) {
+            return $date->format(self::DF_LOCAL);
+        }
+    }
+
+    public function init()
+    {
+        if ($this->getScenario() == 'insert') {
+            $date = new DateTime();
+            $date->setTime(0, 0, 0);
+            $this->start_date = $date->format(self::DF_LOCAL);
+            $date->setTime(23, 59, 59);
+            $this->end_date = $date->add(new DateInterval("P1D"))->format(self::DF_LOCAL);
+        }
+
+        return parent::init();
     }
 
     /**
@@ -320,35 +353,37 @@ class Task extends CActiveRecord
 
     }
 
-    public function init()
-    {
-        if ($this->getScenario() == 'insert') {
-            $date             = new DateTime();
-            $this->start_date = $date->format('d-m-Y');
-            $this->end_date   = $date->add(new DateInterval("P1D"))->format('d-m-Y');
-        }
-
-        return parent::init();
-    }
 
     protected $saveFiles;
+
+    public function onAfterFind($event)
+    {
+
+        return parent::onAfterFind($event);
+    }
+
 
     protected function beforeSave()
     {
         if ($this->isNewRecord) {
             $this->saveFiles = true;
         }
+        //$this->parent_id = 1;
         if (!$this->parent_id) {
             $this->parent_id = NULL;
         }
         $this->description = strip_tags($this->description);
         try {
 
-            if ($date = date_create_from_format('d-m-Y H:i:s', $this->start_date . ' 00:00:00')) {
-                $this->start_date = $date->format('Y-m-d H:i:s');
+            if ($date = date_create_from_format(self::DF_LOCAL, $this->start_date . ' 00:00:00')) {
+                $this->start_date = $date->format(self::DF_INTER);
+            } elseif ($date = date_create_from_format(self::DF_LOCAL, $this->start_date)) {
+                $this->start_date = $date->format(self::DF_INTER);
             }
-            if ($date = date_create_from_format('d-m-Y H:i:s', $this->end_date . ' 23:59:59')) {
-                $this->end_date = $date->format('Y-m-d H:i:s');
+            if ($date = date_create_from_format(self::DF_LOCAL, $this->end_date . ' 23:59:59')) {
+                $this->end_date = $date->format(self::DF_INTER);
+            } elseif ($date = date_create_from_format(self::DF_LOCAL, $this->end_date)) {
+                $this->end_date = $date->format(self::DF_INTER);
             }
         } catch (Exception $e) {
             Yii::app()->user->setFlash('danger', __('Incorrect Date Format'));
@@ -362,7 +397,8 @@ class Task extends CActiveRecord
 
     protected function afterSave()
     {
-        if ($this->saveFiles) {
+        $files = $this->task_files;
+        if ($this->saveFiles && $files && count($files)) {
             $taskDir = UPLOAD_DIR . $this->id . DS;
             if (!is_dir($taskDir)) {
                 try {
@@ -372,22 +408,20 @@ class Task extends CActiveRecord
                 }
             }
             if (is_dir($taskDir)) {
-                $files = $this->task_files;
-                if ($files && count($files))
-                    foreach ($files as $realname => $orgname) {
-                        $file            = new File();
-                        $file->realname  = $realname;
-                        $file->file_name = $orgname;
-                        $file->task_id   = $this->id;
-                        try {
-                            if (!$file->save()) {
-                                print_r($file->getErrors());
-                                die;
-                            }
-                        } catch (Exception $e) {
-                            Yii::app()->user->setFlash('danger', $e->getMessage());
+                foreach ($files as $realname => $orgname) {
+                    $file            = new File();
+                    $file->realname  = $realname;
+                    $file->file_name = $orgname;
+                    $file->task_id   = $this->id;
+                    try {
+                        if (!$file->save()) {
+                            print_r($file->getErrors());
+                            die;
                         }
+                    } catch (Exception $e) {
+                        Yii::app()->user->setFlash('danger', $e->getMessage());
                     }
+                }
             }
         }
 

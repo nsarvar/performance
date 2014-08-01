@@ -89,11 +89,15 @@ class TaskController extends Controller
             if (isset($_POST['Task']['task_files']))
                 $model->task_files = $_POST['Task']['task_files'];
 
-
-            if ($model->save()) {
-                Yii::app()->user->setFlash('success', __('Task ":name" created successfully', array(':name' => $model->number)));
-                $this->redirect(array('view', 'id' => $model->id));
+            try {
+                if ($model->save()) {
+                    Yii::app()->user->setFlash('success', __('Task ":name" created successfully', array(':name' => $model->number)));
+                    $this->redirect(array('view', 'id' => $model->id));
+                }
+            } catch (Exception $e) {
+                Yii::app()->user->setFlash('danger', $e->getMessage());
             }
+
 
         }
 

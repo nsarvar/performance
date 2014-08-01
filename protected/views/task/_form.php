@@ -76,35 +76,39 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
 
                 <div class="row">
                     <div class="col col-md-12">
-                        <?php echo $form->textFieldControlGroup($model, 'start_date', array('maxlength' => 64)); ?>
 
                         <?php
 
                         $this->widget('CJuiDateTimePicker', array(
                             'hidden'    => true,
+                            'value'     => $model->getFormattedDate($model->start_date),
                             'model'     => $model, //Model object
                             'attribute' => 'start_date', //attribute name
                             'mode'      => 'date', //use "time","date" or "datetime" (default)
                             'options'   => array(
-                                'dateFormat' => 'dd-mm-yy', // show format
+                                'dateFormat' => Task::DF_JS, // show format
                             ) // jquery plugin options
                         ));
 
                         ?>
+                        <?php echo $form->textFieldControlGroup($model, 'start_date', array('maxlength' => 64, 'value' => $model->getFormattedDate($model->start_date),)); ?>
+
                     </div>
                     <div class="col col-md-12">
-                        <?php echo $form->textFieldControlGroup($model, 'end_date', array('maxlength' => 64)); ?>
 
                         <?php
 
                         $this->widget('CJuiDateTimePicker', array(
                             'hidden'    => true,
+                            'value'     => $model->getFormattedDate($model->end_date),
                             'model'     => $model, //Model object
                             'attribute' => 'end_date', //attribute name
                             'mode'      => 'date', //use "time","date" or "datetime" (default)
-                            'options'   => array('dateFormat' => 'dd-mm-yy') // jquery plugin options
+                            'options'   => array('dateFormat' => Task::DF_JS) // jquery plugin options
                         ));
                         ?>
+                        <?php echo $form->textFieldControlGroup($model, 'end_date', array('maxlength' => 64, 'value' => $model->getFormattedDate($model->end_date),)); ?>
+
                     </div>
                 </div>
 
@@ -268,7 +272,7 @@ $('#form_selected_org').submit(function(){
     }
     function addFileToTask(id, fileName, r) {
         if (r.success) {
-            $('#uploadFile').append("<input type='hidden' name='Task[task_files]["+r.realname+"]' value='" + r.orgname + "'>");
+            $('#uploadFile').append("<input type='hidden' name='Task[task_files][" + r.realname + "]' value='" + r.orgname + "'>");
             $('.qq-upload-list .qq-upload-file').each(function (el) {
 
                 if ($(this).text().trim() == r.orgname) {
