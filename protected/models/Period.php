@@ -33,11 +33,11 @@ class Period extends CActiveRecord
         // will receive user inputs.
         return array(
             array('name, period_from', 'required'),
-            array('task_count', 'numerical', 'integerOnly'=> true),
-            array('name', 'length', 'max'=> 32),
-            array('status', 'length', 'max'=> 8),
+            array('task_count', 'numerical', 'integerOnly' => true),
+            array('name', 'length', 'max' => 32),
+            array('status', 'length', 'max' => 8),
             array('period_to', 'safe'),
-            array('id, name, status, task_count, period_from, period_to', 'safe', 'on'=> 'search'),
+            array('id, name, status, task_count, period_from, period_to', 'safe', 'on' => 'search'),
         );
     }
 
@@ -74,18 +74,18 @@ class Period extends CActiveRecord
 
         if (!empty($this->period_from) && empty($this->period_to)) {
             $criteria->condition = "period_from >= :period_from";
-            $criteria->params    = array(':period_from'=> $this->period_from);
+            $criteria->params    = array(':period_from' => $this->period_from);
         } elseif (!empty($this->period_to) && empty($this->period_from)) {
             $criteria->condition = "period_from <= :period_to";
-            $criteria->params    = array(':period_to'=> $this->period_to);
+            $criteria->params    = array(':period_to' => $this->period_to);
         } elseif (!empty($this->period_from) && !empty($this->period_to)) {
             $criteria->condition = "period_from  >= :period_from AND period_from <= :period_to";
-            $criteria->params    = array(':period_from'=> $this->period_from, ':period_to'=> $this->period_to);
+            $criteria->params    = array(':period_from' => $this->period_from, ':period_to' => $this->period_to);
         }
 
         return new CActiveDataProvider($this, array(
             'criteria'   => $criteria,
-            'sort'       => array('defaultOrder'=> 'period_from DESC',),
+            'sort'       => array('defaultOrder' => 'period_from DESC',),
             'pagination' => array(
                 'pageSize' => 13
 
@@ -100,14 +100,14 @@ class Period extends CActiveRecord
 
     function getPeriodToFormatted()
     {
-        if ($this->period_to === null)
+        if ($this->period_to === NULL)
             return;
 
         return Yii::app()->dateFormatter->format("d/M/y", $this->period_to);
     }
 
 
-    public static function getPeriods($status = null)
+    public static function getPeriods($status = NULL)
     {
         /**
          * @var $organizations CDbCommand
@@ -118,12 +118,12 @@ class Period extends CActiveRecord
         return new CActiveDataProvider(self::model(), array(
             'criteria'   => $criteria,
             'sort'       => array(
-                'defaultOrder'=> 'period_from DESC',
-                'route'       => 'period/ajax/status/'.$status
+                'defaultOrder' => 'period_from DESC',
+                'route'        => 'period/ajax/status/' . $status
             ),
             'pagination' => array(
                 'pageSize' => 13,
-                'route'    => 'period/ajax/status/'.$status
+                'route'    => 'period/ajax/status/' . $status
             ),
         ));
 
@@ -131,4 +131,41 @@ class Period extends CActiveRecord
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_ARCHIVED = 'archived';
+
+    /**
+     * @return Period
+     */
+    public static function getCurrentPeriod()
+    {
+        $start = new DateTime();
+        $start->setDate($start->format('Y'), $start->format('n'), 1)->setTime(0, 0, 0);
+
+        $end = clone $start;
+        $end = $end->modify('+' . (cal_days_in_month(CAL_GREGORIAN, $start->format('n'), $start->format('Y'))) . ' day')->modify('-1 sec');
+
+        $period = Period::model()->findByAttributes(array(
+            'period_from' => $start->format(Task::DF_INTER),
+            'period_to'   => $end->format(Task::DF_INTER),
+        ));
+
+        if ($period == NULL) {
+            $period              = new Period();
+            $period->period_from = $start->format(Task::DF_INTER);
+            $period->period_to   = $end->format(Task::DF_INTER);
+            $period->status      = self::STATUS_ACTIVE;
+            $period->name        = $start->format('F, Y');
+            try {
+                $period->save();
+            } catch (Exception $e) {
+
+            }
+        }
+
+        return $period;
+    }
+
+    public function isCurrentPeriod()
+    {
+        return $this->period_from == self::getCurrentPeriod()->period_from;
+    }
 }

@@ -295,16 +295,14 @@ class _Period extends Import
         $now     = new DateTime(NULL, new DateTimeZone('Asia/Tashkent'));
         $seconds = new DateTime();
         $seconds->setDate(2004, 1, 1)->setTime(0, 0, 0);
-        //print_r($now->format('Y-m-d H:i:s'));
+
         for ($year = $start; $year <= 2014; $year++) {
             for ($month = 1; $month <= 12; $month++) {
                 $start = new DateTime();
                 $start->setDate($year, $month, 1)->setTime(0, 0, 0);
-                //$start = $date->format('Y-m-d H:i:s');
                 $end  = clone $start;
                 $end  = $end->modify('+' . (cal_days_in_month(CAL_GREGORIAN, $month, $year)) . ' day')->modify('-1 sec');
                 $cols = array(
-                    //'id'         => $start->format('U') - $seconds->format('U'),
                     'period_from' => $start->format('Y-m-d H:i:s'),
                     'period_to'   => $end->format('Y-m-d H:i:s'),
                     'status'      => 'archived',

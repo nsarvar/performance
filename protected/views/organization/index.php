@@ -10,6 +10,9 @@ $this->pageTitle = Yii::app()->name;
 <ol class="breadcrumb">
     <li><a href="/">Home</a></li>
     <li>Organizations</li>
+    <span class="pull-right action_admin">
+        <a href="/organization/create"><i class="fa fa-plus"></i> <?= __('Add Organization') ?></a>
+    </span>
 </ol>
 
 <div class="page-header">

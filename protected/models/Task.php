@@ -61,7 +61,7 @@ class Task extends CActiveRecord
             array('type, priority', 'length', 'max' => 6),
             array('parent_id, group_id, user_id, period_id', 'length', 'max' => 11),
             array('status', 'length', 'max' => 8),
-            array('start_date, end_date, created_at, updated_at', 'safe'),
+            array('start_date, end_date, created_at, updated_at, type', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
             array('id, number, name, type, parent_id, group_id, user_id, period_id, status, priority, start_date, end_date, description, attachable, created_at, updated_at,organization_ids,task_files', 'safe', 'on' => 'search'),
@@ -254,8 +254,8 @@ class Task extends CActiveRecord
         return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
     }
 
-    const TYPE_HAT    = 'hat';
-    const TYPE_BUYRUQ = 'buruq';
+    const TYPE_HAT    = 'xat';
+    const TYPE_BUYRUQ = 'buyruq';
     const TYPE_FISHKA = 'fishka';
 
     public static function getTypeArray($empty = true)

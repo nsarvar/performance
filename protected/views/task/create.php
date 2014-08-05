@@ -4,10 +4,12 @@
 ?>
 
 <?php
-$this->breadcrumbs = array(
-    __('Tasks') => array('index'),
-    __('Create New Task'),
-);
+if ($model->period_id)
+    $this->breadcrumbs = array(
+        __('Periods')                                                   => array('period/index'),
+        __('Task on :period', array(':period' => $model->period->name)) => array('task/period/', 'id' => $model->period_id),
+        __('Add New Task')
+    );
 ?>
     <div class="page-header">
         <h3>

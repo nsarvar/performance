@@ -186,7 +186,6 @@ class OrganizationController extends Controller
 
     public function actionTest()
     {
-        echo "<pre>";
-        print_r(Organization::getTreeViewData());
+        Period::getCurrentPeriod();
     }
 }
