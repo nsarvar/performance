@@ -194,7 +194,7 @@ table thead th:first-child {
 }
 .qq-upload-success .qq-upload-file {
     display: inline-block;
-    width: 80%;
+    width: 70%;
 }
 .modal-open #task-organizations-selected-grid .defender{
    display: none;

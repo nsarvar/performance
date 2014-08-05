@@ -97,6 +97,7 @@ class TaskController extends Controller
                     $this->redirect(array('view', 'id' => $model->id));
                 }
             } catch (Exception $e) {
+                $model->task_files = array();
                 Yii::app()->user->setFlash('danger', $e->getMessage());
             }
 

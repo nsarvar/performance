@@ -83,11 +83,10 @@ class Task extends CActiveRecord
 
     public function validDate($attribute, $params)
     {
-
-        if ($date = date_create_from_format(self::DF_LOCAL, $this->$attribute /*. ' 00:00:00'*/)) {
+        if ($date = date_create_from_format(self::DF_LOCAL, $this->$attribute)) {
             if ($this->$attribute == $date->format(self::DF_LOCAL)) return;
-        } elseif ($date = date_create_from_format(self::DF_INTER, $this->$attribute /*. ' 00:00:00'*/)) {
-            if ($this->$attribute == $date->format(self::DF_INTER)) return;
+        } elseif ($date = date_create_from_format(self::DF_LOCAL, $this->$attribute . ' 00:00:00')) {
+            if (($this->$attribute . ' 00:00:00') == $date->format(self::DF_LOCAL)) return;
         }
         $this->addError($attribute, 'Invalid Date Format, use as 31-12-2014');
 
@@ -366,7 +365,7 @@ class Task extends CActiveRecord
     protected function beforeSave()
     {
 
-        $this->parent_id = 1;
+        //$this->parent_id = 1;
         if (!$this->parent_id) {
             $this->parent_id = NULL;
         }
@@ -393,7 +392,8 @@ class Task extends CActiveRecord
         }
 
 
-        $this->user_id = Yii::app()->user->user_id;
+        $this->user_id  = Yii::app()->user->user_id;
+        $this->group_id = (Yii::app()->user->group_id) ? Yii::app()->user->group_id : NULL;
 
         return parent::beforeSave();
     }

@@ -38,9 +38,10 @@ class UserIdentity extends CUserIdentity
     {
         $states = array();
         if ($this->userModel) {
-            foreach (array('role', 'login', 'group_id') as $state)
+            foreach (array('role', 'login') as $state)
                 $states[$state] = $this->userModel->$state;
-            $states['user_id'] = $this->userModel->id;
+            $states['user_id']  = $this->userModel->id;
+            $states['group_id'] = ($this->userModel->group_id !== NULL) ? $this->userModel->group_id : false;
         }
 
         return $states;
