@@ -8,8 +8,8 @@ $(function () {
     $('.selectpicker').selectpicker();
 
     $('.nav-tabs a').click(function (e) {
-        e.preventDefault()
-        $(this).tab('show')
+        e.preventDefault();
+        var tab = $(this).tab('show');
     })
 
     $('.info_block').click(function (e) {

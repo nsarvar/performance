@@ -184,4 +184,39 @@ class File extends CActiveRecord
 
         return parent::beforeSave();
     }
+
+    public function getFileSize()
+    {
+        return round($this->file_size / 1024, 1) . 'kB';
+    }
+
+    public function getClass()
+    {
+        $pathinfo = pathinfo($this->file_name);
+        $ext      = $pathinfo['extension'];
+
+        return $this->getFileClass($ext);
+    }
+
+    public static function  getFileClass($ext)
+    {
+        $class = 'fa-file-o';
+        foreach (array(
+                     'fa-file-word-o'       => array('doc', 'docx'),
+                     'fa-file-excel-o'      => array('xls', 'xlsx'),
+                     'fa-file-text-o'       => array('dat', 'txt'),
+                     'fa-file-pdf-o'        => array('pdf'),
+                     'fa-file-powerpoint-o' => array('ppt', 'pptx'),
+                     'fa-file-image-o'      => array('jpg', 'jpeg', 'gif', 'png', 'tif'),
+                     'fa-file-zip-o'        => array('rar', 'zip', 'gz', 'tar', 'tgz'),
+                 ) as $cl => $exts) {
+            if (in_array($ext, $exts)) {
+                $class = $cl;
+                break;
+            }
+
+        }
+
+        return $class;
+    }
 }

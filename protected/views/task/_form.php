@@ -39,7 +39,7 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
 
                     <?php echo $form->hiddenField($model, 'parent_id', array('maxlength' => 11, 'class' => 'disabled ',)); ?>
                     <div class="input-group" style="width: 100%;">
-                        <?php echo $form->textField($model, 'parent_name', array('maxlength' => 11, 'class' => 'disabled ', 'disabled' => 'disabled')); ?>
+                        <?php echo $form->textField($model, 'parent_name', array('value' => $model->parent ? $model->parent->name : '', 'maxlength' => 11, 'class' => 'disabled ', 'disabled' => 'disabled')); ?>
                         <span class="input-group-btn">
                             <button class="btn btn-primary" id="btn_task_parent"
                                     type="button"><?= __('Select Parent') ?></button>
@@ -158,11 +158,17 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
         </div>
     </div>
     <div id="files_area">
-        <?php if ($model->task_files) foreach ($model->task_files as $realname => $orgname): ?>
-            <input type='hidden' name='Task[task_files][<?= $realname ?>]' value='<?= $orgname ?>'>
-        <?php endforeach; ?>
+        <?php if ($files = $model->getTaskFiles())
+            foreach ($files as $file): ?>
+                <input type='hidden'
+                       name='Task[task_files][<?= $file->realname ?>]'
+                       value='<?= $file->file_name ?>'
+                       data-id="<?= $file->realname ?>"
+                       data-size="<?= $file->getFileSize() ?>"
+                       data-content="<?= $file->getClass() ?>">
+            <?php endforeach; ?>
     </div>
-    <?php echo $form->hiddenField($model, 'organization_ids'); ?>
+    <?php echo $form->hiddenField($model, 'organization_ids', array('value' => $model->getOrganizationIds())); ?>
     <?php $this->endWidget(); ?>
     <div class="col col-sm-12">
         <div class="panel panel-default">
@@ -267,9 +273,10 @@ $('#form_selected_org').submit(function(){
 });
 $(document).ready(function(){
     $('#form_selected_org').submit();
+    showFiles();
 })
 
-");
+",CClientScript::POS_LOAD);
 ?>
 
 <script type="text/javascript">
@@ -280,16 +287,16 @@ $(document).ready(function(){
     function addFileToTask(id, fileName, r) {
         if (r.success) {
             $('#files_area').append("<input type='hidden' name='Task[task_files][" + r.realname + "]' value='" + r.orgname + "'>");
-            $('#' + r.realname.replace('.', '_') + ' .qq-upload-file').html(r.filename);
+            $('#' + r.realname + ' .qq-upload-file').html(r.filename);
         }
     }
     function deleteFile(el) {
-        var f = $(el).parent();
-        var id = f.attr('id').replace('_', '.');
-        id = 'input[name="Task[task_files][' + id + ']"]';
-        console.log(id);
-        $(id).remove();
-        f.remove();
+        if (confirm('<?=__('Are you sure to delete the file?')?>')) {
+            var id = 'input[name="Task[task_files][' + $(el).parent().attr('id') + ']"]';
+            console.log(id);
+            $(id).remove();
+            $(el).parent().remove();
+        }
         return false;
     }
     function generateTaskName() {
@@ -344,6 +351,18 @@ $(document).ready(function(){
                 $('#modal_task_parent').modal('hide');
             }
         }
+    }
+
+    function showFiles() {
+        $('#files_area input').each(function () {
+            var el = $(this);
+            var t = '<li class="qq-upload-success" id="' + el.attr('data-id') + '">' +
+                '<span class="qq-upload-file"><i class="fa ' + el.attr('data-content') + '">' +
+                '</i> ' + el.val() + '</span>' +
+                '<span class="qq-upload-size">'+el.attr('data-size')+'</span>'+
+                '<a onclick="return deleteFile(this)" href="#" class="qq-upload-delete">Delete</a></li>'
+            $('.qq-upload-list').append(t);
+        })
     }
     <?php if($model->task_files)foreach ($model->task_files as $realname => $orgname): ?>
 

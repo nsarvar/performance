@@ -357,7 +357,6 @@ class Task extends CActiveRecord
 
     public function onAfterFind($event)
     {
-
         return parent::onAfterFind($event);
     }
 
@@ -398,29 +397,81 @@ class Task extends CActiveRecord
         return parent::beforeSave();
     }
 
-    protected function afterSave()
+    public function getOrganizationIds()
     {
-        $files         = $this->task_files;
-        $organizations = explode(',', $this->organization_ids);
-        if ($this->isNewRecord && count($organizations)) {
+        if (!$this->organization_ids && $this->id) {
             $data = array();
-            $date = date_create()->format(self::DF_INTER);
-            foreach ($organizations as $id) {
-                $data[] = array(
-                    'organization_id' => intval($id),
-                    'status'          => Job::STATUS_PENDING,
-                    'task_id'         => $this->id,
-                    'updated_at'      => $date
-                );
+            foreach ($this->jobs as $job) {
+                $data[] = $job->organization_id;
             }
-            try {
-                Job::batchInsert($data);
-            } catch (Exception $e) {
+            $this->organization_ids = implode(',', $data);
+        }
 
+        return $this->organization_ids;
+    }
+
+    /**
+     * @return File[]
+     */
+    public function getTaskFiles()
+    {
+        $result = array();
+        foreach ($this->files as $file) {
+            if ($file->job_id == NULL) $result[$file->realname] = $file;
+        }
+        if ($this->task_files && count($this->task_files)) {
+            foreach ($this->task_files as $realname => $orgname) {
+                if (!isset($result[$realname])) {
+                    $file            = new File();
+                    $file->realname  = $realname;
+                    $file->file_name = $orgname;
+                    $result[]        = $file;
+                }
             }
         }
-        if ($this->isNewRecord && $files && count($files)) {
-            $taskDir = UPLOAD_DIR . $this->id . DS;
+
+
+        return $result;
+    }
+
+    protected function afterSave()
+    {
+        $newJobs = explode(',', $this->organization_ids);
+        $oldJobs = array();
+        foreach ($this->jobs as $job) {
+            $oldJobs[$job->organization_id] = $job;
+        }
+
+        if (count($newJobs)) {
+            $inserts = array();
+            $date    = date_create()->format(self::DF_INTER);
+            foreach ($newJobs as $id) {
+                if (!isset($oldJobs[$id]))
+                    $inserts[] = array(
+                        'organization_id' => intval($id),
+                        'status'          => Job::STATUS_PENDING,
+                        'task_id'         => $this->id,
+                        'updated_at'      => $date
+                    );
+            }
+            if (count($inserts)) {
+                try {
+                    Job::batchInsert($inserts);
+                } catch (Exception $e) {
+                }
+            }
+            foreach ($oldJobs as $orgId => $job) {
+                if (!in_array($orgId, $newJobs)) {
+                    try {
+                        $job->delete();
+                    } catch (Exception $e) {
+                    }
+                }
+            }
+        }
+
+        $taskDir = UPLOAD_DIR . $this->id . DS;
+        if ($this->getIsNewRecord()) {
             if (!is_dir($taskDir)) {
                 try {
                     mkdir($taskDir);
@@ -428,22 +479,39 @@ class Task extends CActiveRecord
                     Yii::app()->user->setFlash('danger', $e->getMessage());
                 }
             }
+        }
+        $newFiles = $this->task_files;
+        $oldFiles = array();
+        foreach ($this->files as $file) {
+            if ($file->job_id == NULL) $oldFiles[$file->realname] = $file;
+        }
+
+        if ($newFiles && count($newFiles)) {
             if (is_dir($taskDir)) {
-                foreach ($files as $realname => $orgname) {
-                    $file            = new File();
-                    $file->realname  = $realname;
-                    $file->file_name = $orgname;
-                    $file->task_id   = $this->id;
-                    try {
-                        if (!$file->save()) {
-                            print_r($file->getErrors());
-                            die;
+                foreach ($newFiles as $realname => $orgname) {
+                    if (!isset($oldFiles[$realname])) {
+                        $file            = new File();
+                        $file->realname  = $realname;
+                        $file->file_name = $orgname;
+                        $file->task_id   = $this->id;
+                        try {
+                            if (!$file->save()) {
+                                Yii::app()->user->setFlash('danger', __('Cannot save ":file"', $file->file_name));
+                            }
+                        } catch (Exception $e) {
+                            Yii::app()->user->setFlash('danger', $e->getMessage());
                         }
-                    } catch (Exception $e) {
-                        Yii::app()->user->setFlash('danger', $e->getMessage());
                     }
                 }
             }
+        }
+
+        foreach ($oldFiles as $realname => $file) {
+            if (!$newFiles || count($newFiles) == 0 || !isset($newFiles[$realname]))
+                try {
+                    $file->delete();
+                } catch (Exception $e) {
+                }
         }
 
         return parent::afterSave();

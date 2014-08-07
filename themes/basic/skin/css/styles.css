@@ -196,6 +196,10 @@ table thead th:first-child {
     display: inline-block;
     width: 70%;
 }
+.qq-upload-size {
+    display: inline-block;
+    width: 15%;
+}
 .modal-open #task-organizations-selected-grid .defender{
    display: none;
 }

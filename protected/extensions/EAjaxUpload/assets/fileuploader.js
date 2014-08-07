@@ -599,7 +599,7 @@ qq.extend(qq.FileUploader.prototype, {
 
         var item = this._getItemByFileId(id);
         var size = this._find(item, 'size');
-        size.style.display = 'inline';
+        size.style.display = 'inline-block';
 
         var text;
         if (loaded != total){
@@ -620,7 +620,7 @@ qq.extend(qq.FileUploader.prototype, {
 
         if (result.success){
             qq.addClass(item, this._classes.success);
-            item.id=result.realname.replace('.','_');
+            item.id=result.realname;
         } else {
             qq.addClass(item, this._classes.fail);
         }

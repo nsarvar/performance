@@ -158,16 +158,15 @@ class qqFileUploader
 
         if (!$replaceOldFile) {
             /// don't overwrite previous files that were uploaded
-            while (file_exists($uploadDirectory . $filename . '.' . $ext)) {
+            while (file_exists($uploadDirectory . $filename)) {
                 $filename .= rand(10, 99);
             }
         }
 
-        if ($this->file->save($uploadDirectory . $filename . '.' . $ext)) {
+        if ($this->file->save($uploadDirectory . $filename)) {
             return array(
                 'success'  => true,
-                'filename' => $filename . '.' . $ext,
-                'realname' => $filename . '.' . $ext,
+                'realname' => $filename,
                 'orgname'  => $orgname . '.' . $ext,
                 'ext'      => strtolower($ext)
             );

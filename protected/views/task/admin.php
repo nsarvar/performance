@@ -13,8 +13,8 @@ $('.search-form form').submit(function(){
 ");
 ?>
 <ol class="breadcrumb">
-    <li><a href="/">Home</a></li>
-    <li>Tasks</li>
+    <li><a href="/"><?= __('Home') ?></a></li>
+    <li><?= __('Tasks') ?></li>
     <span class="pull-right admin_action">
         <a href="/task/create/<?= Period::getCurrentPeriod()->id ?>"><i
                 class="fa fa-plus"></i> <?= __('Create New Task') ?></a>

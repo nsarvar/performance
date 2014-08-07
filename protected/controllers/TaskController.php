@@ -56,6 +56,24 @@ class TaskController extends Controller
         ));
     }
 
+
+    /**
+     * Updates a particular model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id the ID of the model to be updated
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->loadModel($id);
+        $this->performAjaxValidation($model);
+
+        if ($model->user_id == Yii::app()->user->id || $model->group_id == Yii::app()->user->group_id) {
+            $this->createAndUpdate($model);
+        } else {
+            $this->show404();
+        }
+    }
+
     /**
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -65,7 +83,33 @@ class TaskController extends Controller
 
         $model            = new Task();
         $model->period_id = $id;
+
+        $this->createAndUpdate($model);
+    }
+
+
+    protected function createAndUpdate(Task $model)
+    {
         $this->performAjaxValidation($model);
+
+
+        if (isset($_POST['Task'])) {
+            $model->attributes = $_POST['Task'];
+            if (isset($_POST['Task']['task_files']))
+                $model->task_files = $_POST['Task']['task_files'];
+            if (isset($_POST['Task']['organization_ids']))
+                $model->organization_ids = $_POST['Task']['organization_ids'];
+
+            try {
+                if ($model->save()) {
+                    Yii::app()->user->setFlash('success', __($model->getIsNewRecord() ? 'Task ":name" created successfully' : 'Task ":name" updated successfully', array(':name' => $model->number)));
+                    $this->redirect(array('view', 'id' => $model->id));
+                }
+            } catch (Exception $e) {
+                Yii::app()->user->setFlash('danger', $e->getMessage());
+            }
+
+        }
 
         $searchTasks = new Task('search');
         $searchTasks->unsetAttributes();
@@ -82,38 +126,19 @@ class TaskController extends Controller
 
         $searchSelectedOrg = new Organization('search');
         $searchSelectedOrg->unsetAttributes();
+        $searchSelectedOrg->so_ids = $model->getOrganizationIds();
+
         if (isset($_GET['so_ids']))
             $searchSelectedOrg->so_ids = $_GET['so_ids'];
 
 
-        if (isset($_POST['Task'])) {
-            $model->attributes = $_POST['Task'];
-            if (isset($_POST['Task']['task_files']))
-                $model->task_files = $_POST['Task']['task_files'];
-            if (isset($_POST['Task']['organization_ids']))
-                $model->organization_ids = $_POST['Task']['organization_ids'];
-
-            try {
-                if ($model->save()) {
-                    Yii::app()->user->setFlash('success', __('Task ":name" created successfully', array(':name' => $model->number)));
-                    $this->redirect(array('view', 'id' => $model->id));
-                }
-            } catch (Exception $e) {
-                $model->task_files = array();
-                Yii::app()->user->setFlash('danger', $e->getMessage());
-            }
-
-            $searchSelectedOrg->so_ids = $model->organization_ids;
-        }
-
-        $this->render('create', array(
+        $this->render($model->getIsNewRecord() ? 'create' : 'update', array(
             'model'               => $model,
             'searchSelectedOrg'   => $searchSelectedOrg,
             'searchTasks'         => $searchTasks,
             'searchOrganizations' => $searchOrganizations,
         ));
     }
-
 
     public function actionOrganizations()
     {
@@ -151,29 +176,6 @@ class TaskController extends Controller
         ));
     }
 
-
-    /**
-     * Updates a particular model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id the ID of the model to be updated
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->loadModel($id);
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if (isset($_POST['Task'])) {
-            $model->attributes = $_POST['Task'];
-            if ($model->save())
-                $this->redirect(array('view', 'id' => $model->id));
-        }
-
-        $this->render('update', array(
-            'model' => $model,
-        ));
-    }
 
     /**
      * Deletes a particular model.
@@ -266,6 +268,10 @@ class TaskController extends Controller
         }
     }
 
+    protected function show404()
+    {
+        throw new CHttpException(404, 'The requested page does not exist.');
+    }
 
     public function actionUpload()
     {
@@ -278,22 +284,7 @@ class TaskController extends Controller
         $result            = $uploader->handleUpload($folder);
         //sleep(1);
         if (isset($result['ext'])) {
-            $class = 'fa-file-o';
-            foreach (array(
-                         'fa-file-word-o'       => array('doc', 'docx'),
-                         'fa-file-excel-o'      => array('xls', 'xlsx'),
-                         'fa-file-text-o'       => array('dat', 'txt'),
-                         'fa-file-pdf-o'        => array('pdf'),
-                         'fa-file-powerpoint-o' => array('ppt', 'pptx'),
-                         'fa-file-image-o'      => array('jpg', 'jpeg', 'gif', 'png', 'tif'),
-                         'fa-file-zip-o'        => array('rar', 'zip', 'gz', 'tar', 'tgz'),
-                     ) as $cl => $exts) {
-                if (in_array($result['ext'], $exts)) {
-                    $class = $cl;
-                    break;
-                }
-
-            }
+            $class              = File::getFileClass($result['ext']);
             $result['filename'] = "<i class='fa $class'></i> " . $result['orgname'];
         }
         echo json_encode($result);
