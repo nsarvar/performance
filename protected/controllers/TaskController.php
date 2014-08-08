@@ -28,7 +28,7 @@ class TaskController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view', 'test', 'ajaxjobs', 'ajaxjob'),
+                'actions' => array('index', 'view', 'full', 'test', 'ajaxjobs', 'ajaxjob'),
                 'users'   => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -52,6 +52,13 @@ class TaskController extends Controller
     public function actionView($id)
     {
         $this->render('view', array(
+            'model' => $this->loadModel($id),
+        ));
+    }
+
+    public function actionFull($id)
+    {
+        $this->render('full', array(
             'model' => $this->loadModel($id),
         ));
     }
@@ -336,7 +343,7 @@ class TaskController extends Controller
 
     public function actionAjaxJob($id)
     {
-        $model = Job::model()->with(array('organization','user','files'))->findByPk($id);
+        $model = Job::model()->with(array('organization', 'user', 'files'))->findByPk($id);
         if ($model) {
             return $this->renderPartial('view/job/view', array(
                 'model' => $model,

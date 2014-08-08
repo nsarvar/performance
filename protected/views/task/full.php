@@ -9,7 +9,8 @@
     <li>
         <a href="/task/period/<?= $model->period_id ?>"><?= __('Tasks on :period', array(':period' => $model->period->name)) ?></a>
     </li>
-    <li><?= $model->name ?></li>
+    <li><a href="/task/view/<?= $model->id ?>"><?= $model->name ?></a></li>
+    <li><?= __('Full') ?></li>
     <span class="pull-right action_admin actions">
         <a href="/task/update/<?= $model->id ?>"><i class="fa fa-edit"></i> <?= __('Update') ?></a>
         <?php if ($model->status == Task::STATUS_ENABLED): ?>
@@ -20,10 +21,7 @@
     </span>
 </ol>
 
-<?php $this->renderPartial('_view', array('model' => $model)); ?>
-
-<?php $this->renderPartial('/task/view/jobs', array('model' => $model)) ?>
-
+<?php $this->renderPartial('/task/view/jobs_full', array('model' => $model)) ?>
 
 <script type="text/javascript">
     function showTaskJob(id) {
