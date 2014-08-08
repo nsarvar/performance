@@ -8,9 +8,11 @@ body {
     font-size: 120%;
 
 }
-.container{
+
+.container {
     width: 100%;
 }
+
 .middle_area {
     height: 230px;
     margin-top: -115px;
@@ -63,6 +65,11 @@ table thead {
     cursor: pointer;
     font-size: 12px;
 
+}
+
+.table-striped {
+    border: 1px solid #dddddd;
+    border-top: none;
 }
 
 .pagination {
@@ -130,116 +137,166 @@ table thead {
 }
 
 .user_role_admin .hider:hover .action_admin {
-    display: inline-block!important;
+    display: inline-block !important;
 }
-.info_block:hover{
+
+.info_block:hover {
     text-decoration: underline;
 }
-.info_block_src th:first-child{
+
+.info_block_src th:first-child {
     width: 220px;
 }
-.info_block_src{
+
+.info_block_src {
     display: none;
 }
-.info_block{
+
+.info_block {
     margin-left: 15px;
     cursor: pointer;
 }
-.grid-view{
+
+.grid-view {
     position: relative;
 }
-body{
+
+body {
     overflow-y: scroll;
 }
-.modal-open{
+
+.modal-open {
 
 }
-.modal{
+
+.modal {
     overflow-y: auto;
 }
-.modal-dialog .pagination{
+
+.modal-dialog .pagination {
     margin: 10px 0px 0 0;
 }
-.modal-dialog .table .selected td{
+
+.modal-dialog .table .selected td {
     background-color: #c3c3c3;
 }
-.modal-dialog .table{
+
+.modal-dialog .table {
     margin-bottom: 0;
     margin-top: 10px;
 }
-table .checkbox-column{
+
+table .checkbox-column {
     text-align: center;
     width: 60px;
 }
+
 table thead th:first-child {
     border-left: none;
 }
+
 .qq-upload-list {
     border-top: 1px solid #e3e3e3;
     list-style: disc outside none;
     margin: 2px 0 15px;
     padding: 10px 10px 0;
 }
-.qq-upload-button{
+
+.qq-upload-button {
     display: none;
 }
-.qq-upload-list li i{
+
+.qq-upload-list li i {
     font-size: 14px;
     margin: 0 10px 0 0;
 
 }
-.qq-upload-list li{
+
+.qq-upload-list li {
     padding: 3px 0;
     list-style: none;
 }
+
 .qq-upload-success .qq-upload-file {
     display: inline-block;
     width: 60%;
 }
+
 .qq-upload-delete {
     width: 20%;
     display: inline-block;
     text-align: right;
 }
+
 .qq-upload-size {
     display: inline-block;
     width: 15%;
 }
-.modal-open #task-organizations-selected-grid .defender{
-   display: none;
+
+.modal-open #task-organizations-selected-grid .defender {
+    display: none;
 }
-.tbl-details td,.tbl-details th{
-    border-top: none!important;
+
+.tbl-details td, .tbl-details th {
+    border-top: none !important;
 }
-.tbl-details th{
+
+.tbl-details th {
     text-align: right;
-    padding-right: 20px!important;
+    padding-right: 20px !important;
 }
-.border{
+
+.border {
     border-top: 1px solid #e3e3e3;
 }
-.prt{
+
+.prt {
     color: #ffffff;
     font-weight: bold;
     padding: 3px 10px;
     border-radius: 3px;
 }
-.priority-urgent{
-    background-color: #d9534f!important;
+
+.priority-urgent, .status-rejected {
+    background-color: #d9534f !important;
 }
-.priority-high{
-    background-color: #f0ad4e!important;
+
+.status-progressing {
+    background-color: #428bca;
 }
-.priority-normal{
-    background-color: #5cb85c!important;
+
+.priority-high, .status-received {
+    background-color: #f0ad4e !important;
 }
-.priority-low{
-    background-color: #777!important;
+
+.priority-normal, .status-approved {
+    background-color: #5cb85c !important;
 }
-.number{
-    font-family:  monospace, courier, typewriter, monospace;
+
+.priority-low, .status-pending {
+    background-color: #777 !important;
+}
+
+.number {
+    font-family: monospace, courier, typewriter, monospace;
     font-size: 16px;
 }
-.actions a{
+
+.actions a {
     margin-right: 10px;
+}
+
+.btn-action:hover {
+    background-color: #ededed;
+}
+
+.btn-action {
+    padding: 3px 8px;
+    background-color: #f1f1f1;
+    border-radius: 2px;
+    margin: 0 3px;
+}
+
+.table-hover tr:hover td {
+    background-color: #e3d3d5 !important;
 }

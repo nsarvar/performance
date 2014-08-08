@@ -225,6 +225,7 @@ class BsHtml extends CHtml
     // GRID VIEW
     // --------------------------------------------------
     const GRID_TYPE_STRIPED = 'striped';
+    const GRID_TYPE_STRIPED_HOVER = 'striped hover';
     const GRID_TYPE_BORDERED = 'bordered';
     const GRID_TYPE_CONDENSED = 'condensed';
     const GRID_TYPE_HOVER = 'hover';

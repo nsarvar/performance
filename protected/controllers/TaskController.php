@@ -28,7 +28,7 @@ class TaskController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view', 'test'),
+                'actions' => array('index', 'view', 'test', 'ajaxjobs', 'ajaxjob'),
                 'users'   => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -332,5 +332,30 @@ class TaskController extends Controller
     {
         $start = date_create_from_format('d-m-Y H:i:s', '12-08-2014 23:59:59');
         echo $start->format('Y-m-d H:i:s');
+    }
+
+    public function actionAjaxJob($id)
+    {
+        $model = Job::model()->with(array('organization','user','files'))->findByPk($id);
+        if ($model) {
+            return $this->renderPartial('view/job/view', array(
+                'model' => $model,
+            ));
+        }
+        $this->show404();
+    }
+
+    public function actionAjaxjobs($id)
+    {
+        $model = $this->loadModel($id);
+
+        /*$searchOrganizations = new Organization('search');
+        $searchOrganizations->unsetAttributes();
+        if (isset($_GET['Organization']))
+            $searchOrganizations->attributes = $_GET['Organization'];*/
+
+        $this->renderPartial('view/jobs', array(
+            'model' => $model,
+        ));
     }
 }

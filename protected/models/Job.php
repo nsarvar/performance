@@ -11,6 +11,7 @@
  * @property string $updated_at
  * @property string $user_id
  * @property string $task_id
+ * @property boolean $has_files
  *
  * The followings are the available model relations:
  * @property File[] $files
@@ -124,6 +125,20 @@ class Job extends CActiveRecord
     const STATUS_APPROVED    = 'approved';
     const STATUS_REJECTED    = 'rejected';
 
+    public static function getStatusArray($empty = true)
+    {
+        $status = array(
+            self::STATUS_PENDING     => __(ucfirst(self::STATUS_PENDING)),
+            self::STATUS_RECEIVED    => __(ucfirst(self::STATUS_RECEIVED)),
+            self::STATUS_PROGRESSING => __(ucfirst(self::STATUS_PROGRESSING)),
+            self::STATUS_APPROVED    => __(ucfirst(self::STATUS_APPROVED)),
+            self::STATUS_REJECTED    => __(ucfirst(self::STATUS_REJECTED)),
+        );
+
+        return ($empty) ? array_merge(array('' => ''), $status) : $status;
+    }
+
+
     public static function batchInsert($data = array())
     {
         if (count($data)) {
@@ -144,5 +159,13 @@ class Job extends CActiveRecord
             $command = Yii::app()->db->createCommand($sql);
             $command->execute();
         }
+    }
+
+    public $organization_name;
+
+
+    public function getStatusLabel()
+    {
+        return __(ucfirst($this->status));
     }
 }

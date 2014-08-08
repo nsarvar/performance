@@ -93,13 +93,14 @@ class Task extends CActiveRecord
     }
 
 
-    public function getFormattedDate($value)
+    public static function getFormattedDate($value, $formatTo = self::DF_LOCAL)
     {
+
         if ($date = date_create_from_format(self::DF_LOCAL, $value)) {
-            return $date->format(self::DF_LOCAL);
+            return $date->format($formatTo);
         }
         if ($date = date_create_from_format(self::DF_INTER, $value)) {
-            return $date->format(self::DF_LOCAL);
+            return $date->format($formatTo);
         }
     }
 
@@ -337,6 +338,47 @@ class Task extends CActiveRecord
         }
 
         return $result;
+    }
+
+
+    public function getTaskJobs($status = NULL, $neq = false)
+    {
+        /**
+         * @var $organizations CDbCommand
+         */
+        $criteria         = new CDbCriteria;
+        $criteria->alias  = 'j';
+        $criteria->select = 'j.*, o.name as organization_name';
+        $criteria->join   = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = j.organization_id';
+        if ($status) {
+            if ($neq) {
+                $criteria->addCondition('j.status <> :status');
+                $criteria->params = array(':status' => $status);
+            } else {
+                $criteria->compare('j.status', $status);
+            }
+        }
+        $criteria->compare('j.task_id', $this->id);
+
+        return new CActiveDataProvider(Job::model()->with('files'), array(
+            'criteria'   => $criteria,
+            'sort'       => array(
+                'defaultOrder' => 'j.updated_at DESC',
+                'route'        => "task/ajaxjobs",
+                'attributes'   => array(
+                    'organization_name' => array(
+                        'asc'  => 'o.name',
+                        'desc' => 'o.name DESC',
+                    ),
+                    '*',
+                ),
+            ),
+            'pagination' => array(
+                'pageSize' => 100,
+                'route'    => "task/ajaxjobs"
+            ),
+        ));
+
     }
 
 
