@@ -374,35 +374,37 @@ class Task extends CActiveRecord
     protected function beforeSave()
     {
 
-        //$this->parent_id = 1;
-        if (!$this->parent_id) {
-            $this->parent_id = NULL;
-        }
-        if ($this->isNewRecord) {
-            $this->created_at = date_create()->format(self::DF_INTER);
-        } else {
-            $this->updated_at = date_create()->format(self::DF_INTER);
-        }
-        $this->description = strip_tags($this->description);
-        try {
-
-            if ($date = date_create_from_format(self::DF_LOCAL, $this->start_date . ' 00:00:00')) {
-                $this->start_date = $date->format(self::DF_INTER);
-            } elseif ($date = date_create_from_format(self::DF_LOCAL, $this->start_date)) {
-                $this->start_date = $date->format(self::DF_INTER);
+        if ($this->getScenario() == 'update' || $this->getScenario() == 'create') {
+            if (!$this->parent_id) {
+                $this->parent_id = NULL;
             }
-            if ($date = date_create_from_format(self::DF_LOCAL, $this->end_date . ' 23:59:59')) {
-                $this->end_date = $date->format(self::DF_INTER);
-            } elseif ($date = date_create_from_format(self::DF_LOCAL, $this->end_date)) {
-                $this->end_date = $date->format(self::DF_INTER);
+            if ($this->isNewRecord) {
+                $this->created_at = date_create()->format(self::DF_INTER);
+            } else {
+                $this->updated_at = date_create()->format(self::DF_INTER);
             }
-        } catch (Exception $e) {
-            Yii::app()->user->setFlash('danger', __('Incorrect Date Format'));
+            $this->description = strip_tags($this->description);
+            try {
+
+                if ($date = date_create_from_format(self::DF_LOCAL, $this->start_date . ' 00:00:00')) {
+                    $this->start_date = $date->format(self::DF_INTER);
+                } elseif ($date = date_create_from_format(self::DF_LOCAL, $this->start_date)) {
+                    $this->start_date = $date->format(self::DF_INTER);
+                }
+                if ($date = date_create_from_format(self::DF_LOCAL, $this->end_date . ' 23:59:59')) {
+                    $this->end_date = $date->format(self::DF_INTER);
+                } elseif ($date = date_create_from_format(self::DF_LOCAL, $this->end_date)) {
+                    $this->end_date = $date->format(self::DF_INTER);
+                }
+            } catch (Exception $e) {
+                Yii::app()->user->setFlash('danger', __('Incorrect Date Format'));
+            }
+
+
+            $this->user_id  = Yii::app()->user->user_id;
+            $this->group_id = (Yii::app()->user->group_id) ? Yii::app()->user->group_id : NULL;
+
         }
-
-
-        $this->user_id  = Yii::app()->user->user_id;
-        $this->group_id = (Yii::app()->user->group_id) ? Yii::app()->user->group_id : NULL;
 
         return parent::beforeSave();
     }
@@ -446,82 +448,84 @@ class Task extends CActiveRecord
 
     protected function afterSave()
     {
-        $newJobs = explode(',', $this->organization_ids);
-        $oldJobs = array();
-        foreach ($this->jobs as $job) {
-            $oldJobs[$job->organization_id] = $job;
-        }
+        if ($this->getScenario() == 'update' || $this->getScenario() == 'create') {
+            $newJobs = explode(',', $this->organization_ids);
+            $oldJobs = array();
+            foreach ($this->jobs as $job) {
+                $oldJobs[$job->organization_id] = $job;
+            }
 
-        if (count($newJobs)) {
-            $inserts = array();
-            $date    = date_create()->format(self::DF_INTER);
-            foreach ($newJobs as $id) {
-                if (!isset($oldJobs[$id]))
-                    $inserts[] = array(
-                        'organization_id' => intval($id),
-                        'status'          => Job::STATUS_PENDING,
-                        'task_id'         => $this->id,
-                        'updated_at'      => $date
-                    );
-            }
-            if (count($inserts)) {
-                try {
-                    Job::batchInsert($inserts);
-                } catch (Exception $e) {
+            if (count($newJobs)) {
+                $inserts = array();
+                $date    = date_create()->format(self::DF_INTER);
+                foreach ($newJobs as $id) {
+                    if (!isset($oldJobs[$id]))
+                        $inserts[] = array(
+                            'organization_id' => intval($id),
+                            'status'          => Job::STATUS_PENDING,
+                            'task_id'         => $this->id,
+                            'updated_at'      => $date
+                        );
                 }
-            }
-            foreach ($oldJobs as $orgId => $job) {
-                if (!in_array($orgId, $newJobs)) {
+                if (count($inserts)) {
                     try {
-                        $job->delete();
+                        Job::batchInsert($inserts);
                     } catch (Exception $e) {
                     }
                 }
-            }
-        }
-
-        $taskDir = UPLOAD_DIR . $this->id . DS;
-        if ($this->getIsNewRecord()) {
-            if (!is_dir($taskDir)) {
-                try {
-                    mkdir($taskDir);
-                } catch (Exception $e) {
-                    Yii::app()->user->setFlash('danger', $e->getMessage());
-                }
-            }
-        }
-        $newFiles = $this->task_files;
-        $oldFiles = array();
-        foreach ($this->files as $file) {
-            if ($file->job_id == NULL) $oldFiles[$file->realname] = $file;
-        }
-
-        if ($newFiles && count($newFiles)) {
-            if (is_dir($taskDir)) {
-                foreach ($newFiles as $realname => $orgname) {
-                    if (!isset($oldFiles[$realname])) {
-                        $file            = new File();
-                        $file->realname  = $realname;
-                        $file->file_name = $orgname;
-                        $file->task_id   = $this->id;
+                foreach ($oldJobs as $orgId => $job) {
+                    if (!in_array($orgId, $newJobs)) {
                         try {
-                            if (!$file->save()) {
-                                Yii::app()->user->setFlash('danger', __('Cannot save ":file"', $file->file_name));
-                            }
+                            $job->delete();
                         } catch (Exception $e) {
-                            Yii::app()->user->setFlash('danger', $e->getMessage());
                         }
                     }
                 }
             }
-        }
 
-        foreach ($oldFiles as $realname => $file) {
-            if (!$newFiles || count($newFiles) == 0 || !isset($newFiles[$realname]))
-                try {
-                    $file->delete();
-                } catch (Exception $e) {
+            $taskDir = UPLOAD_DIR . $this->id . DS;
+            if ($this->getIsNewRecord()) {
+                if (!is_dir($taskDir)) {
+                    try {
+                        mkdir($taskDir);
+                    } catch (Exception $e) {
+                        Yii::app()->user->setFlash('danger', $e->getMessage());
+                    }
                 }
+            }
+            $newFiles = $this->task_files;
+            $oldFiles = array();
+            foreach ($this->files as $file) {
+                if ($file->job_id == NULL) $oldFiles[$file->realname] = $file;
+            }
+
+            if ($newFiles && count($newFiles)) {
+                if (is_dir($taskDir)) {
+                    foreach ($newFiles as $realname => $orgname) {
+                        if (!isset($oldFiles[$realname])) {
+                            $file            = new File();
+                            $file->realname  = $realname;
+                            $file->file_name = $orgname;
+                            $file->task_id   = $this->id;
+                            try {
+                                if (!$file->save()) {
+                                    Yii::app()->user->setFlash('danger', __('Cannot save ":file"', $file->file_name));
+                                }
+                            } catch (Exception $e) {
+                                Yii::app()->user->setFlash('danger', $e->getMessage());
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach ($oldFiles as $realname => $file) {
+                if (!$newFiles || count($newFiles) == 0 || !isset($newFiles[$realname]))
+                    try {
+                        $file->delete();
+                    } catch (Exception $e) {
+                    }
+            }
         }
 
         return parent::afterSave();

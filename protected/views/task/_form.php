@@ -303,7 +303,7 @@ $(document).ready(function(){
         var date = new Date();
         var number = $('input[name="Task[number]"]').val();
         var type = $('select[name="Task[type]"]').val().toUpperCase();
-        var name = type + " #" + number + " - " + date.toLocaleDateString();
+        var name = type + " #" + number + " " + date.toLocaleDateString();
         $('input[name="Task[name]"]').val(name);
     }
 

@@ -65,7 +65,7 @@ class TaskController extends Controller
     public function actionDisable($id)
     {
         $model = $this->loadModel($id);
-
+        $model->setScenario('status');
         if ($model->user_id == Yii::app()->user->id || $model->group_id == Yii::app()->user->group_id) {
             $model->status = Task::STATUS_DISABLED;
             try {
@@ -83,7 +83,7 @@ class TaskController extends Controller
     public function actionEnable($id)
     {
         $model = $this->loadModel($id);
-
+        $model->setScenario('status');
         if ($model->user_id == Yii::app()->user->id || $model->group_id == Yii::app()->user->group_id) {
             $model->status = Task::STATUS_ENABLED;
             try {
@@ -101,6 +101,7 @@ class TaskController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->loadModel($id);
+        $model->setScenario('update');
         $this->performAjaxValidation($model);
 
         if ($model->user_id == Yii::app()->user->id || $model->group_id == Yii::app()->user->group_id) {
@@ -119,6 +120,7 @@ class TaskController extends Controller
 
         $model            = new Task();
         $model->period_id = $id;
+        $model->setScenario('create');
 
         $this->createAndUpdate($model);
     }
