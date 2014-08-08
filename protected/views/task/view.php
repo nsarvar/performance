@@ -3,38 +3,119 @@
 /* @var $model Task */
 ?>
 
-    <ol class="breadcrumb">
-        <li><a href="/"><?= __('Home') ?></a></li>
-        <li><a href="/task"><?= __('Tasks') ?></a></li>
-        <li><?= $model->name ?></li>
-        <span class="pull-right action_admin">
-            <a href="/task/update/<?= $model->id ?>"><i class="fa fa-edit"></i> <?= __('Update Task') ?></a>
-        </span>
-    </ol>
+<ol class="breadcrumb">
+    <li><a href="/"><?= __('Home') ?></a></li>
+    <li><a href="/period"><?= __('Periods') ?></a></li>
+    <li>
+        <a href="/task/period/<?= $model->period_id ?>"><?= __('Tasks on :period', array(':period' => $model->period->name)) ?></a>
+    </li>
+    <li><?= $model->name ?></li>
+    <span class="pull-right action_admin actions">
+        <a href="/task/update/<?= $model->id ?>"><i class="fa fa-edit"></i> <?= __('Update') ?></a>
+        <?php if ($model->status == Task::STATUS_ENABLED): ?>
+            <a href="/task/disable/<?= $model->id ?>"><i class="fa fa-power-off"></i> <?= __('Disable Task') ?></a>
+        <?php else: ?>
+            <a href="/task/enable/<?= $model->id ?>"><i class="fa fa-check-circle"></i> <?= __('Enable Task') ?></a>
+        <?php endif; ?>
+    </span>
+</ol>
 
-<?php echo BsHtml::pageHeader('View', 'Task ' . $model->id) ?>
+<?php //echo BsHtml::pageHeader($model->name) ?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4><?= __('Task Details') ?></h4>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col col-md-7">
+                <div class="form-group">
+                    <label><?= __('Description') ?></label>
+                    <textarea class="form-control" onkeypress="return false"
+                              rows="5"><?= $model->description ?></textarea>
+                </div>
+                <div class="form-group">
+                    <label><?= __('Files') ?></label>
 
-<?php $this->widget('zii.widgets.CDetailView', array(
-    'htmlOptions' => array(
-        'class' => 'table table-striped table-condensed table-hover',
-    ),
-    'data'        => $model,
-    'attributes'  => array(
-        'id',
-        'number',
-        'name',
-        'type',
-        'parent_id',
-        'group_id',
-        'user_id',
-        'period_id',
-        'status',
-        'priority',
-        'start_date',
-        'end_date',
-        'description',
-        'attachable',
-        'created_at',
-        'updated_at',
-    ),
-)); ?>
+                    <div class="qq-uploader">
+                        <ul class="qq-upload-list">
+                            <?php foreach ($model->getTaskFiles() as $file): ?>
+                                <li class="qq-upload-success">
+                                    <span class="qq-upload-file">
+                                        <i class="fa <?= $file->getClass() ?>"></i>
+                                        <?= $file->file_name ?>
+                                    </span>
+                                    <span class="qq-upload-size"><?= $file->getFileSize() ?></span>
+                                    <a class="qq-upload-delete" href="/task/file/<?= $file->realname ?>">
+                                        <i class="fa fa-download"></i> <span class="hidden-xs"><?= __('Download') ?></span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col col-md-5">
+                <table class="table  table-condensed table-hover tbl-details">
+                    <tbody>
+                    <tr>
+                        <th><?= __('Name') ?></th>
+                        <td><strong><?= $model->name ?></strong></td>
+                    </tr>
+                    <tr>
+                        <th><?= __('Number') ?></th>
+                        <td class="number"><?= $model->number ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= __('Priority') ?></th>
+                        <td><span
+                                class="prt priority-<?= $model->priority ?>"><?= $model->getPriorityLabel() ?></span>
+                        </td>
+                    </tr>
+
+                    <tr class="border">
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <th><?= __('Status') ?></th>
+                        <td><?= $model->getStatusLabel() ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= __('Period') ?></th>
+                        <td><a href="/task/period/<?= $model->period_id ?>"><?= $model->period->name ?></a></td>
+                    </tr>
+                    <tr>
+                        <th><?= __('Curator') ?></th>
+                        <td><a href="/user/<?= $model->user_id ?>"><?= $model->user->name ?></a></td>
+                    </tr>
+                    <?php if ($model->parent): ?>
+                        <tr>
+                            <th><?= __('Parent') ?></th>
+                            <td><a href="/task/view/<?= $model->parent_id ?>"><?= $model->parent->name ?></a></td>
+                        </tr>
+                    <?php endif; ?>
+                    <tr class="border">
+                        <td colspan="2"></td>
+                    </tr>
+
+                    <tr>
+                        <th><?= __('Start Date') ?></th>
+                        <td><?= Yii::app()->dateFormatter->format("d-MMMM, y", strtotime($model->start_date)) ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= __('End Date') ?></th>
+                        <td><?= Yii::app()->dateFormatter->format("d-MMMM, y", strtotime($model->end_date)) ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= __('Created') ?></th>
+                        <td><?= Yii::app()->dateFormatter->format("d-MMMM, y HH:mm:ss", strtotime($model->created_at)) ?></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+

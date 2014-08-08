@@ -254,6 +254,16 @@ class Task extends CActiveRecord
         return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
     }
 
+    public function getPriorityLabel()
+    {
+        return __(ucfirst($this->priority));
+    }
+
+    public function getStatusLabel()
+    {
+        return __(ucfirst($this->status));
+    }
+
     const TYPE_HAT    = 'xat';
     const TYPE_BUYRUQ = 'buyruq';
     const TYPE_FISHKA = 'fishka';

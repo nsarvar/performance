@@ -194,7 +194,12 @@ table thead th:first-child {
 }
 .qq-upload-success .qq-upload-file {
     display: inline-block;
-    width: 70%;
+    width: 60%;
+}
+.qq-upload-delete {
+    width: 22%;
+    display: inline-block;
+    text-align: right;
 }
 .qq-upload-size {
     display: inline-block;
@@ -202,4 +207,39 @@ table thead th:first-child {
 }
 .modal-open #task-organizations-selected-grid .defender{
    display: none;
+}
+.tbl-details td,.tbl-details th{
+    border-top: none!important;
+}
+.tbl-details th{
+    text-align: right;
+    padding-right: 20px!important;
+}
+.border{
+    border-top: 1px solid #e3e3e3;
+}
+.prt{
+    color: #ffffff;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 3px;
+}
+.priority-urgent{
+    background-color: #d9534f!important;
+}
+.priority-high{
+    background-color: #f0ad4e!important;
+}
+.priority-normal{
+    background-color: #5cb85c!important;
+}
+.priority-low{
+    background-color: #777!important;
+}
+.number{
+    font-family:  monospace, courier, typewriter, monospace;
+    font-size: 16px;
+}
+.actions a{
+    margin-right: 10px;
 }

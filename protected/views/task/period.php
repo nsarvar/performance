@@ -81,17 +81,13 @@ $('.search-form form').submit(function(){
                     'dataProvider' => $model->search(),
                     'template'     => "{items}\n{pager}<div class='defender'></div>",
                     'columns'      => array(
-                        array('name' => 'id', 'header' => 'ID', 'htmlOptions' => array('width' => '60px')),
                         array(
                             'name'   => 'number',
                             'header' => 'Number',
                             'value'  => 'CHtml::link(($data->number)?$data->number:$data->name, Yii::app()->createUrl("task/view",array("id"=>$data->primaryKey)))',
                             'type'   => 'raw'
                         ),
-                        array(
-                            'name'   => 'type',
-                            'header' => 'Type',
-                        ),
+                        'name',
                         array(
                             'name'   => 'start_date',
                             'header' => 'Start',

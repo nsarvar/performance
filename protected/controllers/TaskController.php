@@ -32,7 +32,7 @@ class TaskController extends Controller
                 'users'   => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'admin', 'period', 'upload', 'tasks', 'organizations', 'selectedOrg'),
+                'actions' => array('create', 'update', 'admin', 'period', 'upload', 'tasks', 'organizations', 'selectedOrg', 'disable', 'enable'),
                 'users'   => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -62,6 +62,42 @@ class TaskController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated
      */
+    public function actionDisable($id)
+    {
+        $model = $this->loadModel($id);
+
+        if ($model->user_id == Yii::app()->user->id || $model->group_id == Yii::app()->user->group_id) {
+            $model->status = Task::STATUS_DISABLED;
+            try {
+                $model->save(false);
+                Yii::app()->user->setFlash('success', __('Task ":name" disabled successfully', array(':name' => $model->number)));
+            } catch (Exception $e) {
+                Yii::app()->user->setFlash('danger', $e->getMessage());
+            }
+            $this->redirect(array('view', 'id' => $model->id));
+        } else {
+            $this->show404();
+        }
+    }
+
+    public function actionEnable($id)
+    {
+        $model = $this->loadModel($id);
+
+        if ($model->user_id == Yii::app()->user->id || $model->group_id == Yii::app()->user->group_id) {
+            $model->status = Task::STATUS_ENABLED;
+            try {
+                $model->save(false);
+                Yii::app()->user->setFlash('success', __('Task ":name" enabled successfully', array(':name' => $model->number)));
+            } catch (Exception $e) {
+                Yii::app()->user->setFlash('danger', $e->getMessage());
+            }
+            $this->redirect(array('view', 'id' => $model->id));
+        } else {
+            $this->show404();
+        }
+    }
+
     public function actionUpdate($id)
     {
         $model = $this->loadModel($id);

@@ -187,7 +187,14 @@ class File extends CActiveRecord
 
     public function getFileSize()
     {
-        return round($this->file_size / 1024, 1) . 'kB';
+        $lbl  = 'Kb';
+        $size = $this->file_size / 1024;
+        if ($size > 1024) {
+            $size /= 1024;
+            $lbl = 'Mb';
+        }
+
+        return round($size, 1) . " $lbl";
     }
 
     public function getClass()

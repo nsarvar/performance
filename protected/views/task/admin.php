@@ -44,7 +44,6 @@ $('.search-form form').submit(function(){
                     'template'     => "{items}\n{pager}<div class='defender'></div>",
                     'type'         => BsHtml::GRID_TYPE_STRIPED,
                     'columns'      => array(
-                        array('name' => 'id', 'header' => 'ID', 'htmlOptions' => array('width' => '60px')),
                         array('name' => 'number', 'header' => 'Number'),
                         array(
                             'name'   => 'name',
