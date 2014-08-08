@@ -364,7 +364,7 @@ class Task extends CActiveRecord
             'criteria'   => $criteria,
             'sort'       => array(
                 'defaultOrder' => 'j.updated_at DESC',
-                'route'        => $full ? "task/ajaxjobs" : "task/ajaxjobsfull",
+                'route'        => $full ? "task/ajaxjobs" : "task/ajaxjobs",
                 'attributes'   => array(
                     'organization_name' => array(
                         'asc'  => 'o.name',
@@ -375,7 +375,7 @@ class Task extends CActiveRecord
             ),
             'pagination' => array(
                 'pageSize' => 100,
-                'route'    => $full ? "task/ajaxjobs" : "task/ajaxjobsfull"
+                'route'    => $full ? "task/ajaxjobs" : "task/ajaxjobs"
             ),
         ));
 
