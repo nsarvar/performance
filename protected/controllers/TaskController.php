@@ -28,7 +28,7 @@ class TaskController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view', 'full', 'test', 'ajaxjobs', 'ajaxjob'),
+                'actions' => array('index', 'view', 'full', 'test', 'ajaxjobs', 'ajaxjobsfull', 'ajaxjob'),
                 'users'   => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -352,16 +352,18 @@ class TaskController extends Controller
         $this->show404();
     }
 
-    public function actionAjaxjobs($id)
+    public function actionAjaxJobs($id)
     {
         $model = $this->loadModel($id);
-
-        /*$searchOrganizations = new Organization('search');
-        $searchOrganizations->unsetAttributes();
-        if (isset($_GET['Organization']))
-            $searchOrganizations->attributes = $_GET['Organization'];*/
-
         $this->renderPartial('view/jobs', array(
+            'model' => $model,
+        ));
+    }
+
+    public function actionAjaxJobsFull($id)
+    {
+        $model = $this->loadModel($id);
+        $this->renderPartial('view/jobs_full', array(
             'model' => $model,
         ));
     }
