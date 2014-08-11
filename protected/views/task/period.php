@@ -80,14 +80,20 @@ $('.search-form form').submit(function(){
                     'id'           => 'task-grid',
                     'dataProvider' => $model->search(),
                     'template'     => "{items}\n{pager}<div class='defender'></div>",
+                    'type'         => BsHtml::GRID_TYPE_STRIPED,
                     'columns'      => array(
                         array(
                             'name'   => 'number',
                             'header' => 'Number',
-                            'value'  => 'CHtml::link(($data->number)?$data->number:$data->name, Yii::app()->createUrl("task/view",array("id"=>$data->primaryKey)))',
+                            'value'  => 'CHtml::link($data->number, Yii::app()->createUrl("task/view",array("id"=>$data->primaryKey)))',
                             'type'   => 'raw'
                         ),
-                        'name',
+                        array(
+                            'name'   => 'name',
+                            'header' => 'Name',
+                            'value'  => 'CHtml::link($data->name, Yii::app()->createUrl("task/view",array("id"=>$data->primaryKey)))',
+                            'type'   => 'raw'
+                        ),
                         array(
                             'name'   => 'start_date',
                             'header' => 'Start',
