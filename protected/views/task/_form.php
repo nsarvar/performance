@@ -364,7 +364,4 @@ $(document).ready(function(){
             $('.qq-upload-list').append(t);
         })
     }
-    <?php if($model->task_files)foreach ($model->task_files as $realname => $orgname): ?>
-
-    <?php endforeach; ?>
 </script>

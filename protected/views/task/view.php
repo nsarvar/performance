@@ -44,13 +44,16 @@
         return false;
     }
 
-    function downloadTaskJobFiles(id) {
-        $('#global_file_loader').attr('src', '<?=Yii::app()->createUrl("task/file")?>' + '/' + id);
+    function downloadTaskJobFiles(id, c) {
+        if (parseInt(c) == 1) {
+            $('#global_file_loader').attr('src', '<?=Yii::app()->createUrl("task/file")?>' + '/' + id);
+        } else {
+            showTaskJob(id)
+        }
         return false;
     }
 </script>
 
 <div class="modal fade" id="modal_task_job_view" tabindex="-1" role="dialog" aria-hidden="true">
-
 </div>
 <iframe src="#" id="global_file_loader" style="display: none"></iframe>

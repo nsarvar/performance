@@ -25,7 +25,7 @@
  * @property Group $group
  * @property Organization $organization
  */
-class User extends CActiveRecord
+class User_ extends CActiveRecord
 {
     /**
      * @return string the associated database table name

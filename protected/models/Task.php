@@ -360,7 +360,7 @@ class Task extends CActiveRecord
         }
         $criteria->compare('j.task_id', $this->id);
 
-        return new CActiveDataProvider(Job::model()->with('files'), array(
+        return new CActiveDataProvider(Job::model()->with(array('files', 'task', 'task.user')), array(
             'criteria'   => $criteria,
             'sort'       => array(
                 'defaultOrder' => 'j.updated_at DESC',
@@ -537,7 +537,7 @@ class Task extends CActiveRecord
             $newFiles = $this->task_files;
             $oldFiles = array();
             foreach ($this->files as $file) {
-                if ($file->job_id != NULL) $oldFiles[$file->realname] = $file;
+                if ($file->job_id == NULL) $oldFiles[$file->realname] = $file;
             }
 
             if ($newFiles && count($newFiles)) {
@@ -570,5 +570,17 @@ class Task extends CActiveRecord
         }
 
         return parent::afterSave();
+    }
+
+    /**
+     * @param $organizationId
+     * @return Job
+     */
+    public function getJobOfOrganization($organizationId)
+    {
+        return Job::model()->findByAttributes(array(
+            'task_id'         => $this->id,
+            'organization_id' => $organizationId
+        ));
     }
 }

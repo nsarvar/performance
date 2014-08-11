@@ -32,7 +32,7 @@ class TaskController extends Controller
                 'users'   => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'admin', 'period', 'upload', 'tasks', 'organizations', 'selectedOrg', 'disable', 'enable'),
+                'actions' => array('approve', 'reject', 'job', 'create', 'update', 'admin', 'period', 'upload', 'tasks', 'organizations', 'selectedOrg', 'disable', 'enable'),
                 'users'   => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -49,11 +49,73 @@ class TaskController extends Controller
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
      */
+    public function actionJob($id)
+    {
+        //view by task executor
+        /**
+         * @var $job Job
+         */
+        $job = Job::model()->with('organization')->findByPk($id);
+        if ($job === NULL)
+            throw new CHttpException(404, 'The requested page does not exist.');
+
+        $model = $job->task;
+
+        if (
+            $job->organization_id == $this->_user()->organization_id ||
+            $model->user_id == $this->_user()->id ||
+            ($this->_user()->group_id && $this->_user()->group_id == $model->group_id)
+        ) {
+
+            if (isset($_POST['Job']) && $_POST['Job']['content']) {
+                $job->setScenario('update');
+                $job->content = $_POST['Job']['content'];
+                $job->user_id = $this->_user()->id;
+                $job->status  = Job::STATUS_PROGRESSING;
+
+                if (isset($_POST['Job']['job_files']))
+                    $job->job_files = $_POST['Job']['job_files'];
+
+                try {
+
+                    if ($job->save()) {
+                        Yii::app()->user->setFlash('success', __('Work of <b>:name</b> updated successfully', array(':name' => $job->organization->name)));
+                    }
+                    $this->redirect(array('job', 'id' => $job->id));
+                } catch (Exception $e) {
+                    Yii::app()->user->setFlash('danger', $e->getMessage());
+                }
+            } elseif ($job->status == Job::STATUS_PENDING && $job->organization_id == $this->_user()->organization_id) {
+                //change status after first view;
+                $job->status = Job::STATUS_RECEIVED;
+                try {
+                    $job->save(false);
+                } catch (Exception $e) {
+                }
+            }
+
+            $this->render('view_job', array(
+                'model' => $model,
+                'job'   => $job,
+            ));
+        }
+
+
+    }
+
     public function actionView($id)
     {
-        $this->render('view', array(
-            'model' => $this->loadModel($id),
-        ));
+        $model = $this->loadModel($id);
+        if ($model->user_id == $this->_user()->id || ($this->_user()->group_id && $this->_user()->group_id == $model->group_id)) {
+            //view by task owner
+            $this->render('view', array(
+                'model' => $model,
+            ));
+        } else {
+            //view by task executor
+            if ($job = $model->getJobOfOrganization($this->_user()->organization_id))
+                $this->redirect(array('job', 'id' => $job->id));
+        }
     }
 
     public function actionFull($id)
@@ -63,6 +125,43 @@ class TaskController extends Controller
         ));
     }
 
+    public function actionApprove($id, $page = 'view')
+    {
+        $this->jobStatus($id, Job::STATUS_APPROVED);
+    }
+
+    public function actionReject($id)
+    {
+        $this->jobStatus($id, Job::STATUS_REJECTED);
+    }
+
+    protected function jobStatus($id, $status)
+    {
+        /**
+         * @var $job Job
+         */
+        $job = Job::model()->with('organization')->findByPk($id);
+        if ($job === NULL ||
+            $job->task === NULL ||
+            !($job->task->user_id == $this->_user()->id ||
+                $job->task->group_id && $this->_user()->group_id == $job->task->group_id)
+        )
+            throw new CHttpException(404, 'The requested page does not exist.');
+
+        $job->status = $status;
+        $job->setScenario('status');
+        try {
+            $job->save(false);
+            if ($job->status == Job::STATUS_APPROVED) Yii::app()->user->setFlash('success', __('Work of <b>:name</b> approved ', array(':name' => $job->organization->name)));
+            if ($job->status == Job::STATUS_REJECTED) Yii::app()->user->setFlash('danger', __('Work of <b>:name</b> rejected ', array(':name' => $job->organization->name)));
+        } catch (Exception $e) {
+            Yii::app()->user->setFlash('danger', $e->getMessage());
+        }
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            return $this->redirect($_SERVER['HTTP_REFERER']);
+        }
+        $this->redirect(array('view', $job->task->id));
+    }
 
     /**
      * Updates a particular model.
@@ -111,7 +210,7 @@ class TaskController extends Controller
         $model->setScenario('update');
         $this->performAjaxValidation($model);
 
-        if ($model->user_id == Yii::app()->user->id || $model->group_id == $this->_user()->group_id || $this->_user()->role == User::ROLE_ADMIN) {
+        if ($model->user_id == $this->_user()->id || $model->group_id == $this->_user()->group_id || $this->_user()->role == User::ROLE_ADMIN) {
             $this->createAndUpdate($model);
         } else {
             $this->show404();
@@ -368,9 +467,19 @@ class TaskController extends Controller
         ));
     }
 
-    protected function _user()
+
+    protected $_user;
+
+    /**
+     * @return User
+     */
+    public function _user()
     {
-        return Yii::app()->user;
+        if (!$this->_user) {
+            $this->_user = User::model()->findByPk(Yii::app()->user->user_id);
+        }
+
+        return $this->_user;
     }
 
     protected function downloadFile(File $file)

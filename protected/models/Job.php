@@ -34,14 +34,10 @@ class Job extends CActiveRecord
      */
     public function rules()
     {
-        // NOTE: you should only define rules for those attributes that
-        // will receive user inputs.
         return array(
             array('content', 'required'),
             array('organization_id, status, user_id, task_id', 'length', 'max' => 11),
             array('updated_at', 'safe'),
-            // The following rule is used by search().
-            // @todo Please remove those attributes that should not be searched.
             array('id, organization_id, content, status, updated_at, user_id, task_id', 'safe', 'on' => 'search'),
         );
     }
@@ -167,5 +163,74 @@ class Job extends CActiveRecord
     public function getStatusLabel()
     {
         return __(ucfirst($this->status));
+    }
+
+    public $job_files;
+
+
+    protected function beforeSave()
+    {
+
+        if ($this->getScenario() == 'update' || $this->getScenario() == 'create') {
+            $this->updated_at = date_create()->format(Task::DF_INTER);
+        }
+
+        $this->content = strip_tags($this->content);
+
+        return parent::beforeSave();
+    }
+
+
+    protected function afterSave()
+    {
+
+        if ($this->getScenario() == 'update' || $this->getScenario() == 'create') {
+
+
+            $taskDir = UPLOAD_DIR . $this->task->id . DS;
+            if (!is_dir($taskDir)) {
+                try {
+                    mkdir($taskDir);
+                } catch (Exception $e) {
+                    Yii::app()->user->setFlash('danger', $e->getMessage());
+                }
+            }
+
+            $newFiles = $this->job_files;
+            $oldFiles = array();
+            foreach ($this->files as $file) {
+                $oldFiles[$file->realname] = $file;
+            }
+
+            if ($newFiles && count($newFiles) && is_dir($taskDir)) {
+
+                foreach ($newFiles as $realname => $orgname) {
+                    if (!isset($oldFiles[$realname])) {
+                        $file            = new File();
+                        $file->realname  = $realname;
+                        $file->file_name = $orgname;
+                        $file->task_id   = $this->task->id;
+                        $file->job_id    = $this->id;
+                        try {
+                            if (!$file->save()) {
+                                Yii::app()->user->setFlash('danger', __('Cannot save ":file"', $file->file_name));
+                            }
+                        } catch (Exception $e) {
+                            Yii::app()->user->setFlash('danger', $e->getMessage());
+                        }
+                    }
+                }
+            }
+
+            foreach ($oldFiles as $realname => $file) {
+                if (!$newFiles || count($newFiles) == 0 || !isset($newFiles[$realname]))
+                    try {
+                        $file->delete();
+                    } catch (Exception $e) {
+                    }
+            }
+        }
+
+        return parent::afterSave();
     }
 }

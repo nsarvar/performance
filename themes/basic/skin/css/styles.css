@@ -300,3 +300,6 @@ table thead th:first-child {
 .table-hover tr:hover td {
     background-color: #e3d3d5 !important;
 }
+.formatted{
+    font-family: monospace, courier, typewriter, monospace;
+}
