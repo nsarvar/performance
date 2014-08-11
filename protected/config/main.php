@@ -7,17 +7,17 @@
 // CWebApplication properties can be configured here.
 require_once(dirname(__FILE__) . '/../components/helpers.php');
 return array(
-    'theme'       => 'basic',
-    'basePath'    => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
-    'name'        => 'Performance',
-    'language'    => 'ru',
+    'theme'      => 'basic',
+    'basePath'   => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
+    'name'       => 'Performance',
+    'language'   => 'ru',
     /*'preload'     => array('log'),*/
 
-    'aliases'     => array(
+    'aliases'    => array(
         'bootstrap' => 'ext.bootstrap',
     ),
 
-    'import'      => array(
+    'import'     => array(
         'application.models.*',
         'application.components.*',
         'bootstrap.behaviors.*',
@@ -25,8 +25,8 @@ return array(
         'bootstrap.widgets.*'
     ),
 
-    'modules'     => array(
-        'gii'=> array(
+    'modules'    => array(
+        'gii' => array(
             'class'          => 'system.gii.GiiModule',
             'password'       => 'random123',
             'ipFilters'      => array('127.0.0.1', '::1'),
@@ -35,23 +35,24 @@ return array(
 
     ),
 
-    'components'  => array(
-        'user'        => array(
-            'allowAutoLogin'=> true,
+    'components' => array(
+        'user'         => array(
+            'allowAutoLogin' => true,
         ),
 
-        'urlManager'  => array(
-            'urlFormat'     => 'path',
-            'showScriptName'=> false,
-            'rules'         => array(
-                'task/period/<periodId:\d+>'=>'task/period',
-                '<controller:\w+>/<id:\d+>'             => '<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>'=> '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>'         => '<controller>/<action>',
+        'urlManager'   => array(
+            'urlFormat'      => 'path',
+            'showScriptName' => false,
+            'rules'          => array(
+                'task/period/<periodId:\d+>'             => 'task/period',
+                'task/file/<id:\w+>'                     => 'task/file',
+                '<controller:\w+>/<id:\d+>'              => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>'          => '<controller>/<action>',
             ),
         ),
 
-        'db'          => array(
+        'db'           => array(
             'connectionString' => 'mysql:host=localhost;dbname=performance_new',
             'emulatePrepare'   => true,
             'username'         => 'performance',
@@ -59,31 +60,31 @@ return array(
             'charset'          => 'utf8',
         ),
 
-        'errorHandler'=> array(
-            'errorAction'=> 'site/error',
+        'errorHandler' => array(
+            'errorAction' => 'site/error',
         ),
 
-        'log'         => array(
-            'class' => 'CLogRouter',
-            'routes'=> array(
+        'log'          => array(
+            'class'  => 'CLogRouter',
+            'routes' => array(
                 array(
-                    'class' => 'CFileLogRoute',
-                    'levels'=> 'error, warning',
+                    'class'  => 'CFileLogRoute',
+                    'levels' => 'error, warning',
                 ),
 
                 array(
-                    'class'=> 'CWebLogRoute',
+                    'class' => 'CWebLogRoute',
                 ),
             ),
         ),
-        'bootstrap'   => array(
+        'bootstrap'    => array(
             'class' => 'bootstrap.components.BsApi'
         ),
     ),
 
-    'params'      => array(
+    'params'     => array(
         //Yii::app()->params['paramName']
-        'adminEmail'=> 'homidjonov@gmail.com',
+        'adminEmail' => 'homidjonov@gmail.com',
     ),
 
 );

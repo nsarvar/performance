@@ -1,7 +1,9 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4><?= __('Executers') ?>
-            <small><a href="<?=Yii::app()->createUrl("task/full",array("id"=>$model->id))?>"><?= __('Show Full') ?></a></small>
+            <small><a
+                    href="<?= Yii::app()->createUrl("task/full", array("id" => $model->id)) ?>"><?= __('Show Full') ?></a>
+            </small>
         </h4>
     </div>
     <?php $this->widget('bootstrap.widgets.BsGridView', array(
@@ -13,7 +15,7 @@
         'columns'      => array(
             array(
                 'name'  => 'organization_name',
-                'value' => 'CHtml::link($data->organization_name, "#",array("onclick"=>"return showTaskJob(\'$data->id\')"))',
+                'value' => 'CHtml::link($data->organization_name, Yii::app()->createUrl("task/job",array("id"=>$data->id)),array("onclick"=>"return showTaskJob(\'$data->id\')"))',
                 'type'  => 'raw',
             ),
             array(
@@ -51,7 +53,7 @@
 function getRowActions($data)
 {
     $html = ''; //CHtml::link("<i class='fa fa-edit'></i>", "#", array("onclick" => "return showTaskJob('{$data->id}')", "class" => "btn-action"));
-    if (count($data->files)) $html .= CHtml::link("<i class='fa fa-download'></i>", "#", array("onclick" => "return downloadTaskJobFiles('{$data->id}')", "class" => "btn-action"));
+    if (count($data->files) == 1) $html .= CHtml::link("<i class='fa fa-download'></i>", "#", array("onclick" => "return downloadTaskJobFiles('{$data->id}')", "class" => "btn-action"));
     if ($data->status != Job::STATUS_APPROVED)
         return CHtml::link("<i class='fa fa-check'></i>", "#", array("onclick" => "return approveTaskJob('{$data->id}')", "class" => "btn-action")) . $html;
 

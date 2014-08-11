@@ -526,19 +526,18 @@ class Task extends CActiveRecord
             }
 
             $taskDir = UPLOAD_DIR . $this->id . DS;
-            if ($this->getIsNewRecord()) {
-                if (!is_dir($taskDir)) {
-                    try {
-                        mkdir($taskDir);
-                    } catch (Exception $e) {
-                        Yii::app()->user->setFlash('danger', $e->getMessage());
-                    }
+            if (!is_dir($taskDir)) {
+                try {
+                    mkdir($taskDir);
+                } catch (Exception $e) {
+                    Yii::app()->user->setFlash('danger', $e->getMessage());
                 }
             }
+
             $newFiles = $this->task_files;
             $oldFiles = array();
             foreach ($this->files as $file) {
-                if ($file->job_id == NULL) $oldFiles[$file->realname] = $file;
+                if ($file->job_id != NULL) $oldFiles[$file->realname] = $file;
             }
 
             if ($newFiles && count($newFiles)) {

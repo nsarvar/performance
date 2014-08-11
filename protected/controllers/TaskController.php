@@ -28,7 +28,7 @@ class TaskController extends Controller
     {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view', 'full', 'test', 'ajaxjobs', 'ajaxjobsfull', 'ajaxjob'),
+                'actions' => array('file', 'index', 'view', 'full', 'test', 'ajaxjobs', 'ajaxjobsfull', 'ajaxjob'),
                 'users'   => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -111,7 +111,7 @@ class TaskController extends Controller
         $model->setScenario('update');
         $this->performAjaxValidation($model);
 
-        if ($model->user_id == Yii::app()->user->id || $model->group_id == Yii::app()->user->group_id) {
+        if ($model->user_id == Yii::app()->user->id || $model->group_id == $this->_user()->group_id || $this->_user()->role == User::ROLE_ADMIN) {
             $this->createAndUpdate($model);
         } else {
             $this->show404();
@@ -366,5 +366,75 @@ class TaskController extends Controller
         $this->renderPartial('view/jobs_full', array(
             'model' => $model,
         ));
+    }
+
+    protected function _user()
+    {
+        return Yii::app()->user;
+    }
+
+    protected function downloadFile(File $file)
+    {
+        $path = UPLOAD_DIR . $file->task_id . DS . $file->realname;
+        if (file_exists($path)) {
+            return Yii::app()->getRequest()->sendFile($file->file_name, @file_get_contents($path));
+        } elseif (file_exists(UPLOAD_DIR . $file->realname)) {
+            return Yii::app()->getRequest()->sendFile($file->file_name, @file_get_contents(UPLOAD_DIR . $file->realname));
+        } else {
+            echo __('File ":name" not found on server', array(':name' => $file->file_name));
+            Yii::app()->end(0, false);
+        }
+    }
+
+    protected function cannotAccess()
+    {
+        echo __('You cannot access to the resource');
+        Yii::app()->end(0, false);
+    }
+
+    public function actionFile($id)
+    {
+        /**
+         * @var $file File
+         * @var $job  Job
+         */
+        if ($id == intval($id) . '') {
+            $job = Job::model()->with(array('files', 'task'))->findByPk($id);
+            if ($job) {
+                if ($job->task->group_id == $this->_user()->group_id ||
+                    $job->organization_id == $this->_user()->organization_id ||
+                    $this->_user()->role == User::ROLE_SUPER_ADMIN ||
+                    $this->_user()->role == User::ROLE_ADMIN
+                ) {
+                    if (count($job->files) == 1) return $this->downloadFile($job->files[0]);
+                    if (count($job->files) > 1) return $this->redirect(Yii::app()->createUrl('task/job', array('id' => $job->id)));
+                } else {
+                    return $this->cannotAccess();
+                }
+            }
+        } else {
+            $file = File::model()->with(array('task', 'job'))->findByAttributes(['realname' => $id]);
+            if ($file) {
+                if ($file->job) {
+                    $job = $file->job;
+                    if ($job->task->group_id == $this->_user()->group_id ||
+                        $job->organization_id == $this->_user()->organization_id ||
+                        $this->_user()->role == User::ROLE_SUPER_ADMIN ||
+                        $this->_user()->role == User::ROLE_ADMIN
+                    ) return $this->downloadFile($file); else {
+                        return $this->cannotAccess();
+                    }
+                }
+                if ($task = $file->task) {
+                    if ($task->group_id == $this->_user()->group_id ||
+                        $this->_user()->role == User::ROLE_SUPER_ADMIN ||
+                        $this->_user()->role == User::ROLE_ADMIN
+                    ) return $this->downloadFile($file); else {
+                        return $this->cannotAccess();
+                    }
+                }
+            }
+        }
+        $this->show404();
     }
 }
