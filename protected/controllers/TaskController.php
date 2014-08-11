@@ -77,7 +77,6 @@ class TaskController extends Controller
                     $job->job_files = $_POST['Job']['job_files'];
 
                 try {
-
                     if ($job->save()) {
                         Yii::app()->user->setFlash('success', __('Work of <b>:name</b> updated successfully', array(':name' => $job->organization->name)));
                     }
@@ -120,9 +119,16 @@ class TaskController extends Controller
 
     public function actionFull($id)
     {
-        $this->render('full', array(
-            'model' => $this->loadModel($id),
-        ));
+        if (Yii::app()->request->isAjaxRequest) {
+            return $this->renderPartial('view/jobs_full', array(
+                'model' => $this->loadModel($id),
+            ));
+        } else {
+            $this->render('full', array(
+                'model' => $this->loadModel($id),
+            ));
+        }
+
     }
 
     public function actionApprove($id, $page = 'view')
@@ -156,6 +162,11 @@ class TaskController extends Controller
             if ($job->status == Job::STATUS_REJECTED) Yii::app()->user->setFlash('danger', __('Work of <b>:name</b> rejected ', array(':name' => $job->organization->name)));
         } catch (Exception $e) {
             Yii::app()->user->setFlash('danger', $e->getMessage());
+        }
+        if (Yii::app()->request->isAjaxRequest) {
+            return $this->renderPartial('view/job/view', array(
+                'model' => $job,
+            ));
         }
         if (isset($_SERVER['HTTP_REFERER'])) {
             return $this->redirect($_SERVER['HTTP_REFERER']);

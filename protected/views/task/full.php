@@ -20,9 +20,9 @@
         <?php endif; ?>
     </span>
 </ol>
-
+<div id="">
 <?php $this->renderPartial('/task/view/jobs_full', array('model' => $model)) ?>
-
+</div>
 <script type="text/javascript">
     function showTaskJob(id) {
         $('#task-jobs-grid .defender').show();
@@ -34,11 +34,19 @@
         return false;
     }
     function approveTaskJob(id) {
-        alert(id);
+        $('#task-jobs-grid .defender').show();
+        $('#modal_task_job_view').load('<?=Yii::app()->createUrl("task/approve")?>/' + id, function () {
+            $.fn.yiiListView.update('task-jobs-grid', {});
+
+        })
         return false;
     }
     function rejectTaskJob(id) {
-        alert(id);
+        $('#task-jobs-grid .defender').show();
+        $('#modal_task_job_view').load('<?=Yii::app()->createUrl("task/reject")?>/' + id, function () {
+            $.fn.yiiListView.update('task-jobs-grid', {});
+
+        })
         return false;
     }
 

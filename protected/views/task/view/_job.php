@@ -69,12 +69,14 @@ $canAction = $job->task->group_id == $this->_user()->group_id;
                     <div class="col col-md-4 text-right">
                         <?php if ($job->status != Job::STATUS_APPROVED && $canAction): ?>
                             <a class="btn btn-success"
+                               onclick="return approveTaskJob(<?= $job->id ?>)"
                                href='<?= Yii::app()->createUrl("task/approve", array("id" => $job->id)) ?>'>
                                 <i class="fa fa-check"></i> <?= __('Approve') ?>
                             </a>
                         <?php endif; ?>
                         <?php if ($job->status != Job::STATUS_REJECTED && $canAction): ?>
                             <a class="btn btn-danger"
+                               onclick="return rejectTaskJob(<?= $job->id ?>)"
                                href='<?= Yii::app()->createUrl("task/reject", array("id" => $job->id)) ?>'>
                                 <i class="fa fa-ban"></i> <?= __('Reject') ?></a>
                         <?php endif; ?>

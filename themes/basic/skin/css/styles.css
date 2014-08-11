@@ -98,7 +98,7 @@ table thead {
     height: 100%;
     left: 0;
     overflow: hidden;
-    position: absolute;
+    position: fixed;
     opacity: 0.6;
     right: 0;
     top: 0;

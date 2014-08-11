@@ -36,11 +36,18 @@
         return false;
     }
     function approveTaskJob(id) {
-        alert(id);
+        $('#task-jobs-grid .defender').show();
+        $('#modal_task_job_view').load('<?=Yii::app()->createUrl("task/approve")?>/' + id, function () {
+
+            $('#task-jobs-grid').yiiGridView('update', {});
+        })
         return false;
     }
     function rejectTaskJob(id) {
-        alert(id);
+        $('#task-jobs-grid .defender').show();
+        $('#modal_task_job_view').load('<?=Yii::app()->createUrl("task/reject")?>/' + id, function () {
+            $('#task-jobs-grid').yiiGridView('update', {});
+        })
         return false;
     }
 
