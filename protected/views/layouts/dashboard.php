@@ -33,7 +33,7 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                 array(
                     'label' => __( 'Calendar'),
                     'url'   => array(
-                        '/tasks/calendar'
+                        '/calendar'
                     ),
                 ),
 
