@@ -5,10 +5,15 @@
 
 <ol class="breadcrumb">
     <li><a href="/"><?= __('Home') ?></a></li>
-    <li><a href="/period"><?= __('Periods') ?></a></li>
-    <li>
-        <a href="/task/period/<?= $model->period_id ?>"><?= __('Tasks on :period', array(':period' => $model->period->name)) ?></a>
-    </li>
+    <?php if ($model->period): ?>
+        <li><a href="/period"><?= __('Periods') ?></a></li>
+
+        <li>
+            <a href="/task/period/<?= $model->period_id ?>"><?= __('Tasks on :period', array(':period' => $model->period->name)) ?></a>
+        </li>
+    <?php else: ?>
+        <li><a href="/task"><?= __('Tasks') ?></a></li>
+    <?php endif; ?>
     <li><?= $model->name ?></li>
     <span class="pull-right action_admin actions">
         <a href="/task/update/<?= $model->id ?>"><i class="fa fa-edit"></i> <?= __('Update') ?></a>

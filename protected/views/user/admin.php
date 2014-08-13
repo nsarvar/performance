@@ -39,6 +39,7 @@ $('.search-form form').submit(function(){
                 <?php $this->widget('bootstrap.widgets.BsGridView', array(
                 'id'          => 'user-grid',
                 'dataProvider'=> $model->search(),
+                'type'         => BsHtml::GRID_TYPE_STRIPED,
                 'template'    => "{items}\n{pager}<div class='defender'></div>",
                 'columns'     => array(
                     array('name'=> 'id', 'header'=> 'ID', 'htmlOptions'=> array('width'=> '60px')),

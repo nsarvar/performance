@@ -152,6 +152,12 @@ class File extends CActiveRecord
             } catch (Exception $e) {
 
             }
+        } elseif (is_file(UPLOAD_DIR . $this->realname)) {
+            try {
+                unlink(UPLOAD_DIR . $this->realname);
+            } catch (Exception $e) {
+
+            }
         }
 
         return parent::afterDelete();

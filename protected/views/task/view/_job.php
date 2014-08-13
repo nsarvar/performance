@@ -36,7 +36,7 @@ $canAction = $job->task->group_id == $this->_user()->group_id;
                                         <i class="fa <?= $file->getClass() ?>"></i>
                                         <?= $file->file_name ?>
                                     </span>
-                                        <span class="qq-upload-size"><?= $file->getFileSize() ?></span>
+                                        <span class="qq-upload-size hidden-xs"><?= $file->getFileSize() ?></span>
                                         <a class="qq-upload-delete" href="/task/file/<?= $file->realname ?>">
                                             <i class="fa fa-download"></i> <span
                                                 class="hidden-xs"><?= __('Download') ?></span>
@@ -49,12 +49,13 @@ $canAction = $job->task->group_id == $this->_user()->group_id;
                     </div>
                 </div>
             </div>
+
             <div class="col col-sm-12">
                 <hr>
                 <div class="row">
-                    <div class="col col-md-8">
+                    <div class="col col-sm-8 hidden-xs">
                         <p>
-                        <span class="formatted">
+                        <span class="formatted ">
                             <?php if ($job->user): ?>
                                 <?= __('Updated by <b>:user</b> on <b>:date</b>', array(':user' => $job->user->name, ':date' => Task::getFormattedDate($job->updated_at, 'd-F, Y H:i:s'))) ?>
                             <?php else: ?>
@@ -66,7 +67,7 @@ $canAction = $job->task->group_id == $this->_user()->group_id;
                         </span>
                         </p>
                     </div>
-                    <div class="col col-md-4 text-right">
+                    <div class="col col-xs-12 col-sm-4 text-right">
                         <?php if ($job->status != Job::STATUS_APPROVED && $canAction): ?>
                             <a class="btn btn-success"
                                onclick="return approveTaskJob(<?= $job->id ?>)"

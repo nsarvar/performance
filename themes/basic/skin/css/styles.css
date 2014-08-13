@@ -219,6 +219,8 @@ table thead th:first-child {
 
 .qq-upload-success .qq-upload-file {
     display: inline-block;
+    height: 16px;
+    overflow: hidden;
     width: 60%;
 }
 

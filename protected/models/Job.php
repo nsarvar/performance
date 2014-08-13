@@ -35,7 +35,6 @@ class Job extends CActiveRecord
     public function rules()
     {
         return array(
-            array('content', 'required'),
             array('organization_id, status, user_id, task_id', 'length', 'max' => 11),
             array('updated_at', 'safe'),
             array('id, organization_id, content, status, updated_at, user_id, task_id', 'safe', 'on' => 'search'),
@@ -166,6 +165,15 @@ class Job extends CActiveRecord
     }
 
     public $job_files;
+
+    public function beforeDelete()
+    {
+        foreach ($this->files as $file) {
+            $file->delete();
+        }
+
+        return parent::beforeDelete();
+    }
 
 
     protected function beforeSave()

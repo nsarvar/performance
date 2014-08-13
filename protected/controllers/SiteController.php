@@ -4,16 +4,42 @@ class SiteController extends Controller
 {
     public $layout = '//layouts/dashboard';
 
+    public function filters()
+    {
+        return array(
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions' => array('login'),
+                'users'   => array('*'),
+            ),
+            array('allow',
+                'actions' => array('index', 'logout'),
+                'users'   => array('@'),
+            ),
+            array('allow',
+                'actions' => array('admin', 'delete'),
+                'users'   => array('admin'),
+            ),
+            array('deny',
+                'users' => array('*'),
+            ),
+        );
+    }
+
     public function actions()
     {
         return array(
-            // captcha action renders the CAPTCHA image displayed on the contact page
             'captcha' => array(
                 'class'     => 'CCaptchaAction',
                 'backColor' => 0xFFFFFF,
             ),
-            // page action renders "static" pages stored under 'protected/views/site/pages'
-            // They can be accessed via: index.php?r=site/page&view=FileName
             'page'    => array(
                 'class' => 'CViewAction',
             ),
@@ -26,8 +52,6 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        // renders the view file 'protected/views/site/index.php'
-        // using the default layout 'protected/views/layouts/main.php'
         $this->render('index');
     }
 
@@ -53,7 +77,7 @@ class SiteController extends Controller
         if (isset($_POST['ContactForm'])) {
             $model->attributes = $_POST['ContactForm'];
             if ($model->validate()) {
-                $name = '=?UTF-8?B?' . base64_encode($model->name) . '?=';
+                $name    = '=?UTF-8?B?' . base64_encode($model->name) . '?=';
                 $subject = '=?UTF-8?B?' . base64_encode($model->subject) . '?=';
                 $headers = "From: $name <{$model->email}>\r\n" .
                     "Reply-To: {$model->email}\r\n" .
@@ -74,7 +98,7 @@ class SiteController extends Controller
     public function actionLogin()
     {
         $this->layout = '//layouts/dialog';
-        $model = new LoginForm;
+        $model        = new LoginForm;
 
         // if it is ajax validation request
         if (isset($_POST['ajax']) && $_POST['ajax'] === 'login-form') {

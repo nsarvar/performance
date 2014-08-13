@@ -407,11 +407,18 @@ class Task extends CActiveRecord
 
     protected $saveFiles;
 
-    public function onAfterFind($event)
+    public function beforeDelete()
     {
-        return parent::onAfterFind($event);
-    }
+        foreach ($this->files as $file) {
+            $file->delete();
+        }
 
+        foreach ($this->jobs as $job) {
+            $job->delete();
+        }
+
+        return parent::beforeDelete();
+    }
 
     protected function beforeSave()
     {
@@ -497,31 +504,27 @@ class Task extends CActiveRecord
                 $oldJobs[$job->organization_id] = $job;
             }
 
-            if (count($newJobs)) {
-                $inserts = array();
-                $date    = date_create()->format(self::DF_INTER);
-                foreach ($newJobs as $id) {
-                    if (!isset($oldJobs[$id]))
-                        $inserts[] = array(
-                            'organization_id' => intval($id),
-                            'status'          => Job::STATUS_PENDING,
-                            'task_id'         => $this->id,
-                            'updated_at'      => $date
-                        );
-                }
-                if (count($inserts)) {
-                    try {
-                        Job::batchInsert($inserts);
-                    } catch (Exception $e) {
-                    }
-                }
-                foreach ($oldJobs as $orgId => $job) {
-                    if (!in_array($orgId, $newJobs)) {
-                        try {
-                            $job->delete();
-                        } catch (Exception $e) {
-                        }
-                    }
+            $inserts = array();
+            $date    = date_create()->format(self::DF_INTER);
+            foreach ($newJobs as $id) {
+                if (intval($id) && !isset($oldJobs[$id]))
+                    $inserts[] = array(
+                        'organization_id' => intval($id),
+                        'status'          => Job::STATUS_PENDING,
+                        'task_id'         => $this->id,
+                        'updated_at'      => $date
+                    );
+            }
+
+            if (count($inserts)) {
+                Job::batchInsert($inserts);
+            }
+            /**
+             * @var $job Job
+             */
+            foreach ($oldJobs as $orgId => $job) {
+                if (!in_array($orgId, $newJobs)) {
+                    $job->delete();
                 }
             }
 
@@ -543,7 +546,7 @@ class Task extends CActiveRecord
             if ($newFiles && count($newFiles)) {
                 if (is_dir($taskDir)) {
                     foreach ($newFiles as $realname => $orgname) {
-                        if (!isset($oldFiles[$realname])) {
+                        if ($realname && !isset($oldFiles[$realname])) {
                             $file            = new File();
                             $file->realname  = $realname;
                             $file->file_name = $orgname;
@@ -561,11 +564,10 @@ class Task extends CActiveRecord
             }
 
             foreach ($oldFiles as $realname => $file) {
-                if (!$newFiles || count($newFiles) == 0 || !isset($newFiles[$realname]))
-                    try {
-                        $file->delete();
-                    } catch (Exception $e) {
-                    }
+                if (!$newFiles || count($newFiles) == 0 || !isset($newFiles[$realname])) {
+                    $file->delete();
+                }
+
             }
         }
 

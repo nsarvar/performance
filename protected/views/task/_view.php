@@ -44,7 +44,7 @@
 
             <div class="col col-md-5">
                 <div class="form-group">
-                    <label><?=__('Details')?></label>
+                    <label><?= __('Details') ?></label>
                     <table class="table  table-condensed table-hover tbl-details">
                         <tbody>
                         <tr>
@@ -68,11 +68,12 @@
                             <th><?= __('Status') ?></th>
                             <td><?= $model->getStatusLabel() ?></td>
                         </tr>
-                        <tr>
-                            <th><?= __('Period') ?></th>
-                            <td><a href="/task/period/<?= $model->period_id ?>"><?= $model->period->name ?></a></td>
-                        </tr>
-
+                        <?php if ($model->period): ?>
+                            <tr>
+                                <th><?= __('Period') ?></th>
+                                <td><a href="/task/period/<?= $model->period_id ?>"><?= $model->period->name ?></a></td>
+                            </tr>
+                        <?php endif; ?>
                         <tr>
                             <th><?= __('Curator') ?></th>
                             <td><a href="/user/<?= $model->user_id ?>"><?= $model->user->name ?></a></td>
