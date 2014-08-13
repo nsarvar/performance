@@ -2,9 +2,6 @@
 
 class CalendarController extends Controller
 {
-
-    public $layout = '//layouts/dashboard';
-
     public function actionIndex()
     {
         $this->render('index');
@@ -45,40 +42,5 @@ class CalendarController extends Controller
         $this->renderJSON($result);
     }
 
-    public function filters()
-    {
-        return array(
-            'accessControl', // perform access control for CRUD operations
-        );
-    }
 
-    public function accessRules()
-    {
-        return array(
-            array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('index', 'events'),
-                'users'   => array('@'),
-            ),
-            array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions' => array('admin', 'delete'),
-                'users'   => array('admin'),
-            ),
-            array('deny', // deny all users
-                'users' => array('*'),
-            ),
-        );
-    }
-
-    protected function renderJSON($data)
-    {
-        header('Content-type: application/json');
-        echo CJSON::encode($data);
-
-        foreach (Yii::app()->log->routes as $route) {
-            if ($route instanceof CWebLogRoute) {
-                $route->enabled = false; // disable any weblogroutes
-            }
-        }
-        Yii::app()->end();
-    }
 }

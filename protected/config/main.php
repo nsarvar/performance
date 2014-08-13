@@ -17,6 +17,12 @@ return array(
         'bootstrap' => 'ext.bootstrap',
     ),
 
+    /*'behaviors' => array(
+        'onBeginRequest' => array(
+            'class' => 'application.components.RequireLogin'
+        )
+    ),*/
+
     'import'     => array(
         'application.models.*',
         'application.components.*',

@@ -2,48 +2,14 @@
 
 class TaskController extends Controller
 {
-    /**
-     * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-     * using two-column layout. See 'protected/views/layouts/column2.php'.
-     */
-    public $layout = '//layouts/dashboard';
 
-    /**
-     * @return array action filters
-     */
-    public function filters()
+    public function actionIndex()
     {
-        return array(
-            'accessControl', // perform access control for CRUD operations
-            'postOnly + delete', // we only allow deletion via POST request
-        );
+        return $this->actionAdmin();
     }
 
-    /**
-     * Specifies the access control rules.
-     * This method is used by the 'accessControl' filter.
-     * @return array access control rules
-     */
-    public function accessRules()
-    {
-        return array(
-            array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('delete', 'file', 'index', 'view', 'full', 'test', 'ajaxjobs', 'ajaxjobsfull', 'ajaxjob', 'approve', 'reject', 'job', 'create', 'update', 'admin', 'period', 'upload', 'tasks', 'organizations', 'selectedOrg', 'disable', 'enable'),
-                'users'   => array('@'),
-            ),
-            array('deny', // deny all users
-                'users' => array('*'),
-            ),
-        );
-    }
-
-    /**
-     * Displays a particular model.
-     * @param integer $id the ID of the model to be displayed
-     */
     public function actionJob($id)
     {
-        //view by task executor
         /**
          * @var $job Job
          */
@@ -166,11 +132,7 @@ class TaskController extends Controller
         $this->redirect(array('view', $job->task->id));
     }
 
-    /**
-     * Updates a particular model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id the ID of the model to be updated
-     */
+
     public function actionDisable($id)
     {
         $model = $this->loadModel($id);
@@ -220,10 +182,6 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Creates a new model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     */
     public function actionCreate($id)
     {
 
@@ -233,7 +191,6 @@ class TaskController extends Controller
 
         $this->createAndUpdate($model);
     }
-
 
     protected function createAndUpdate(Task $model)
     {
@@ -334,17 +291,6 @@ class TaskController extends Controller
             throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     }
 
-    /**
-     * Lists all models.
-     */
-    public function actionIndex()
-    {
-        return $this->actionAdmin();
-    }
-
-    /**
-     * Manages all models.
-     */
     public function actionAdmin()
     {
         $model = new Task('search');
@@ -357,9 +303,6 @@ class TaskController extends Controller
         ));
     }
 
-    /**
-     * Manages all models.
-     */
     public function actionPeriod($periodId)
     {
         $period = Period::model()->findByPk($periodId);
@@ -380,8 +323,6 @@ class TaskController extends Controller
     }
 
     /**
-     * Returns the data model based on the primary key given in the GET variable.
-     * If the data model is not found, an HTTP exception will be raised.
      * @param integer $id the ID of the model to be loaded
      * @return Task the loaded model
      * @throws CHttpException
@@ -395,21 +336,12 @@ class TaskController extends Controller
         return $model;
     }
 
-    /**
-     * Performs the AJAX validation.
-     * @param Task $model the model to be validated
-     */
     protected function performAjaxValidation($model)
     {
         if (isset($_POST['ajax']) && $_POST['ajax'] === 'task-form') {
             echo CActiveForm::validate($model);
             Yii::app()->end();
         }
-    }
-
-    protected function show404()
-    {
-        throw new CHttpException(404, 'The requested page does not exist.');
     }
 
     public function actionUpload()
@@ -427,12 +359,6 @@ class TaskController extends Controller
             $result['filename'] = "<i class='fa $class'></i> " . $result['orgname'];
         }
         echo json_encode($result);
-    }
-
-    public function actionTest()
-    {
-        $start = date_create_from_format('d-m-Y H:i:s', '12-08-2014 23:59:59');
-        echo $start->format('Y-m-d H:i:s');
     }
 
     public function actionAjaxJob($id)
@@ -462,20 +388,6 @@ class TaskController extends Controller
         ));
     }
 
-
-    protected $_user;
-
-    /**
-     * @return User
-     */
-    public function _user()
-    {
-        if (!$this->_user) {
-            $this->_user = User::model()->findByPk(Yii::app()->user->user_id);
-        }
-
-        return $this->_user;
-    }
 
     protected function downloadFile(File $file)
     {
