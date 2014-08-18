@@ -9,13 +9,6 @@ $this->breadcrumbs=array(
 	$model->name,
 );
 
-$this->menu=array(
-    array('icon' => 'glyphicon glyphicon-list','label'=>'List Group', 'url'=>array('index')),
-	array('icon' => 'glyphicon glyphicon-plus-sign','label'=>'Create Group', 'url'=>array('create')),
-	array('icon' => 'glyphicon glyphicon-edit','label'=>'Update Group', 'url'=>array('update', 'id'=>$model->id)),
-	array('icon' => 'glyphicon glyphicon-minus-sign','label'=>'Delete Group', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
-    array('icon' => 'glyphicon glyphicon-tasks','label'=>'Manage Group', 'url'=>array('admin')),
-);
 ?>
 
 <?php echo BsHtml::pageHeader('View','Group '.$model->id) ?>

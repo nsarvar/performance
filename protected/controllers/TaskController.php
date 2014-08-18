@@ -63,7 +63,7 @@ class TaskController extends Controller
     public function actionView($id)
     {
         $model = $this->loadModel($id);
-        if ($model->user_id == $this->_user()->id || ($this->_user()->group_id && $this->_user()->group_id == $model->group_id)) {
+        if ($this->_user()->role == User::ROLE_ADMIN || $model->user_id == $this->_user()->id || ($this->_user()->group_id && $this->_user()->group_id == $model->group_id)) {
             //view by task owner
             $this->render('view', array(
                 'model' => $model,

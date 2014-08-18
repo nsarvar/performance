@@ -13,6 +13,12 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
             'activateParents' => true,
             'items'           => array(
                 array(
+                    'label' => __( 'Calendar'),
+                    'url'   => array(
+                        '/calendar'
+                    ),
+                ),
+                array(
                     'label' => __( 'Organizations'),
                     'url'   => array(
                         '/organization'
@@ -30,17 +36,17 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                         '/task'
                     ),
                 ),
-                array(
-                    'label' => __( 'Calendar'),
-                    'url'   => array(
-                        '/calendar'
-                    ),
-                ),
 
                 array(
                     'label' => __( 'Users'),
                     'url'   => array(
                         '/user'
+                    ),
+                ),
+                array(
+                    'label' => __( 'Groups'),
+                    'url'   => array(
+                        '/group'
                     ),
                 ),
                 array(

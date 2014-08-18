@@ -90,7 +90,8 @@ class Controller extends CController
         } elseif (Yii::app()->controller->action->id == 'login') {
             return $c->run();
         }
-        $this->show404();
+        return $c->run();
+       //$this->show404();
     }
 
 

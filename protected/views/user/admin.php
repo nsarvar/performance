@@ -12,15 +12,15 @@ $('.search-form form').submit(function(){
 ");
 ?>
 <ol class="breadcrumb">
-    <li><a href="/">Home</a></li>
-    <li>Users</li>
+    <li><a href="/"><?=__('Home')?></a></li>
+    <li><?=__('Users')?></li>
     <span class="pull-right admin_action">
         <a href="/user/create"><i class="fa fa-plus"></i> <?=__( 'Create New User')?></a>
     </span>
 </ol>
 <div class="page-header">
     <h3>
-        Users
+        <?=__('Users')?>
     </h3>
 </div>
 <div class="row">

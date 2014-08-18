@@ -28,7 +28,8 @@ $cs
     <meta name="language" content="en"/>
 
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
-
+    <link rel="icon" href="/favicon.jpeg" type="image/jpeg">
+    <link rel="shortcut icon" href="/favicon.jpeg">
     <!--[if lt IE 9]>
     <script src="<?php echo Yii::app()->theme->baseUrl ?>/assets/js/html5shiv.js"></script>
     <script src="<?php echo Yii::app()->theme->baseUrl ?>/assets/js/respond.min.js"></script>

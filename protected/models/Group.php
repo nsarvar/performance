@@ -31,12 +31,12 @@ class Group extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('short_name', 'required'),
-            array('name', 'length', 'max'=> 64),
-            array('short_name', 'length', 'max'=> 32),
+            array('short_name,name', 'required'),
+            array('name', 'length', 'max' => 64),
+            array('short_name', 'length', 'max' => 32),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, name, short_name', 'safe', 'on'=> 'search'),
+            array('id, name, short_name', 'safe', 'on' => 'search'),
         );
     }
 
@@ -89,7 +89,7 @@ class Group extends CActiveRecord
         $criteria->compare('short_name', $this->short_name, true);
 
         return new CActiveDataProvider($this, array(
-            'criteria'=> $criteria,
+            'criteria' => $criteria,
         ));
     }
 
@@ -115,7 +115,7 @@ class Group extends CActiveRecord
             ORDER BY `name`
         ')->queryAll();
 
-        $result = array(''=> '');
+        $result = array('' => '');
         foreach ($groups as $group) {
             $result[$group['id']] = $group['name'];
         }

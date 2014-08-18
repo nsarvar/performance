@@ -4,17 +4,16 @@
 /* @var $form BSActiveForm */
 ?>
 
-<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm', array(
-    'action'=>Yii::app()->createUrl($this->route),
-    'method'=>'get',
+<?php $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
+    'action' => Yii::app()->createUrl($this->route),
+    'method' => 'get',
 )); ?>
 
-    <?php echo $form->textFieldControlGroup($model,'id',array('maxlength'=>11)); ?>
-    <?php echo $form->textFieldControlGroup($model,'name',array('maxlength'=>64)); ?>
-    <?php echo $form->textFieldControlGroup($model,'short_name',array('maxlength'=>32)); ?>
+<?php echo $form->textFieldControlGroup($model, 'name', array('maxlength' => 64)); ?>
 
-    <div class="form-actions">
-        <?php echo BsHtml::submitButton('Search',  array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>
-    </div>
-
+<div class="form-actions pull-right">
+    <?php echo BsHtml::submitButton('Search', array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>
+</div>
+<div class="clearfix"></div>
 <?php $this->endWidget(); ?>
+

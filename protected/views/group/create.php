@@ -4,17 +4,13 @@
 ?>
 
 <?php
-$this->breadcrumbs=array(
-	'Groups'=>array('index'),
-	'Create',
-);
-
-$this->menu=array(
-    array('icon' => 'glyphicon glyphicon-list','label'=>'List Group', 'url'=>array('index')),
-	array('icon' => 'glyphicon glyphicon-tasks','label'=>'Manage Group', 'url'=>array('admin')),
+$this->breadcrumbs = array(
+    'Users'  => array('user'),
+    'Groups' => array('index'),
+    'Create New Group',
 );
 ?>
 
-<?php echo BsHtml::pageHeader('Create','Group') ?>
+<?php echo BsHtml::pageHeader('Create New Group') ?>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model' => $model)); ?>
