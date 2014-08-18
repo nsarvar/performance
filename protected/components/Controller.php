@@ -3,7 +3,7 @@
 class Controller extends CController
 {
 
-    public $layout = '//layouts/dashboard';
+    public $layout = '//layouts/dialog';
     /**
      * @var array context menu items. This property will be assigned to {@link CMenu::items}.
      */
@@ -52,11 +52,12 @@ class Controller extends CController
         );
     }
 
+
     protected $acl = array(
         User::ROLE_SUPER_ADMIN => array('*' => '*'),
         User::ROLE_ADMIN       => array('*' => '*'),
         User::ROLE_MODERATOR   => array(
-            'site'         => array('login', 'logout'),
+            'site'         => array('index', 'login', 'logout'),
             'calendar'     => array('index', 'events'),
             'period'       => array('index', 'ajax'),
             'organization' => array('view'),
@@ -64,7 +65,7 @@ class Controller extends CController
             'task'         => array('job', 'view', 'upload', 'file')
         ),
         User::ROLE_USER        => array(
-            'site'         => array('login', 'logout'),
+            'site'         => array('index', 'login', 'logout','usertasks'),
             'calendar'     => array('index', 'events'),
             'period'       => array('index', 'ajax', 'view'),
             'organization' => array('view'),
@@ -77,9 +78,10 @@ class Controller extends CController
     {
         $acl = $this->acl;
         if ($user = $this->_user()) {
-            $userRole   = $this->_user()->role;
-            $action     = Yii::app()->controller->action->id;
-            $controller = Yii::app()->controller->id;
+            $this->layout = '//layouts/' . $user->role;
+            $userRole     = $this->_user()->role;
+            $action       = Yii::app()->controller->action->id;
+            $controller   = Yii::app()->controller->id;
 
             if (isset($acl[$userRole])) {
                 if (isset($acl[$userRole]['*']) || isset($acl[$userRole][$controller]) && in_array($action, $acl[$userRole][$controller])) {
@@ -90,8 +92,9 @@ class Controller extends CController
         } elseif (Yii::app()->controller->action->id == 'login') {
             return $c->run();
         }
-        return $c->run();
-       //$this->show404();
+
+        //return $c->run();
+        $this->show404();
     }
 
 
@@ -129,4 +132,5 @@ class Controller extends CController
     {
         throw new CHttpException(404, 'The requested page does not exist.');
     }
+
 }

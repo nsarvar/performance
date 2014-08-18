@@ -241,4 +241,50 @@ class Job extends CActiveRecord
 
         return parent::afterSave();
     }
+
+    public $name;
+    public $number;
+    public $priority;
+    public $user_name;
+    public $task_user_id;
+
+    public function userTasks(User $user)
+    {
+        $criteria         = new CDbCriteria;
+        $criteria->alias  = 'job';
+        $criteria->select = 'task.user_id as task_user_id, task.name as name, task.number as number, task.priority as priority, user.name as user_name, job.*';
+        $criteria->join   = 'LEFT JOIN ' . Task::model()->tableName() . ' on task.id = job.task_id
+                             LEFT JOIN ' . User::model()->tableName() . ' on user.id = task.user_id';
+        $criteria->compare('job.organization_id', $user->organization_id);
+
+        return new CActiveDataProvider(
+            Job::model(),
+            array(
+                'criteria'   => $criteria,
+                'sort'       => array(
+                    'defaultOrder' => 'task.period_id DESC, task.priority DESC, job.status ASC',
+                    'route'        => "site/usertasks",
+                    'attributes'   => array(
+                        'priority'  => array(
+                            'asc'  => 'task.priority',
+                            'desc' => 'task.priority DESC',
+                        ),
+                        'number'    => array(
+                            'asc'  => 'task.number',
+                            'desc' => 'task.number DESC',
+                        ),
+                        'user_name' => array(
+                            'asc'  => 'user.name',
+                            'desc' => 'user.name DESC',
+                        ),
+                        '*',
+                    ),
+                ),
+                'pagination' => array(
+                    'pageSize' => 20,
+                    'route'    => "site/usertasks"
+                ),
+            ));
+    }
+
 }

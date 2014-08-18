@@ -17,7 +17,7 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        $this->render('index');
+        $this->render($this->_user()->role);
     }
 
     public function actionError()
@@ -72,6 +72,12 @@ class SiteController extends Controller
         $this->render('login', array('model' => $model));
     }
 
+
+    public function actionUserTasks()
+    {
+        $model = new Job('search');
+        $this->renderPartial('user/tasks', array('model' => $model));
+    }
 
     public function actionLogout()
     {

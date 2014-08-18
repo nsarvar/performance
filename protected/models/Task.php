@@ -341,6 +341,8 @@ class Task extends CActiveRecord
     }
 
 
+
+
     public function getTaskJobs($status = NULL, $neq = false, $full = false)
     {
         /**
