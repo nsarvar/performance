@@ -12,12 +12,12 @@ $model = new Job('search');
 <ol class="breadcrumb">
     <li><a href="/"><?= __('Home') ?></a></li>
     <li><a href="/task/user"><?= __('Tasks') ?></a></li>
-    <li><?= __('Active') ?></li>
+    <li><?=Period::getCurrentPeriod()->name ?></li>
 </ol>
 
 <div class="page-header">
     <h3>
-        <i class="fa fa-tasks"></i> <?= __('Active Tasks') ?>
+        <i class="fa fa-tasks"></i> <?= __('Tasks on :period', array(':period' => Period::getCurrentPeriod()->name)) ?>
     </h3>
 </div>
 

@@ -13,10 +13,12 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
             'activateParents' => true,
             'items'           => array(
                 array(
-                    'label' => __('Calendar'),
-                    'url'   => array(
+                    'label'   => __('Calendar'),
+                    'url'     => array(
                         '/calendar'
                     ),
+                    'visible' => false
+
                 ),
                 array(
                     'label' => __('Organizations'),

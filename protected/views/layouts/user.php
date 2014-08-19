@@ -27,7 +27,7 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                 array(
                     'label' => __('Tasks'),
                     'url'   => array(
-                        '/task'
+                        '/task/user'
                     ),
                 )
             )

@@ -256,18 +256,23 @@ class Job extends CActiveRecord
         $criteria->join   = 'LEFT JOIN ' . Task::model()->tableName() . ' on task.id = job.task_id
                              LEFT JOIN ' . User::model()->tableName() . ' on user.id = task.user_id';
         $criteria->compare('job.organization_id', $user->organization_id);
+        $criteria->compare('task.period_id', Period::getCurrentPeriod()->id);
 
         return new CActiveDataProvider(
             Job::model(),
             array(
                 'criteria'   => $criteria,
                 'sort'       => array(
-                    'defaultOrder' => 'task.period_id DESC, task.priority DESC, job.status ASC',
+                    'defaultOrder' => 'task.period_id DESC, job.status ASC, task.priority DESC',
                     'route'        => "site/usertasks",
                     'attributes'   => array(
                         'priority'  => array(
                             'asc'  => 'task.priority',
                             'desc' => 'task.priority DESC',
+                        ),
+                        'name'      => array(
+                            'asc'  => 'task.name',
+                            'desc' => 'task.name DESC',
                         ),
                         'number'    => array(
                             'asc'  => 'task.number',

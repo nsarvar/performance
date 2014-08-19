@@ -68,7 +68,7 @@ table thead {
 }
 
 .table-striped {
-    border: 1px solid #dddddd;
+    border: 1px solid #ddd;
     border-top: none;
 }
 
@@ -89,7 +89,7 @@ table thead {
 }
 
 .defender {
-    background-color: #ffffff;
+    background-color: #fff;
     background-image: url('../img/loader.gif');
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -253,7 +253,7 @@ table thead th:first-child {
 }
 
 .prt {
-    color: #ffffff;
+    color: #fff;
     font-weight: bold;
     padding: 3px 10px;
     border-radius: 3px;
@@ -348,4 +348,32 @@ table thead th:first-child {
 
 #cal-slide-box {
     z-index: 10000;
+}
+
+.sts-rejected td,.sts-rejected td a {
+    color: #d9534f !important;
+}
+
+.sts-approved td, .sts-approved td a{
+    color: #5cb85c !important;
+}
+
+.mrk:before {
+    font-family: fontawesome;
+    content: "\f128";
+    margin-right: 5px;
+    width: 10px;
+    display: inline-block;
+}
+
+.mark-approved:before {
+    content: "\f00c";
+}
+
+.mark-rejected:before {
+    content: "\f122";
+}
+
+.mark-progressing:before {
+    content: "\f0ec";
 }

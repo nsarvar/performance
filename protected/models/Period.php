@@ -131,37 +131,44 @@ class Period extends CActiveRecord
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_ARCHIVED = 'archived';
+    public static $current;
 
     /**
      * @return Period
      */
+
+
     public static function getCurrentPeriod()
     {
-        $start = new DateTime();
-        $start->setDate($start->format('Y'), $start->format('n'), 1)->setTime(0, 0, 0);
+        if (!self::$current) {
+            $start = new DateTime();
+            $start->setDate($start->format('Y'), $start->format('n'), 1)->setTime(0, 0, 0);
 
-        $end = clone $start;
-        $end = $end->modify('+' . (cal_days_in_month(CAL_GREGORIAN, $start->format('n'), $start->format('Y'))) . ' day')->modify('-1 sec');
+            $end = clone $start;
+            $end = $end->modify('+' . (cal_days_in_month(CAL_GREGORIAN, $start->format('n'), $start->format('Y'))) . ' day')->modify('-1 sec');
 
-        $period = Period::model()->findByAttributes(array(
-            'period_from' => $start->format(Task::DF_INTER),
-            'period_to'   => $end->format(Task::DF_INTER),
-        ));
+            $period = Period::model()->findByAttributes(array(
+                'period_from' => $start->format(Task::DF_INTER),
+                'period_to'   => $end->format(Task::DF_INTER),
+            ));
 
-        if ($period == NULL) {
-            $period              = new Period();
-            $period->period_from = $start->format(Task::DF_INTER);
-            $period->period_to   = $end->format(Task::DF_INTER);
-            $period->status      = self::STATUS_ACTIVE;
-            $period->name        = $start->format('F, Y');
-            try {
-                $period->save();
-            } catch (Exception $e) {
+            if ($period == NULL) {
+                $period              = new Period();
+                $period->period_from = $start->format(Task::DF_INTER);
+                $period->period_to   = $end->format(Task::DF_INTER);
+                $period->status      = self::STATUS_ACTIVE;
+                $period->name        = $start->format('F, Y');
+                try {
+                    $period->save();
 
+                } catch (Exception $e) {
+
+                }
             }
+            self::$current = $period;
         }
 
-        return $period;
+        return self::$current;
     }
 
     public function isCurrentPeriod()
