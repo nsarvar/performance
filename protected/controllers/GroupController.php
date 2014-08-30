@@ -72,13 +72,17 @@ class GroupController extends Controller
         $model->unsetAttributes(); // clear any default values
         if (isset($_GET['Group']))
             $model->attributes = $_GET['Group'];
-
-        $this->render('index', array(
-            'model' => $model,
-        ));
+        if (Yii::app()->request->isAjaxRequest)
+            $this->renderPartial('index/grid', array(
+                'model' => $model,
+            )); else
+            $this->render('index', array(
+                'model' => $model,
+            ));
     }
 
-    public function loadModel($id)
+    public
+    function loadModel($id)
     {
         $model = Group::model()->findByPk($id);
         if ($model === NULL)
@@ -87,7 +91,8 @@ class GroupController extends Controller
         return $model;
     }
 
-    protected function performAjaxValidation($model)
+    protected
+    function performAjaxValidation($model)
     {
         if (isset($_POST['ajax']) && $_POST['ajax'] === 'group-form') {
             echo CActiveForm::validate($model);

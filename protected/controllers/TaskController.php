@@ -26,22 +26,24 @@ class TaskController extends Controller
         ) {
 
             if (isset($_POST['Job'])) {
-                $job->setScenario('update');
-                $job->content = $_POST['Job']['content'];
-                $job->user_id = $this->_user()->id;
-                $job->status  = Job::STATUS_PROGRESSING;
+                if ($model->status == Task::STATUS_ENABLED && $job->status != Job::STATUS_APPROVED) {
+                    $job->setScenario('update');
+                    $job->content = $_POST['Job']['content'];
+                    $job->user_id = $this->_user()->id;
+                    $job->status = Job::STATUS_PROGRESSING;
 
-                if (isset($_POST['Job']['job_files']))
-                    $job->job_files = $_POST['Job']['job_files'];
+                    if (isset($_POST['Job']['job_files']))
+                        $job->job_files = $_POST['Job']['job_files'];
 
-                try {
-                    if ($job->save()) {
-                        Yii::app()->user->setFlash('success', __('Work of <b>:name</b> updated successfully', array(':name' => $job->organization->name)));
+                    try {
+                        if ($job->save()) {
+                            Yii::app()->user->setFlash('success', __('Work of <b>:name</b> updated successfully', array(':name' => $job->organization->name)));
+                        }
+                    } catch (Exception $e) {
+                        Yii::app()->user->setFlash('danger', $e->getMessage());
                     }
-                    $this->redirect(array('job', 'id' => $job->id));
-                } catch (Exception $e) {
-                    Yii::app()->user->setFlash('danger', $e->getMessage());
                 }
+                $this->redirect(array('job', 'id' => $job->id));
             } elseif ($job->status == Job::STATUS_PENDING && $job->organization_id == $this->_user()->organization_id) {
                 //change status after first view;
                 $job->status = Job::STATUS_RECEIVED;
@@ -53,7 +55,7 @@ class TaskController extends Controller
 
             $this->render('view_job', array(
                 'model' => $model,
-                'job'   => $job,
+                'job' => $job,
             ));
         }
 
@@ -185,7 +187,7 @@ class TaskController extends Controller
     public function actionCreate($id)
     {
 
-        $model            = new Task();
+        $model = new Task();
         $model->period_id = $id;
         $model->setScenario('create');
 
@@ -237,9 +239,9 @@ class TaskController extends Controller
 
 
         $this->render($model->getIsNewRecord() ? 'create' : 'update', array(
-            'model'               => $model,
-            'searchSelectedOrg'   => $searchSelectedOrg,
-            'searchTasks'         => $searchTasks,
+            'model' => $model,
+            'searchSelectedOrg' => $searchSelectedOrg,
+            'searchTasks' => $searchTasks,
             'searchOrganizations' => $searchOrganizations,
         ));
     }
@@ -317,7 +319,7 @@ class TaskController extends Controller
 
 
         $this->render('period', array(
-            'model'  => $model,
+            'model' => $model,
             'period' => $period
         ));
     }
@@ -348,14 +350,14 @@ class TaskController extends Controller
     {
         Yii::import("ext.EAjaxUpload.qqFileUploader");
 
-        $folder            = UPLOAD_TEMP_DIR;
+        $folder = UPLOAD_TEMP_DIR;
         $allowedExtensions = File::$allowedExt;
-        $sizeLimit         = 10 * 1024 * 1024;
-        $uploader          = new qqFileUploader($allowedExtensions, $sizeLimit);
-        $result            = $uploader->handleUpload($folder);
+        $sizeLimit = 10 * 1024 * 1024;
+        $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
+        $result = $uploader->handleUpload($folder);
         //sleep(1);
         if (isset($result['ext'])) {
-            $class              = File::getFileClass($result['ext']);
+            $class = File::getFileClass($result['ext']);
             $result['filename'] = "<i class='fa $class'></i> " . $result['orgname'];
         }
         echo json_encode($result);
@@ -431,24 +433,23 @@ class TaskController extends Controller
         } else {
             $file = File::model()->with(array('task', 'job'))->findByAttributes(['realname' => $id]);
             if ($file) {
+                $canAccess = $this->_user()->role == User::ROLE_SUPER_ADMIN || $this->_user()->role == User::ROLE_ADMIN;
                 if ($file->job) {
                     $job = $file->job;
-                    if ($job->task->group_id == $this->_user()->group_id ||
-                        $job->organization_id == $this->_user()->organization_id ||
-                        $this->_user()->role == User::ROLE_SUPER_ADMIN ||
-                        $this->_user()->role == User::ROLE_ADMIN
-                    ) return $this->downloadFile($file); else {
-                        return $this->cannotAccess();
+                    if ($canAccess || $job->task->group_id == $this->_user()->group_id || $job->organization_id == $this->_user()->organization_id)
+                        return $this->downloadFile($file);
+                } elseif ($task = $file->task) {
+                    foreach ($task->jobs as $job) {
+                        if ($job->organization_id == $this->_user()->organization_id) {
+                            $canAccess = true;
+                            break;
+                        }
                     }
+
+                    if ($canAccess || $task->group_id == $this->_user()->group_id)
+                        return $this->downloadFile($file);
                 }
-                if ($task = $file->task) {
-                    if ($task->group_id == $this->_user()->group_id ||
-                        $this->_user()->role == User::ROLE_SUPER_ADMIN ||
-                        $this->_user()->role == User::ROLE_ADMIN
-                    ) return $this->downloadFile($file); else {
-                        return $this->cannotAccess();
-                    }
-                }
+                return $this->cannotAccess();
             }
         }
         $this->show404();
