@@ -90,7 +90,7 @@ class OrganizationController extends Controller
      * @return Organization the loaded model
      * @throws CHttpException
      */
-    public function loadModel($id)
+    protected function loadModel($id)
     {
         $model = Organization::model()->findByPk($id);
         if ($model === NULL)

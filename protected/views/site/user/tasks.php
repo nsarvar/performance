@@ -2,7 +2,7 @@
     <div class="panel-body">
         <?php $this->widget('bootstrap.widgets.BsGridView', array(
             'id'                    => 'job-grid',
-            'dataProvider'          => $model->userTasks($this->_user()),
+            'dataProvider'          => $model->userTasksForCurrentPeriod($this->_user()),
             'template'              => "{items}\n{pager}<div class='defender'></div>",
             'type'                  => BsHtml::GRID_TYPE_STRIPED,
             'rowCssClassExpression' => '"prt-".$data->priority." sts-".$data->status',

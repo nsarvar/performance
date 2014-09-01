@@ -4,7 +4,7 @@
  * @var $this TaskController
  */
 $job = $data;
-$canAction = $job->task->group_id == $this->_user()->group_id;
+$canAction = $this->_user()->role == User::ROLE_SUPER_ADMIN || $job->task->group_id == $this->_user()->group_id;
 ?>
 <div class="panel panel-default ">
     <div class="panel-heading">

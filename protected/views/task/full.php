@@ -16,17 +16,19 @@
     <?php endif; ?>
     <li><a href="/task/view/<?= $model->id ?>"><?= $model->name ?></a></li>
     <li><?= __('Full') ?></li>
-    <span class="pull-right action_admin actions">
-        <a href="/task/update/<?= $model->id ?>"><i class="fa fa-edit"></i> <?= __('Update') ?></a>
-        <?php if ($model->status == Task::STATUS_ENABLED): ?>
-            <a href="/task/disable/<?= $model->id ?>"><i class="fa fa-power-off"></i> <?= __('Disable Task') ?></a>
-        <?php else: ?>
-            <a href="/task/enable/<?= $model->id ?>"><i class="fa fa-check-circle"></i> <?= __('Enable Task') ?></a>
-        <?php endif; ?>
-    </span>
+    <?php if ($model->canUpdate($this->_user())): ?>
+        <span class="pull-right actions">
+            <a href="/task/update/<?= $model->id ?>"><i class="fa fa-edit"></i> <?= __('Update') ?></a>
+            <?php if ($model->status == Task::STATUS_ENABLED): ?>
+                <a href="/task/disable/<?= $model->id ?>"><i class="fa fa-power-off"></i> <?= __('Disable Task') ?></a>
+            <?php else: ?>
+                <a href="/task/enable/<?= $model->id ?>"><i class="fa fa-check-circle"></i> <?= __('Enable Task') ?></a>
+            <?php endif; ?>
+        </span>
+    <?php endif ?>
 </ol>
 <div id="">
-<?php $this->renderPartial('/task/view/jobs_full', array('model' => $model)) ?>
+    <?php $this->renderPartial('/task/view/jobs_full', array('model' => $model)) ?>
 </div>
 <script type="text/javascript">
     function showTaskJob(id) {

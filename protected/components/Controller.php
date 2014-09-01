@@ -63,22 +63,23 @@ class Controller extends CController
 
     protected $acl = array(
         User::ROLE_SUPER_ADMIN => array('*' => '*'),
-        User::ROLE_ADMIN       => array('*' => '*'),
-        User::ROLE_MODERATOR   => array(
+        User::ROLE_ADMIN       => array(
             'site'         => array('index', 'login', 'logout'),
             'calendar'     => array('index', 'events'),
-            'period'       => array('index', 'ajax'),
-            'organization' => array('view'),
-            'user'         => array('view'),
-            'task'         => array('job', 'view', 'upload', 'file')
+            'period'       => array('index', 'ajax', 'view'),
+            'group'        => array('index', 'view'),
+            'organization' => array('index', 'admin', 'parent', 'view'),
+            'user'         => array('index', 'admin', 'ajax', 'view'),
+            'task'         => array('*')
         ),
+        User::ROLE_MODERATOR   => array(),
         User::ROLE_USER        => array(
             'site'         => array('index', 'login', 'logout', 'usertasks'),
             'calendar'     => array('index', 'events'),
             'period'       => array('index', 'ajax', 'view'),
             'organization' => array('view'),
             'user'         => array('view'),
-            'task'         => array('job', 'view', 'upload', 'file', 'period')
+            'task'         => array('index', 'job', 'view', 'upload', 'file', 'period', 'user')
         ),
     );
 
@@ -87,11 +88,17 @@ class Controller extends CController
         $acl = $this->acl;
         if ($user = $this->_user()) {
             $this->layout = '//layouts/' . $this->_role;
-            $action       = Yii::app()->controller->action->id;
-            $controller   = Yii::app()->controller->id;
+            $action = Yii::app()->controller->action->id;
+            $controller = Yii::app()->controller->id;
 
             if (isset($acl[$this->_role])) {
-                if (isset($acl[$this->_role]['*']) || isset($acl[$this->_role][$controller]) && in_array($action, $acl[$this->_role][$controller])) {
+                if (
+                    isset($acl[$this->_role]) &&
+                    (isset($acl[$this->_role]['*']) ||
+                        (isset($acl[$this->_role][$controller]) &&
+                            (in_array('*', $acl[$this->_role][$controller]) ||
+                                in_array($action, $acl[$this->_role][$controller]))))
+                ) {
                     return $c->run();
                 }
             }

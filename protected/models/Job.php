@@ -37,7 +37,7 @@ class Job extends CActiveRecord
         return array(
             array('organization_id, status, user_id, task_id', 'length', 'max' => 11),
             array('updated_at', 'safe'),
-            array('id, organization_id, content, status, updated_at, user_id, task_id', 'safe', 'on' => 'search'),
+            array('id,number,priority,period_id organization_id, content, status, updated_at, user_id, task_id', 'safe', 'on' => 'search'),
         );
     }
 
@@ -114,11 +114,11 @@ class Job extends CActiveRecord
         return parent::model($className);
     }
 
-    const STATUS_PENDING     = 'pending';
-    const STATUS_RECEIVED    = 'received';
+    const STATUS_PENDING = 'pending';
+    const STATUS_RECEIVED = 'received';
     const STATUS_PROGRESSING = 'progressing';
-    const STATUS_APPROVED    = 'approved';
-    const STATUS_REJECTED    = 'rejected';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_REJECTED = 'rejected';
 
     public static function getStatusArray($empty = true)
     {
@@ -137,7 +137,7 @@ class Job extends CActiveRecord
     public static function batchInsert($data = array())
     {
         if (count($data)) {
-            $cols   = array();
+            $cols = array();
             $values = array();
             foreach ($data[0] as $col => $value) {
                 $cols[] = "`$col`";
@@ -148,9 +148,9 @@ class Job extends CActiveRecord
                 }
                 $values[] = '(' . implode(',', $row) . ')';
             }
-            $cols    = implode(',', $cols);
-            $values  = implode(',', $values);
-            $sql     = "INSERT INTO `job` ($cols) VALUES $values;";
+            $cols = implode(',', $cols);
+            $values = implode(',', $values);
+            $sql = "INSERT INTO `job` ($cols) VALUES $values;";
             $command = Yii::app()->db->createCommand($sql);
             $command->execute();
         }
@@ -214,11 +214,11 @@ class Job extends CActiveRecord
 
                 foreach ($newFiles as $realname => $orgname) {
                     if (!isset($oldFiles[$realname])) {
-                        $file            = new File();
-                        $file->realname  = $realname;
+                        $file = new File();
+                        $file->realname = $realname;
                         $file->file_name = $orgname;
-                        $file->task_id   = $this->task->id;
-                        $file->job_id    = $this->id;
+                        $file->task_id = $this->task->id;
+                        $file->job_id = $this->id;
                         try {
                             if (!$file->save()) {
                                 Yii::app()->user->setFlash('danger', __('Cannot save ":file"', $file->file_name));
@@ -247,13 +247,14 @@ class Job extends CActiveRecord
     public $priority;
     public $user_name;
     public $task_user_id;
+    public $period_id;
 
-    public function userTasks(User $user)
+    public function userTasksForCurrentPeriod(User $user)
     {
-        $criteria         = new CDbCriteria;
-        $criteria->alias  = 'job';
+        $criteria = new CDbCriteria;
+        $criteria->alias = 'job';
         $criteria->select = 'task.user_id as task_user_id, task.name as name, task.number as number, task.priority as priority, user.name as user_name, job.*';
-        $criteria->join   = 'LEFT JOIN ' . Task::model()->tableName() . ' on task.id = job.task_id
+        $criteria->join = 'LEFT JOIN ' . Task::model()->tableName() . ' on task.id = job.task_id
                              LEFT JOIN ' . User::model()->tableName() . ' on user.id = task.user_id';
         $criteria->compare('job.organization_id', $user->organization_id);
         $criteria->compare('task.period_id', Period::getCurrentPeriod()->id);
@@ -288,6 +289,53 @@ class Job extends CActiveRecord
                 'pagination' => array(
                     'pageSize' => 20,
                     'route'    => "site/usertasks"
+                ),
+            ));
+    }
+
+    public function userAllTasks(User $user)
+    {
+        $criteria = new CDbCriteria;
+        $criteria->alias = 'job';
+        $criteria->select = 'task.user_id as task_user_id, task.name as name, task.number as number, task.priority as priority, user.name as user_name, job.*';
+        $criteria->join = 'LEFT JOIN ' . Task::model()->tableName() . ' on task.id = job.task_id
+                             LEFT JOIN ' . User::model()->tableName() . ' on user.id = task.user_id';
+        $criteria->compare('job.organization_id', $user->organization_id);
+        if ($this->number) $criteria->compare('task.number', $this->number);
+        if ($this->period_id) $criteria->compare('task.period_id', $this->period_id);
+        if ($this->priority) $criteria->compare('task.priority', $this->priority);
+        if ($this->status) $criteria->compare('job.status', $this->status);
+
+        return new CActiveDataProvider(
+            Job::model(),
+            array(
+                'criteria'   => $criteria,
+                'sort'       => array(
+                    'defaultOrder' => 'task.period_id DESC, job.status ASC, task.priority DESC',
+                    'route'        => "task/user",
+                    'attributes'   => array(
+                        'priority'  => array(
+                            'asc'  => 'task.priority',
+                            'desc' => 'task.priority DESC',
+                        ),
+                        'name'      => array(
+                            'asc'  => 'task.name',
+                            'desc' => 'task.name DESC',
+                        ),
+                        'number'    => array(
+                            'asc'  => 'task.number',
+                            'desc' => 'task.number DESC',
+                        ),
+                        'user_name' => array(
+                            'asc'  => 'user.name',
+                            'desc' => 'user.name DESC',
+                        ),
+                        '*',
+                    ),
+                ),
+                'pagination' => array(
+                    'pageSize' => 20,
+                    'route'    => "task/user"
                 ),
             ));
     }

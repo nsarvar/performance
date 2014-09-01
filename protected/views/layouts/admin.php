@@ -38,7 +38,6 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                         '/task'
                     ),
                 ),
-
                 array(
                     'label' => __('Users'),
                     'url'   => array(

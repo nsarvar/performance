@@ -75,7 +75,7 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
                 </div>
 
                 <div class="row">
-                    <div class="col col-md-12">
+                    <div class="col col-md-6">
 
                         <?php
 
@@ -94,7 +94,7 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
                         <?php echo $form->textFieldControlGroup($model, 'start_date', array('maxlength' => 64, 'value' => $model->getFormattedDate($model->start_date),)); ?>
 
                     </div>
-                    <div class="col col-md-12">
+                    <div class="col col-md-6">
 
                         <?php
 
@@ -111,8 +111,11 @@ Yii::import('application.extensions.CJuiDateTimePicker.CJuiDateTimePicker');
 
                     </div>
                 </div>
-
-
+                <div class="row">
+                    <div class="col col-md-12">
+                        <?php echo $form->textFieldControlGroup($model, 'pages', array('maxlength' => 3)); ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -276,7 +279,7 @@ $(document).ready(function(){
     showFiles();
 })
 
-",CClientScript::POS_LOAD);
+", CClientScript::POS_LOAD);
 ?>
 
 <script type="text/javascript">
@@ -359,7 +362,7 @@ $(document).ready(function(){
             var t = '<li class="qq-upload-success" id="' + el.attr('data-id') + '">' +
                 '<span class="qq-upload-file"><i class="fa ' + el.attr('data-content') + '">' +
                 '</i> ' + el.val() + '</span>' +
-                '<span class="qq-upload-size">'+el.attr('data-size')+'</span>'+
+                '<span class="qq-upload-size">' + el.attr('data-size') + '</span>' +
                 '<a onclick="return deleteFile(this)" href="#" class="qq-upload-delete">Delete</a></li>'
             $('.qq-upload-list').append(t);
         })

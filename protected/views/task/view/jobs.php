@@ -55,9 +55,9 @@ function getRowActions($data)
     $html = ''; //CHtml::link("<i class='fa fa-edit'></i>", "#", array("onclick" => "return showTaskJob('{$data->id}')", "class" => "btn-action"));
     if (count($data->files)) $html .= CHtml::link("<i class='fa fa-download'></i>", "#", array("onclick" => "return downloadTaskJobFiles('{$data->id}','" . count($data->files) . "')", "class" => "btn-action"));
     if ($data->status != Job::STATUS_APPROVED)
-        return CHtml::link("<i class='fa fa-check'></i>", Yii::app()->createUrl("task/approve", array("id" => $data->id, 'page' => 'view')), array("class" => "btn-action",'onclick'=>"return approveTaskJob('{$data->id}')")) . $html;
+        return CHtml::link("<i class='fa fa-check'></i>", Yii::app()->createUrl("task/approve", array("id" => $data->id, 'page' => 'view')), array("class" => "btn-action", 'onclick' => "return approveTaskJob('{$data->id}')")) . $html;
     if ($data->status == Job::STATUS_APPROVED)
-        return CHtml::link("<i class='fa fa-ban'></i>", Yii::app()->createUrl("task/reject", array("id" => $data->id, 'page' => 'view')), array("class" => "btn-action",'onclick'=>"return rejectTaskJob('{$data->id}')")) . $html;
+        return CHtml::link("<i class='fa fa-ban'></i>", Yii::app()->createUrl("task/reject", array("id" => $data->id, 'page' => 'view')), array("class" => "btn-action", 'onclick' => "return rejectTaskJob('{$data->id}')")) . $html;
 
 }
 

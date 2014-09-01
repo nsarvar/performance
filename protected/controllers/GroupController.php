@@ -81,8 +81,7 @@ class GroupController extends Controller
             ));
     }
 
-    public
-    function loadModel($id)
+    protected function loadModel($id)
     {
         $model = Group::model()->findByPk($id);
         if ($model === NULL)
@@ -91,8 +90,7 @@ class GroupController extends Controller
         return $model;
     }
 
-    protected
-    function performAjaxValidation($model)
+    protected function performAjaxValidation($model)
     {
         if (isset($_POST['ajax']) && $_POST['ajax'] === 'group-form') {
             echo CActiveForm::validate($model);

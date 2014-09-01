@@ -24,8 +24,8 @@
 <?php $this->renderPartial('_view', array('model' => $model)); ?>
 <?php if ($model->status == Task::STATUS_ENABLED && $job->status != Job::STATUS_APPROVED): ?>
     <?php $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
-        'method' => 'post',
-        'id' => 'task-job-form',
+        'method'        => 'post',
+        'id'            => 'task-job-form',
         'clientOptions' => array('validateOnSubmit' => true)
     )); ?>
     <div class="panel panel-default ">
@@ -41,29 +41,31 @@
                 <div class="col col-md-5">
                     <div class="form-group" id="jobs_file_upload">
                         <label class="control-label"><?= __('Files') ?></label>
-                        <a href="#fileUpload" class="pull-right" onclick="addFile()"><i
-                                class="fa fa-plus"></i> <?= __('Add File') ?> </a>
-                        <?php $this->widget('ext.EAjaxUpload.EAjaxUpload',
-                            array(
-                                'id' => 'uploadFile',
-                                'config' => array(
-                                    'action' => Yii::app()->createUrl('task/upload'),
-                                    'allowedExtensions' => File::$allowedExt,
-                                    'sizeLimit' => 10 * 1024 * 1024,
-                                    'minSizeLimit' => 10,
-                                    'onComplete' => "js:function(id, fileName, responseJSON){ addFileToTask(id,fileName,responseJSON) }",
-                                    'messages' => array(
-                                        'typeError' => "{file} has invalid extension. Only {extensions} are allowed.",
-                                        'sizeError' => "{file} is too large, maximum file size is {sizeLimit}.",
-                                        'minSizeError' => "{file} is too small, minimum file size is {minSizeLimit}.",
-                                        'emptyError' => "{file} is empty, please select files again without it.",
-                                        'onLeave' => "The files are being uploaded, if you leave now the upload will be cancelled."
-                                    ),
-                                )
-                            )); ?>
+                        <a href="#fileUpload" class="pull-right <?=$model->attachable?'':'text-muted'?>"  <?=$model->attachable?'onclick="addFile()"':''?>><i
+                                class="fa fa-plus "></i> <?= __('Add File') ?> </a>
+
+                            <?php $this->widget('ext.EAjaxUpload.EAjaxUpload',
+                                array(
+                                    'id'     => 'uploadFile',
+                                    'config' => array(
+                                        'action'            => Yii::app()->createUrl('task/upload'),
+                                        'allowedExtensions' => File::$allowedExt,
+                                        'sizeLimit'         => 10 * 1024 * 1024,
+                                        'minSizeLimit'      => 10,
+                                        'onComplete'        => "js:function(id, fileName, responseJSON){ addFileToTask(id,fileName,responseJSON) }",
+                                        'messages'          => array(
+                                            'typeError'    => "{file} has invalid extension. Only {extensions} are allowed.",
+                                            'sizeError'    => "{file} is too large, maximum file size is {sizeLimit}.",
+                                            'minSizeError' => "{file} is too small, minimum file size is {minSizeLimit}.",
+                                            'emptyError'   => "{file} is empty, please select files again without it.",
+                                            'onLeave'      => "The files are being uploaded, if you leave now the upload will be cancelled."
+                                        ),
+                                    )
+                                )); ?>
 
                     </div>
                     <div id="job_files_area">
+
                         <?php if ($files = $job->files)
                             foreach ($files as $file): ?>
                                 <input type='hidden'

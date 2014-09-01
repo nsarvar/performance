@@ -20,6 +20,7 @@
  * @property integer $attachable
  * @property string $created_at
  * @property string $updated_at
+ * @property string $pages
  *
  * The followings are the available model relations:
  * @property File[] $files
@@ -53,7 +54,7 @@ class Task extends CActiveRecord
         // will receive user inputs.
         return array(
             array('description, number, start_date, end_date', 'required'),
-            array('attachable', 'numerical', 'integerOnly' => true),
+            array('attachable,pages', 'numerical', 'integerOnly' => true),
             array('name', 'length', 'max' => 64),
             array('start_date, end_date', 'validDate'),
             array('number', 'validNumber'),
@@ -62,8 +63,6 @@ class Task extends CActiveRecord
             array('parent_id, group_id, user_id, period_id', 'length', 'max' => 11),
             array('status', 'length', 'max' => 8),
             array('start_date, end_date, created_at, updated_at, type', 'safe'),
-            // The following rule is used by search().
-            // @todo Please remove those attributes that should not be searched.
             array('id, number, name, type, parent_id, group_id, user_id, period_id, status, priority, start_date, end_date, description, attachable, created_at, updated_at,organization_ids,task_files', 'safe', 'on' => 'search'),
         );
     }
@@ -157,6 +156,7 @@ class Task extends CActiveRecord
             'attachable'  => 'Can Attach File',
             'created_at'  => 'Created At',
             'updated_at'  => 'Updated At',
+            'pages'       => 'Pages',
         );
     }
 
@@ -178,10 +178,10 @@ class Task extends CActiveRecord
     {
         // @todo Please modify the following code to remove attributes that should not be searched.
 
-        $criteria         = new CDbCriteria;
-        $criteria->alias  = 't';
+        $criteria = new CDbCriteria;
+        $criteria->alias = 't';
         $criteria->select = 't.*, u.name as user_name';
-        $criteria->join   = 'LEFT JOIN ' . User::model()->tableName() . ' as u on u.id = t.user_id';
+        $criteria->join = 'LEFT JOIN ' . User::model()->tableName() . ' as u on u.id = t.user_id';
 
         $criteria->compare('t.id', $this->id, true);
         $criteria->compare('t.number', $this->number, true);
@@ -223,7 +223,7 @@ class Task extends CActiveRecord
         return parent::model($className);
     }
 
-    const STATUS_ENABLED  = 'enabled';
+    const STATUS_ENABLED = 'enabled';
     const STATUS_DISABLED = 'disabled';
     const STATUS_ARCHIVED = 'archived';
 
@@ -239,9 +239,9 @@ class Task extends CActiveRecord
     }
 
     const PRIORITY_URGENT = 'urgent';
-    const PRIORITY_HIGH   = 'high';
+    const PRIORITY_HIGH = 'high';
     const PRIORITY_NORMAL = 'normal';
-    const PRIORITY_LOW    = 'low';
+    const PRIORITY_LOW = 'low';
 
     public static function getPriorityArray($empty = true)
     {
@@ -265,7 +265,7 @@ class Task extends CActiveRecord
         return __(ucfirst($this->status));
     }
 
-    const TYPE_HAT    = 'xat';
+    const TYPE_HAT = 'xat';
     const TYPE_BUYRUQ = 'buyruq';
     const TYPE_FISHKA = 'fishka';
 
@@ -341,17 +341,15 @@ class Task extends CActiveRecord
     }
 
 
-
-
     public function getTaskJobs($status = NULL, $neq = false, $full = false)
     {
         /**
          * @var $organizations CDbCommand
          */
-        $criteria         = new CDbCriteria;
-        $criteria->alias  = 'j';
+        $criteria = new CDbCriteria;
+        $criteria->alias = 'j';
         $criteria->select = 'j.*, o.name as organization_name';
-        $criteria->join   = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = j.organization_id';
+        $criteria->join = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = j.organization_id';
         if ($status) {
             if ($neq) {
                 $criteria->addCondition('j.status <> :status');
@@ -452,7 +450,7 @@ class Task extends CActiveRecord
             }
 
 
-            $this->user_id  = Yii::app()->user->user_id;
+            $this->user_id = Yii::app()->user->user_id;
             $this->group_id = (Yii::app()->user->group_id) ? Yii::app()->user->group_id : NULL;
 
         }
@@ -485,10 +483,10 @@ class Task extends CActiveRecord
         if ($this->task_files && count($this->task_files)) {
             foreach ($this->task_files as $realname => $orgname) {
                 if (!isset($result[$realname])) {
-                    $file            = new File();
-                    $file->realname  = $realname;
+                    $file = new File();
+                    $file->realname = $realname;
                     $file->file_name = $orgname;
-                    $result[]        = $file;
+                    $result[] = $file;
                 }
             }
         }
@@ -507,7 +505,7 @@ class Task extends CActiveRecord
             }
 
             $inserts = array();
-            $date    = date_create()->format(self::DF_INTER);
+            $date = date_create()->format(self::DF_INTER);
             foreach ($newJobs as $id) {
                 if (intval($id) && !isset($oldJobs[$id]))
                     $inserts[] = array(
@@ -549,10 +547,10 @@ class Task extends CActiveRecord
                 if (is_dir($taskDir)) {
                     foreach ($newFiles as $realname => $orgname) {
                         if ($realname && !isset($oldFiles[$realname])) {
-                            $file            = new File();
-                            $file->realname  = $realname;
+                            $file = new File();
+                            $file->realname = $realname;
                             $file->file_name = $orgname;
-                            $file->task_id   = $this->id;
+                            $file->task_id = $this->id;
                             try {
                                 if (!$file->save()) {
                                     Yii::app()->user->setFlash('danger', __('Cannot save ":file"', $file->file_name));
@@ -586,5 +584,26 @@ class Task extends CActiveRecord
             'task_id'         => $this->id,
             'organization_id' => $organizationId
         ));
+    }
+
+    public function canView(User $user)
+    {
+        return $user->role == User::ROLE_SUPER_ADMIN ||
+        $user->role == User::ROLE_ADMIN ||
+        $this->user_id == $user->id ||
+        $user->group_id && $this->group_id == $user->group_id;
+    }
+
+    public function canUpdate(User $user)
+    {
+        return $user->role == User::ROLE_SUPER_ADMIN ||
+        $this->user_id == $user->id ||
+        $user->group_id && $this->group_id == $user->group_id;
+    }
+
+    public function canCreate(User $user)
+    {
+        return $user->role == User::ROLE_SUPER_ADMIN ||
+        $user->role == User::ROLE_ADMIN;
     }
 }

@@ -17,28 +17,24 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                     'url'     => array(
                         '/calendar'
                     ),
-                    'visible' => $this->isMenuVisible('calendar')
                 ),
                 array(
                     'label' => __('Organizations'),
                     'url'   => array(
                         '/organization'
                     ),
-                    'visible' => $this->isMenuVisible('organization')
                 ),
                 array(
                     'label' => __('Periods'),
                     'url'   => array(
                         '/period'
                     ),
-                    'visible' => $this->isMenuVisible('period')
                 ),
                 array(
                     'label' => __('Tasks'),
                     'url'   => array(
                         '/task'
                     ),
-                    'visible' => $this->isMenuVisible('task')
                 ),
 
                 array(
@@ -46,21 +42,18 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
                     'url'   => array(
                         '/user'
                     ),
-                    'visible' => $this->isMenuVisible('user')
                 ),
                 array(
                     'label' => __('Groups'),
                     'url'   => array(
                         '/group'
                     ),
-                    'visible' => $this->isMenuVisible('group')
                 ),
                 array(
                     'label' => __('Reports'),
                     'url'   => array(
                         '/reports'
                     ),
-                    'visible' => $this->isMenuVisible('reports')
                 ),
             )
         ),

@@ -84,7 +84,7 @@ class UserController extends Controller
     }
 
 
-    public function loadModel($id)
+    protected function loadModel($id)
     {
         $model = User::model()->findByPk($id);
         if ($model === NULL)

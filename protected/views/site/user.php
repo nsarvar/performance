@@ -5,8 +5,6 @@ $this->pageTitle = Yii::app()->name;
 
 $model = new Job('search');
 ?>
-<?php $types = Organization::getTypesArray(false); ?>
-<?php $organizations = Organization::getListByType(); ?>
 
 
 <ol class="breadcrumb">

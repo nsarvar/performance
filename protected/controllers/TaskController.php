@@ -5,6 +5,9 @@ class TaskController extends Controller
 
     public function actionIndex()
     {
+        if ($this->_user()->role == User::ROLE_USER) {
+            return $this->actionUser();
+        }
         return $this->actionAdmin();
     }
 
@@ -20,9 +23,8 @@ class TaskController extends Controller
         $model = $job->task;
 
         if (
-            $job->organization_id == $this->_user()->organization_id ||
-            $model->user_id == $this->_user()->id ||
-            ($this->_user()->group_id && $this->_user()->group_id == $model->group_id)
+            $model->canView($this->_user()) ||
+            $job->organization_id == $this->_user()->organization_id
         ) {
 
             if (isset($_POST['Job'])) {
@@ -55,7 +57,7 @@ class TaskController extends Controller
 
             $this->render('view_job', array(
                 'model' => $model,
-                'job' => $job,
+                'job'   => $job,
             ));
         }
 
@@ -65,29 +67,35 @@ class TaskController extends Controller
     public function actionView($id)
     {
         $model = $this->loadModel($id);
-        if ($this->_user()->role == User::ROLE_ADMIN || $model->user_id == $this->_user()->id || ($this->_user()->group_id && $this->_user()->group_id == $model->group_id)) {
-            //view by task owner
-            $this->render('view', array(
+        if ($model->canView($this->_user())) {
+            return $this->render('view', array(
                 'model' => $model,
             ));
         } else {
             //view by task executor
-            if ($job = $model->getJobOfOrganization($this->_user()->organization_id))
-                $this->redirect(array('job', 'id' => $job->id));
+            if ($job = $model->getJobOfOrganization($this->_user()->organization_id)) {
+                return $this->redirect(array('job', 'id' => $job->id));
+            }
+
         }
+        $this->redirect(array('site/index'));
     }
 
     public function actionFull($id)
     {
-        if (Yii::app()->request->isAjaxRequest) {
-            return $this->renderPartial('view/jobs_full', array(
-                'model' => $this->loadModel($id),
-            ));
-        } else {
-            $this->render('full', array(
-                'model' => $this->loadModel($id),
-            ));
+        $model = $this->loadModel($id);
+        if ($model->canView($this->_user())) {
+            if (Yii::app()->request->isAjaxRequest) {
+                return $this->renderPartial('view/jobs_full', array(
+                    'model' => $model
+                ));
+            } else {
+                $this->render('full', array(
+                    'model' => $model,
+                ));
+            }
         }
+
 
     }
 
@@ -110,7 +118,8 @@ class TaskController extends Controller
         if ($job === NULL ||
             $job->task === NULL ||
             !($job->task->user_id == $this->_user()->id ||
-                $job->task->group_id && $this->_user()->group_id == $job->task->group_id)
+                $job->task->group_id && $this->_user()->group_id == $job->task->group_id) ||
+            $this->_user()->role != User::ROLE_SUPER_ADMIN
         )
             throw new CHttpException(404, 'The requested page does not exist.');
 
@@ -139,7 +148,7 @@ class TaskController extends Controller
     {
         $model = $this->loadModel($id);
         $model->setScenario('status');
-        if ($model->user_id == Yii::app()->user->id || $model->group_id == Yii::app()->user->group_id) {
+        if ($model->canUpdate($this->_user())) {
             $model->status = Task::STATUS_DISABLED;
             try {
                 $model->save(false);
@@ -153,11 +162,12 @@ class TaskController extends Controller
         }
     }
 
+
     public function actionEnable($id)
     {
         $model = $this->loadModel($id);
         $model->setScenario('status');
-        if ($model->user_id == Yii::app()->user->id || $model->group_id == Yii::app()->user->group_id) {
+        if ($model->canUpdate($this->_user())) {
             $model->status = Task::STATUS_ENABLED;
             try {
                 $model->save(false);
@@ -177,7 +187,7 @@ class TaskController extends Controller
         $model->setScenario('update');
         $this->performAjaxValidation($model);
 
-        if ($model->user_id == $this->_user()->id || $model->group_id == $this->_user()->group_id || $this->_user()->role == User::ROLE_ADMIN) {
+        if ($model->canUpdate($this->_user())) {
             $this->createAndUpdate($model);
         } else {
             $this->show404();
@@ -186,12 +196,14 @@ class TaskController extends Controller
 
     public function actionCreate($id)
     {
-
         $model = new Task();
         $model->period_id = $id;
         $model->setScenario('create');
-
-        $this->createAndUpdate($model);
+        if ($model->canCreate($this->_user())) {
+            $this->createAndUpdate($model);
+        } else {
+            $this->show404();
+        }
     }
 
     protected function createAndUpdate(Task $model)
@@ -239,9 +251,9 @@ class TaskController extends Controller
 
 
         $this->render($model->getIsNewRecord() ? 'create' : 'update', array(
-            'model' => $model,
-            'searchSelectedOrg' => $searchSelectedOrg,
-            'searchTasks' => $searchTasks,
+            'model'               => $model,
+            'searchSelectedOrg'   => $searchSelectedOrg,
+            'searchTasks'         => $searchTasks,
             'searchOrganizations' => $searchOrganizations,
         ));
     }
@@ -285,8 +297,11 @@ class TaskController extends Controller
     public function actionDelete($id)
     {
         if (Yii::app()->request->isPostRequest) {
-            $this->loadModel($id)->delete();
-
+            $model = $this->loadModel($id);
+            if ($model->canUpdate($this->_user())) {
+                $model->delete();
+                Yii::app()->user->setFlash('success', __('Task ":name" deleted successfully', array(':name' => $model->number)));
+            }
             if (!isset($_GET['ajax']))
                 $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
         } else
@@ -305,11 +320,27 @@ class TaskController extends Controller
         ));
     }
 
+    public function actionUser($periodId = false)
+    {
+        $model = new Job('search');
+        $model->unsetAttributes();
+        if ($periodId) $model->period_id = $periodId;
+        if (isset($_GET['Job']))
+            $model->attributes = $_GET['Job'];
+
+        $this->render('user', array(
+            'model' => $model,
+        ));
+    }
+
     public function actionPeriod($periodId)
     {
         $period = Period::model()->findByPk($periodId);
         if ($period === NULL)
             throw new CHttpException(404, 'The requested page does not exist.');
+        if ($this->_user()->role == User::ROLE_USER) {
+            return $this->actionUser($periodId);
+        }
         $model = new Task('search');
         $model->unsetAttributes(); // clear any default values
         $model->period_id = $periodId;
@@ -319,7 +350,7 @@ class TaskController extends Controller
 
 
         $this->render('period', array(
-            'model' => $model,
+            'model'  => $model,
             'period' => $period
         ));
     }
@@ -334,6 +365,7 @@ class TaskController extends Controller
         $model = Task::model()->findByPk($id);
         if ($model === NULL)
             throw new CHttpException(404, 'The requested page does not exist.');
+
 
         return $model;
     }
