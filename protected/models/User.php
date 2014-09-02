@@ -29,12 +29,12 @@ class User extends CActiveRecord
     public $organization_name;
     public $password_repeat;
 
-    const ROLE_USER        = 'user';
-    const ROLE_MODERATOR   = 'moderator';
-    const ROLE_ADMIN       = 'admin';
+    const ROLE_USER = 'user';
+    const ROLE_MODERATOR = 'moderator';
+    const ROLE_ADMIN = 'admin';
     const ROLE_SUPER_ADMIN = 'superadmin';
 
-    const STATUS_ENABLED  = 1;
+    const STATUS_ENABLED = 1;
     const STATUS_DISABLED = 0;
 
     /**
@@ -51,26 +51,26 @@ class User extends CActiveRecord
     public function rules()
     {
         return array(
-            array('login, email, role, organization_id, status', 'required', 'on'=> array('update', 'insert')),
-            array('password, password_repeat', 'required', 'on'=> array('insert')),
-            array('password_repeat', 'compare', 'compareAttribute'=> 'password',
-                                                'allowEmpty'      => true,
-                                                'message'         => "Passwords doesn't match",
-                                                'on'              => array('insert', 'update')),
+            array('login, email, role, organization_id, status', 'required', 'on' => array('update', 'insert')),
+            array('password, password_repeat', 'required', 'on' => array('insert')),
+            array('password_repeat', 'compare', 'compareAttribute' => 'password',
+                                                'allowEmpty'       => true,
+                                                'message'          => "Passwords doesn't match",
+                                                'on'               => array('insert', 'update')),
             array('email', 'email'),
 
-            array('status', 'numerical', 'integerOnly'=> true),
-            array('password, login, name', 'length', 'max'=> 128),
-            array('password, login', 'length', 'min'=> 5),
-            array('organization_id, group_id', 'length', 'max'=> 11),
-            array('email', 'length', 'max'=> 64),
-            array('telephone, mobile', 'length', 'max'=> 14),
-            array('picture', 'length', 'max'=> 255),
-            array('role', 'length', 'max'=> 10),
+            array('status', 'numerical', 'integerOnly' => true),
+            array('password, login, name', 'length', 'max' => 128),
+            array('password, login', 'length', 'min' => 5),
+            array('organization_id, group_id', 'length', 'max' => 11),
+            array('email', 'length', 'max' => 64),
+            array('telephone, mobile', 'length', 'max' => 14),
+            array('picture', 'length', 'max' => 255),
+            array('role', 'length', 'max' => 10),
             array('created_at', 'safe'),
-            array('login, name, organization_id, role', 'safe', 'on'=> 'search'),
+            array('login, name, organization_id, role', 'safe', 'on' => 'search'),
 
-            array('created_at', 'default', 'value'=> new CDbExpression('NOW()'), 'setOnEmpty'=> false, 'on'=> 'insert'),
+            array('created_at', 'default', 'value' => new CDbExpression('NOW()'), 'setOnEmpty' => false, 'on' => 'insert'),
             array('login', 'unique', 'className'     => 'User',
                                      'attributeName' => 'login',
                                      'message'       => 'This login is already in use',
@@ -119,10 +119,10 @@ class User extends CActiveRecord
      */
     public function search()
     {
-        $criteria         = new CDbCriteria;
-        $criteria->alias  = 'u';
+        $criteria = new CDbCriteria;
+        $criteria->alias = 'u';
         $criteria->select = 'u.id,u.login,u.organization_id,u.role,u.name,o.name as organization_name';
-        $criteria->join   = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = u.organization_id';
+        $criteria->join = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = u.organization_id';
         $criteria->compare('login', $this->login, true);
         $criteria->compare('name', $this->name, true);
         $criteria->compare('organization_id', $this->organization_id, true);
@@ -132,11 +132,11 @@ class User extends CActiveRecord
         return new CActiveDataProvider($this, array(
             'criteria'   => $criteria,
             'sort'       => array(
-                'defaultOrder'=> 'id ASC',
-                'attributes'  => array(
-                    'organization_name'=> array(
-                        'asc' => 'o.name',
-                        'desc'=> 'o.name DESC',
+                'defaultOrder' => 'id ASC',
+                'attributes'   => array(
+                    'organization_name' => array(
+                        'asc'  => 'o.name',
+                        'desc' => 'o.name DESC',
                     ),
                     '*',
                 ),
@@ -160,7 +160,7 @@ class User extends CActiveRecord
 
     public static function loadByLogin($login)
     {
-        return self::model()->findByAttributes(array('login'=> $login));
+        return self::model()->findByAttributes(array('login' => $login));
     }
 
     protected static $hashKey = 'd737b577e1534a5abf650ae446129181';
@@ -175,7 +175,19 @@ class User extends CActiveRecord
     public function validatePassword($password)
     {
         /*echo $this->encryptPassword($password);die;*/
+
         if ($secure = $this->password) {
+            if (strlen($secure) == 32) {
+                if (md5($password) == $secure) {
+                    try {
+                        $this->password = $this->encryptPassword($password);
+                        $this->save(false);
+                    } catch (Exception $e) {
+                    }
+                    return true;
+                }
+            }
+
             $salt = substr($secure, 0, 10);
 
             return $secure === $this->encryptPassword($password, $salt);
@@ -197,23 +209,23 @@ class User extends CActiveRecord
     public static function getRolesArray($empty = true)
     {
         $roles = array(
-            self::ROLE_USER        => __( ucfirst(self::ROLE_USER)),
-            self::ROLE_MODERATOR   => __( ucfirst(self::ROLE_MODERATOR)),
-            self::ROLE_ADMIN       => __( ucfirst(self::ROLE_ADMIN)),
-            self::ROLE_SUPER_ADMIN => __( ucfirst(self::ROLE_SUPER_ADMIN)),
+            self::ROLE_USER        => __(ucfirst(self::ROLE_USER)),
+            self::ROLE_MODERATOR   => __(ucfirst(self::ROLE_MODERATOR)),
+            self::ROLE_ADMIN       => __(ucfirst(self::ROLE_ADMIN)),
+            self::ROLE_SUPER_ADMIN => __(ucfirst(self::ROLE_SUPER_ADMIN)),
         );
 
-        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
+        return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
     }
 
     public static function getStatusArray($empty = true)
     {
         $roles = array(
-            self::STATUS_ENABLED         => __( 'Enabled'),
-            self::STATUS_DISABLED        => __( 'Disabled'),
+            self::STATUS_ENABLED  => __('Enabled'),
+            self::STATUS_DISABLED => __('Disabled'),
         );
 
-        return ($empty) ? array_merge(array(''=> ''), $roles) : $roles;
+        return ($empty) ? array_merge(array('' => ''), $roles) : $roles;
     }
 
 
@@ -228,8 +240,8 @@ class User extends CActiveRecord
         return new CActiveDataProvider(self::model(), array(
             'criteria'   => $criteria,
             'sort'       => array(
-                'defaultOrder'=> 'name',
-                'route'       => 'user/ajax/organization/' . $organization
+                'defaultOrder' => 'name',
+                'route'        => 'user/ajax/organization/' . $organization
             ),
             'pagination' => array(
                 'pageSize' => 20,
