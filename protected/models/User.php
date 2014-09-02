@@ -198,7 +198,7 @@ class User extends CActiveRecord
 
     public function beforeSave()
     {
-        if ($this->scenario == 'create' || $this->scenario == 'update' && !is_null($this->password_repeat)) {
+        if (($this->scenario == 'insert' || $this->scenario == 'update') && !is_null($this->password_repeat)) {
             $this->password = $this->encryptPassword($this->password);
         }
         if (empty($this->group_id)) $this->group_id = null;
