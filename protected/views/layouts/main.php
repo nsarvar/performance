@@ -1,5 +1,5 @@
 <?php
-$cs        = Yii::app()->clientScript;
+$cs = Yii::app()->clientScript;
 $themePath = Yii::app()->theme->baseUrl;
 $cs
     ->registerCssFile($themePath . '/skin/css/bootstrap.css')
@@ -36,7 +36,20 @@ $cs
     <![endif]-->
 </head>
 
-<body class="user_role_<?=Yii::app()->user->hasState('role') ? Yii::app()->user->role : 'none'?>">
+<body class="user_role_<?= Yii::app()->user->hasState('role') ? Yii::app()->user->role : 'none' ?>">
 <?php echo $content; ?>
+<footer>
+    <div class="container">
+        <hr>
+        <div class="row">
+            <div class="col-lg-12 footer-below">
+                <p class="text-center text-muted">
+                    Copyright &copy; 2014 <a href="http://edu.uz">
+                        <?= __("O'zbekiston Respublikasi Oliy va o'rta maxsus ta'lim vazirligi") ?></a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

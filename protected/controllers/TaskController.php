@@ -463,7 +463,7 @@ class TaskController extends Controller
                 }
             }
         } else {
-            $file = File::model()->with(array('task', 'job'))->findByAttributes(['realname' => $id]);
+            $file = File::model()->with(array('task', 'job'))->findByAttributes(array('realname' => $id));
             if ($file) {
                 $canAccess = $this->_user()->role == User::ROLE_SUPER_ADMIN || $this->_user()->role == User::ROLE_ADMIN;
                 if ($file->job) {

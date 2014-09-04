@@ -81,6 +81,10 @@ class SiteController extends Controller
         $model = new Job('search');
         $this->renderPartial('user/tasks', array('model' => $model));
     }
+    public function actionUser()
+    {
+        $this->actionIndex();
+    }
 
     public function actionLogout()
     {

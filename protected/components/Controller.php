@@ -64,7 +64,7 @@ class Controller extends CController
     protected $acl = array(
         User::ROLE_SUPER_ADMIN => array('*' => '*'),
         User::ROLE_ADMIN       => array(
-            'site'         => array('index', 'login', 'logout'),
+            'site'         => array('index', 'login', 'logout', 'user'),
             'calendar'     => array('index', 'events'),
             'period'       => array('index', 'ajax', 'view'),
             'group'        => array('index', 'view'),
@@ -74,7 +74,7 @@ class Controller extends CController
         ),
         User::ROLE_MODERATOR   => array(),
         User::ROLE_USER        => array(
-            'site'         => array('index', 'login', 'logout', 'usertasks'),
+            'site'         => array('index', 'login', 'logout', 'usertasks', 'user'),
             'calendar'     => array('index', 'events'),
             'period'       => array('index', 'ajax', 'view'),
             'organization' => array('view'),
@@ -88,8 +88,8 @@ class Controller extends CController
         $acl = $this->acl;
         if ($user = $this->_user()) {
             $this->layout = '//layouts/' . $this->_role;
-            $action = Yii::app()->controller->action->id;
-            $controller = Yii::app()->controller->id;
+            $action       = Yii::app()->controller->action->id;
+            $controller   = Yii::app()->controller->id;
 
             if (isset($acl[$this->_role])) {
                 if (
