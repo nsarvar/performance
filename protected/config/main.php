@@ -91,12 +91,10 @@ return array(
                     'class'      => 'CFileLogRoute',
                     'levels'     => 'trace, info',
                     'categories' => 'system.*',
-                    'enable'     => true,
                 ),
                 array(
                     'class'  => 'CEmailLogRoute',
                     'levels' => 'trace, info',
-                    'enable' => true,
                 ),
             ),
         ),

@@ -377,3 +377,10 @@ table thead th:first-child {
 .mark-progressing:before {
     content: "\f0ec";
 }
+.day-event .cal-hours{
+    display: none;
+}
+a.event-item{
+    text-decoration: none;
+    color: #151515;
+}

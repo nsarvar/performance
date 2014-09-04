@@ -31,8 +31,8 @@ class CalendarController extends Controller
                     'id'    => $task->id,
                     'title' => $task->name,
                     'url'   => Yii::app()->createUrl('task/view', array('id' => $task->id)),
-                    'start' => strtotime($task->start_date) . '000',
-                    'end'   => strtotime($task->start_date) . '000',
+                    'start' => strtotime($task->created_at) . '000',
+                    'end'   => (strtotime($task->created_at) + 1800) . '000',
                     'class' => 'priority-' . $task->priority,
                 );
             }

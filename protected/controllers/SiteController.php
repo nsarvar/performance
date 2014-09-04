@@ -17,6 +17,9 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
+        if ($this->_user()->role == User::ROLE_ADMIN || $this->_user()->role == User::ROLE_SUPER_ADMIN) {
+            $this->redirect('calendar');
+        }
         $this->render($this->_user()->role);
     }
 
