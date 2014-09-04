@@ -11,6 +11,7 @@ class CalendarController extends Controller
     {
         /**
          * @var $task Task
+         * @var $cmd CDbCommand
          */
         $result = array('success' => 1);
         if (isset($_GET['from']) && isset($_GET['to'])) {
@@ -20,7 +21,16 @@ class CalendarController extends Controller
 
             $criteria = new CDbCriteria;
             $criteria->addBetweenCondition('start_date', $start, $end);
-
+            if ($this->_user()->role == User::ROLE_USER) {
+                $cmd     = Yii::app()->db->createCommand();
+                $taskIds = $cmd
+                    ->select('task_id')
+                    ->from(Job::model()->tableName())
+                    ->where('organization_id = :id AND (updated_at BETWEEN :start AND :end)',
+                        array(':id' => $this->_user()->organization_id, ':start' => $start, ':end' => $end))
+                    ->queryColumn();
+                $criteria->addInCondition('id', $taskIds);
+            }
             $tasks = Task::model()->findAll($criteria, array(
                 'order' => array('priority' => 'DESC')
             ));
