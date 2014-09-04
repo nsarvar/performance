@@ -45,7 +45,21 @@ return array(
         'user'         => array(
             'allowAutoLogin' => true,
         ),
-
+        'mail'         => array(
+            'class'         => 'ext.yii-mail.YiiMail',
+            'transportType' => 'php',
+            'viewPath'      => 'application.views.mail',
+            'logging'       => true,
+            'dryRun'        => false,
+            /* 'transportType'    => 'smtp',
+             'transportOptions' => array(
+                 'host'       => 'smtp.mail.yahoo.com',
+                 'username'   => 'nama_email',
+                 'password'   => 'xxxx',
+                 'port'       => '465',
+                 'encryption' => 'ssl',
+             ),*/
+        ),
         'urlManager'   => array(
             'urlFormat'      => 'path',
             'showScriptName' => false,
@@ -74,12 +88,15 @@ return array(
             'class'  => 'CLogRouter',
             'routes' => array(
                 array(
-                    'class'  => 'CFileLogRoute',
-                    'levels' => 'error, warning',
+                    'class'      => 'CFileLogRoute',
+                    'levels'     => 'trace, info',
+                    'categories' => 'system.*',
+                    'enable'     => true,
                 ),
-
                 array(
-                    'class' => 'CWebLogRoute',
+                    'class'  => 'CEmailLogRoute',
+                    'levels' => 'trace, info',
+                    'enable' => true,
                 ),
             ),
         ),
@@ -89,7 +106,6 @@ return array(
     ),
 
     'params'     => array(
-        //Yii::app()->params['paramName']
         'adminEmail' => 'homidjonov@gmail.com',
     ),
 

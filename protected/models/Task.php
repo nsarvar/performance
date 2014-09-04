@@ -178,10 +178,10 @@ class Task extends CActiveRecord
     {
         // @todo Please modify the following code to remove attributes that should not be searched.
 
-        $criteria = new CDbCriteria;
-        $criteria->alias = 't';
+        $criteria         = new CDbCriteria;
+        $criteria->alias  = 't';
         $criteria->select = 't.*, u.name as user_name';
-        $criteria->join = 'LEFT JOIN ' . User::model()->tableName() . ' as u on u.id = t.user_id';
+        $criteria->join   = 'LEFT JOIN ' . User::model()->tableName() . ' as u on u.id = t.user_id';
 
         $criteria->compare('t.id', $this->id, true);
         $criteria->compare('t.number', $this->number, true);
@@ -223,7 +223,7 @@ class Task extends CActiveRecord
         return parent::model($className);
     }
 
-    const STATUS_ENABLED = 'enabled';
+    const STATUS_ENABLED  = 'enabled';
     const STATUS_DISABLED = 'disabled';
     const STATUS_ARCHIVED = 'archived';
 
@@ -239,9 +239,9 @@ class Task extends CActiveRecord
     }
 
     const PRIORITY_URGENT = 'urgent';
-    const PRIORITY_HIGH = 'high';
+    const PRIORITY_HIGH   = 'high';
     const PRIORITY_NORMAL = 'normal';
-    const PRIORITY_LOW = 'low';
+    const PRIORITY_LOW    = 'low';
 
     public static function getPriorityArray($empty = true)
     {
@@ -265,7 +265,7 @@ class Task extends CActiveRecord
         return __(ucfirst($this->status));
     }
 
-    const TYPE_HAT = 'xat';
+    const TYPE_HAT    = 'xat';
     const TYPE_BUYRUQ = 'buyruq';
     const TYPE_FISHKA = 'fishka';
 
@@ -346,10 +346,10 @@ class Task extends CActiveRecord
         /**
          * @var $organizations CDbCommand
          */
-        $criteria = new CDbCriteria;
-        $criteria->alias = 'j';
+        $criteria         = new CDbCriteria;
+        $criteria->alias  = 'j';
         $criteria->select = 'j.*, o.name as organization_name';
-        $criteria->join = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = j.organization_id';
+        $criteria->join   = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = j.organization_id';
         if ($status) {
             if ($neq) {
                 $criteria->addCondition('j.status <> :status');
@@ -450,7 +450,7 @@ class Task extends CActiveRecord
             }
 
 
-            $this->user_id = Yii::app()->user->user_id;
+            $this->user_id  = Yii::app()->user->user_id;
             $this->group_id = (Yii::app()->user->group_id) ? Yii::app()->user->group_id : NULL;
 
         }
@@ -483,10 +483,10 @@ class Task extends CActiveRecord
         if ($this->task_files && count($this->task_files)) {
             foreach ($this->task_files as $realname => $orgname) {
                 if (!isset($result[$realname])) {
-                    $file = new File();
-                    $file->realname = $realname;
+                    $file            = new File();
+                    $file->realname  = $realname;
                     $file->file_name = $orgname;
-                    $result[] = $file;
+                    $result[]        = $file;
                 }
             }
         }
@@ -497,7 +497,68 @@ class Task extends CActiveRecord
 
     protected function afterSave()
     {
+        try {
+            $this->saveJobsAndFiles();
+        } catch (Exception $e) {
+            Yii::app()->user->setFlash('warning', $e->getMessage());
+        }
+
+        try {
+            $result = $this->sendEmail();
+        } catch (Exception $e) {
+            Yii::app()->user->setFlash('warning', $e->getMessage());
+        }
+
+        return parent::afterSave();
+    }
+
+    protected function sendEmail()
+    {
+        /**
+         * @var $cmd CDbCommand
+         */
+        $cmd           = Yii::app()->db->createCommand();
+        $organizations = $cmd
+            ->select('organization_id')
+            ->from(Job::model()->tableName())
+            ->where('task_id=:task_id AND notified=:notified', array(':task_id' => $this->id, 'notified' => '0'))
+            ->queryColumn();
+
+        if (count($organizations)) {
+
+            $ids    = implode(',', $organizations);
+            $emails = Yii::app()->db->createCommand()
+                ->select('email')
+                ->from(User::model()->tableName())
+                ->where("organization_id IN ($ids)", array())
+                ->queryColumn();
+
+
+            if (count($emails)) {
+
+                Yii::import('ext.yii-mail.YiiMailMessage');
+                $params           = array('task' => $this);
+                $message          = new YiiMailMessage;
+                $message->view    = "task/new";
+                $message->subject = __('New task created: :task', array(':task' => $this->name));
+                $message->from    = Yii::app()->params['adminEmail'];
+
+                $message->setBody($params, 'text/html');
+                $message->setTo($emails);
+                if ($count = Yii::app()->mail->send($message)) {
+
+                    $cmd = Yii::app()->db->createCommand();
+                    $cmd->update(Job::model()->tableName(), array('notified' => 1), "task_id={$this->id} AND organization_id IN ($ids)");
+                    Yii::app()->user->setFlash('info', __('Email notification has been sent to :count users', array(':count' => $count)));
+                }
+            }
+        }
+    }
+
+    protected function saveJobsAndFiles()
+    {
         if ($this->getScenario() == 'update' || $this->getScenario() == 'create') {
+
             $newJobs = explode(',', $this->organization_ids);
             $oldJobs = array();
             foreach ($this->jobs as $job) {
@@ -505,7 +566,7 @@ class Task extends CActiveRecord
             }
 
             $inserts = array();
-            $date = date_create()->format(self::DF_INTER);
+            $date    = date_create()->format(self::DF_INTER);
             foreach ($newJobs as $id) {
                 if (intval($id) && !isset($oldJobs[$id]))
                     $inserts[] = array(
@@ -547,10 +608,10 @@ class Task extends CActiveRecord
                 if (is_dir($taskDir)) {
                     foreach ($newFiles as $realname => $orgname) {
                         if ($realname && !isset($oldFiles[$realname])) {
-                            $file = new File();
-                            $file->realname = $realname;
+                            $file            = new File();
+                            $file->realname  = $realname;
                             $file->file_name = $orgname;
-                            $file->task_id = $this->id;
+                            $file->task_id   = $this->id;
                             try {
                                 if (!$file->save()) {
                                     Yii::app()->user->setFlash('danger', __('Cannot save ":file"', $file->file_name));
@@ -570,8 +631,6 @@ class Task extends CActiveRecord
 
             }
         }
-
-        return parent::afterSave();
     }
 
     /**

@@ -123,8 +123,9 @@ class User extends CActiveRecord
         $criteria->alias = 'u';
         $criteria->select = 'u.id,u.login,u.organization_id,u.role,u.name,o.name as organization_name';
         $criteria->join = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = u.organization_id';
-        $criteria->compare('login', $this->login, true);
-        $criteria->compare('name', $this->name, true);
+        $criteria->compare('u.login', $this->login, true);
+        $criteria->compare('u.name', $this->name, true);
+        $criteria->compare('u.email', $this->email, true);
         $criteria->compare('organization_id', $this->organization_id, true);
         $criteria->compare('role', $this->role, true);
         $criteria->compare('o.name', $this->organization_name, true);
