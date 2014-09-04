@@ -13,8 +13,8 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
             'activateParents' => true,
             'items'           => array(
                 array(
-                    'label'   => __('Calendar'),
-                    'url'     => array(
+                    'label' => __('Calendar'),
+                    'url'   => array(
                         '/calendar'
                     ),
                 ),
@@ -116,22 +116,35 @@ $this->widget('bootstrap.widgets.BsNavbar', array(
 ));
 ?>
 
-    <div class="container" id="page">
-        <?php if ($flashMessages = Yii::app()->user->getFlashes()): ?>
-            <?php foreach ($flashMessages as $key => $message): ?>
-                <div class="alert alert-<?= $key ?> alert-dismissable">
-                    <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <?= $message ?>
-                </div>
-            <?php endforeach; ?>
-        <?php endif ?>
+<div class="container" id="page">
+    <?php if ($flashMessages = Yii::app()->user->getFlashes()): ?>
+        <?php foreach ($flashMessages as $key => $message): ?>
+            <div class="alert alert-<?= $key ?> alert-dismissable">
+                <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <?= $message ?>
+            </div>
+        <?php endforeach; ?>
+    <?php endif ?>
 
-        <?php if (isset($this->breadcrumbs)): ?>
-            <?php $this->widget('bootstrap.widgets.BsBreadcrumb', array(
-                'links' => $this->breadcrumbs,
-            )); ?>
-        <?php endif ?>
+    <?php if (isset($this->breadcrumbs)): ?>
+        <?php $this->widget('bootstrap.widgets.BsBreadcrumb', array(
+            'links' => $this->breadcrumbs,
+        )); ?>
+    <?php endif ?>
 
-        <?php echo $content; ?>
+    <?php echo $content; ?>
+</div>
+<footer>
+    <div class="container">
+        <hr>
+        <div class="row">
+            <div class="col-lg-12 footer-below">
+                <p class="text-center text-muted">
+                    Copyright &copy; 2014 <a href="http://edu.uz">
+                        <?= __("O'zbekiston Respublikasi Oliy va o'rta maxsus ta'lim vazirligi") ?></a>
+                </p>
+            </div>
+        </div>
     </div>
+</footer>
 <?php $this->endContent(); ?>
