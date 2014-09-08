@@ -589,7 +589,17 @@ class Task extends CActiveRecord
                 }
             }
 
-            $taskDir = UPLOAD_DIR . $this->id . DS;
+            $periodDir = UPLOAD_DIR . $this->period_id . DS;
+
+            if (!is_dir($periodDir)) {
+                try {
+                    mkdir($periodDir);
+                } catch (Exception $e) {
+                    Yii::app()->user->setFlash('danger', $e->getMessage());
+                }
+            }
+
+            $taskDir = UPLOAD_DIR . $this->period_id . DS . $this->id . DS;
             if (!is_dir($taskDir)) {
                 try {
                     mkdir($taskDir);
@@ -665,4 +675,6 @@ class Task extends CActiveRecord
         return $user->role == User::ROLE_SUPER_ADMIN ||
         $user->role == User::ROLE_ADMIN;
     }
+
+
 }

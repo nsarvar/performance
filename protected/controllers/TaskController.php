@@ -32,7 +32,7 @@ class TaskController extends Controller
                     $job->setScenario('update');
                     $job->content = $_POST['Job']['content'];
                     $job->user_id = $this->_user()->id;
-                    $job->status = Job::STATUS_PROGRESSING;
+                    $job->status  = Job::STATUS_PROGRESSING;
 
                     if (isset($_POST['Job']['job_files']))
                         $job->job_files = $_POST['Job']['job_files'];
@@ -196,7 +196,7 @@ class TaskController extends Controller
 
     public function actionCreate($id)
     {
-        $model = new Task();
+        $model            = new Task();
         $model->period_id = $id;
         $model->setScenario('create');
         if ($model->canCreate($this->_user())) {
@@ -382,14 +382,14 @@ class TaskController extends Controller
     {
         Yii::import("ext.EAjaxUpload.qqFileUploader");
 
-        $folder = UPLOAD_TEMP_DIR;
+        $folder            = UPLOAD_TEMP_DIR;
         $allowedExtensions = File::$allowedExt;
-        $sizeLimit = 10 * 1024 * 1024;
-        $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
-        $result = $uploader->handleUpload($folder);
+        $sizeLimit         = 10 * 1024 * 1024;
+        $uploader          = new qqFileUploader($allowedExtensions, $sizeLimit);
+        $result            = $uploader->handleUpload($folder);
         //sleep(1);
         if (isset($result['ext'])) {
-            $class = File::getFileClass($result['ext']);
+            $class              = File::getFileClass($result['ext']);
             $result['filename'] = "<i class='fa $class'></i> " . $result['orgname'];
         }
         echo json_encode($result);
@@ -425,7 +425,7 @@ class TaskController extends Controller
 
     protected function downloadFile(File $file)
     {
-        $path = UPLOAD_DIR . $file->task_id . DS . $file->realname;
+        $path = UPLOAD_DIR . $file->task->period_id . DS . $file->task_id . DS . $file->realname;
         if (file_exists($path)) {
             return Yii::app()->getRequest()->sendFile($file->file_name, @file_get_contents($path));
         } elseif (file_exists(UPLOAD_DIR . $file->realname)) {
@@ -485,5 +485,10 @@ class TaskController extends Controller
             }
         }
         $this->show404();
+    }
+
+    public function actionFix()
+    {
+        File::fixOldFiles();
     }
 }

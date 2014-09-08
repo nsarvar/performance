@@ -145,7 +145,7 @@ class File extends CActiveRecord
 
     protected function afterDelete()
     {
-        $file = UPLOAD_DIR . $this->task_id . DS . $this->realname;
+        $file = UPLOAD_DIR . $this->task->period_id . DS . $this->task_id . DS . $this->realname;
         if (is_file($file)) {
             try {
                 unlink($file);
@@ -166,7 +166,7 @@ class File extends CActiveRecord
     protected function afterSave()
     {
         if ($this->isNewRecord) {
-            $taskDir  = UPLOAD_DIR . $this->task_id . DS;
+            $taskDir  = UPLOAD_DIR . $this->task->period_id . DS . $this->task_id . DS;
             $tempFile = UPLOAD_TEMP_DIR . $this->realname;
             if (is_dir($taskDir) && is_file($tempFile)) {
                 if (!rename($tempFile, $taskDir . $this->realname)) {
@@ -231,5 +231,61 @@ class File extends CActiveRecord
         }
 
         return $class;
+    }
+
+    public static function fixOldFiles()
+    {
+        /**
+         * @var $file File
+         * @var $task Task
+         * @var $period Period
+         */
+        echo "<pre>";
+        $periods = Period::model()->findAll();
+        foreach ($periods as $period) {
+            $periodDir = UPLOAD_DIR . $period->id . DS;
+            if (!is_dir($periodDir)) {
+                try {
+                    mkdir($periodDir);
+                } catch (Exception $e) {
+                    echo $e->getMessage() . "\n";
+                }
+            }
+            echo "PERIOD {$period->name}---------------------------------\n";
+            $tasks = $period->tasks;
+            if (is_dir($periodDir))
+                foreach ($tasks as $task) {
+                    $taskDir = $periodDir . $task->id . DS;
+                    if (!is_dir($taskDir)) {
+                        try {
+                            mkdir($taskDir);
+                        } catch (Exception $e) {
+                            echo $e->getMessage() . "\n";
+                        }
+                    }
+                    $files = $task->files;
+                    echo ">>>TASK {$task->name}---------------------------------\n";
+                    if (is_dir($taskDir))
+                        foreach ($files as $file) {
+                            if ($file->realname && file_exists(UPLOAD_DIR . '__ALL__' . DS . $file->realname)) {
+                                print_r($file->getAttributes());
+                                try {
+                                    $newDir = $taskDir . $file->realname;
+                                    if (rename(UPLOAD_DIR . '__ALL__' . DS . $file->realname, $newDir)) {
+                                        echo ">>>>>>>>FILE MOVED {$file->realname}\n";
+                                    } else {
+                                        echo ">>>>>>>>FILE CANNOT MOVED {$file->realname}\n";
+                                    }
+                                } catch (Exception $e) {
+
+                                    echo $e->getMessage() . "\n";
+                                }
+                                flush();
+                            }
+                        }
+                    flush();
+                }
+            flush();
+        }
     }
 }

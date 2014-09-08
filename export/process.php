@@ -30,28 +30,28 @@ class Database
 
     public function insert($table, $data)
     {
-        $data = array_filter($data);
-        $cols = array();
+        $data   = array_filter($data);
+        $cols   = array();
         $values = array();
 
         $result = mysql_query("select * from $table where id={$data['id']}", $this->newDbLink);
         if (!mysql_num_rows($result)) {
 
             foreach ($data as $col => $value) {
-                $cols[] = "`$col`";
+                $cols[]   = "`$col`";
                 $values[] = "'$value'";
             }
-            $cols = implode(',', $cols);
+            $cols   = implode(',', $cols);
             $values = implode(',', $values);
-            $query = "Insert into $table($cols) values($values);\n";
+            $query  = "Insert into $table($cols) values($values);\n";
             $result = mysql_query($query, $this->newDbLink);
             echo $query;
         } else {
             foreach ($data as $col => $value) {
                 $cols[] = "`$col`='$value'";
             }
-            $cols = implode(',', $cols);
-            $query = "Update $table set $cols where id={$data['id']};\n";
+            $cols   = implode(',', $cols);
+            $query  = "Update $table set $cols where id={$data['id']};\n";
             $result = mysql_query($query, $this->newDbLink);
             echo $query;
         }
@@ -86,7 +86,7 @@ class _Organization extends Import
     public function startImport()
     {
         $companies = array();
-        $result = mysql_query("SELECT * FROM companies", $this->db->oldDbLink);
+        $result    = mysql_query("SELECT * FROM companies", $this->db->oldDbLink);
         while ($row = mysql_fetch_assoc($result)) {
             $companies[$row['company_id']] = $row;
         }
@@ -98,7 +98,7 @@ class _Organization extends Import
         }
 
         $regions = array();
-        $result = mysql_query("SELECT * FROM `region` order by name", $this->db->newDbLink);
+        $result  = mysql_query("SELECT * FROM `region` order by name", $this->db->newDbLink);
         while ($row = mysql_fetch_assoc($result)) {
             $regions[$row['id']] = $row;
         }
@@ -160,7 +160,7 @@ class _User extends Import
     public function startImport()
     {
         $departments = array();
-        $result = mysql_query("SELECT * FROM `organization` order by id", $this->db->newDbLink);
+        $result      = mysql_query("SELECT * FROM `organization` order by id", $this->db->newDbLink);
         while ($row = mysql_fetch_assoc($result)) {
             $departments[$row['id']] = $row;
         }
@@ -188,14 +188,14 @@ class _Task extends Import
 {
     function startImport()
     {
-        $users = array();
+        $users  = array();
         $result = mysql_query("SELECT * FROM `user` order by id", $this->db->newDbLink);
         while ($row = mysql_fetch_assoc($result)) {
             $users[$row['id']] = $row;
         }
 
         $periods = array();
-        $result = mysql_query("SELECT * FROM `period` order by period_from", $this->db->newDbLink);
+        $result  = mysql_query("SELECT * FROM `period` order by period_from", $this->db->newDbLink);
         while ($row = mysql_fetch_assoc($result)) {
             $periods[$row['id']] = array(
                 'start' => date_create_from_format('Y-m-d H:i:s', $row['period_from']),
@@ -203,14 +203,14 @@ class _Task extends Import
             );
         }
 
-        $tasks = array();
+        $tasks  = array();
         $result = mysql_query("SELECT * FROM `task` order by id", $this->db->newDbLink);
         while ($row = mysql_fetch_assoc($result)) {
             $tasks[(int)$row['id']] = $row;
         }
 
         $result = mysql_query("SELECT * FROM tasks order by task_id", $this->db->oldDbLink);
-        $j = 0;
+        $j      = 0;
         while ($row = mysql_fetch_assoc($result)) {
             $j++;
             //if ($j > 40) die;
@@ -289,8 +289,8 @@ class _Period extends Import
     function startImport()
     {
         $start = 2004;
-        $end = 2014;
-        $now = new DateTime(NULL, new DateTimeZone('Asia/Tashkent'));
+        $end   = 2014;
+        $now   = new DateTime(NULL, new DateTimeZone('Asia/Tashkent'));
         //$now->add()
         $seconds = new DateTime();
         $seconds->setDate(2004, 1, 1)->setTime(0, 0, 0);
@@ -299,8 +299,8 @@ class _Period extends Import
             for ($month = 1; $month <= 12; $month++) {
                 $start = new DateTime();
                 $start->setDate($year, $month, 1)->setTime(0, 0, 0);
-                $end = clone $start;
-                $end = $end->modify('+' . (cal_days_in_month(CAL_GREGORIAN, $month, $year)) . ' day')->modify('-1 sec');
+                $end  = clone $start;
+                $end  = $end->modify('+' . (cal_days_in_month(CAL_GREGORIAN, $month, $year)) . ' day')->modify('-1 sec');
                 $cols = array(
                     'period_from' => $start->format('Y-m-d H:i:s'),
                     'period_to'   => $end->format('Y-m-d H:i:s'),
@@ -321,20 +321,20 @@ class _Job extends Import
     function startImport()
     {
 
-        $users = array();
+        $users  = array();
         $result = mysql_query("SELECT * FROM `user` order by id", $this->db->newDbLink);
         while ($row = mysql_fetch_assoc($result)) {
             $users[$row['id']] = $row;
         }
 
-        $tasks = array();
+        $tasks  = array();
         $result = mysql_query("SELECT * FROM `task` order by id", $this->db->newDbLink);
         while ($row = mysql_fetch_assoc($result)) {
             $tasks[(int)$row['id']] = $row;
         }
 
         $result = mysql_query("SELECT * FROM task_log order by task_log_id", $this->db->oldDbLink);
-        $j = 0;
+        $j      = 0;
         while ($row = mysql_fetch_assoc($result)) {
             $j++;
             //if ($j > 100) die;
@@ -377,14 +377,14 @@ class _File extends Import
     function startImport()
     {
 
-        $tasks = array();
+        $tasks  = array();
         $result = mysql_query("SELECT * FROM `task` order by id", $this->db->newDbLink);
         while ($row = mysql_fetch_assoc($result)) {
             $tasks[$row['id']] = $row;
         }
 
         $result = mysql_query("SELECT * FROM files order by file_id", $this->db->oldDbLink);
-        $j = 0;
+        $j      = 0;
         while ($row = mysql_fetch_assoc($result)) {
             $j++;
             //if ($j > 100) die;
@@ -405,6 +405,46 @@ class _File extends Import
 
 }
 
+
+class _Move extends Import
+{
+    function startImport()
+    {
+
+        $result = mysql_query("SELECT * FROM files order by file_id", $this->db->oldDbLink);
+        $j      = 0;
+        while ($row = mysql_fetch_assoc($result)) {
+            $j++;
+            if ($realname = $row['file_real_filename']) {
+                $period   = $row['file_project'];
+                $filename = UPLOAD_DIR . $period . DS . $realname;
+                $newDir   = UPLOAD_DIR . '__ALL__' . DS . $realname;
+                if (file_exists($filename)) {
+                    $rename = false;
+                    if (file_exists($newDir)) {
+                        $rename = md5(time() . $realname);
+                        $newDir = UPLOAD_DIR . '__ALL__' . DS . $rename;
+                    }
+                    if (rename($filename, $newDir)) {
+                        echo "Success: $filename\n";
+                        if ($rename) {
+                            $cols = array(
+                                'id'       => $row['file_id'],
+                                'realname' => $rename
+                            );
+                            $this->db->insert('file', $cols);
+                            echo "Renamed: $rename\n";
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+define('DS', DIRECTORY_SEPARATOR);
+define('UPLOAD_DIR', __DIR__ . DS . '..' . DS . 'files' . DS);
 /**
  * @var $model Import
  */
