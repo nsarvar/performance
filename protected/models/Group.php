@@ -61,8 +61,8 @@ class Group extends CActiveRecord
     {
         return array(
             'id'         => 'ID',
-            'name'       => 'Name',
-            'short_name' => 'Short Name',
+            'name'       => __('Name'),
+            'short_name' => __('Short Name'),
         );
     }
 

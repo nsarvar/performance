@@ -4,8 +4,8 @@
 ?>
 
 <ol class="breadcrumb ">
-    <li><a href="/">Home</a></li>
-    <li><a href="/organization">Organizations</a></li>
+    <li><a href="/"><?=__('Home')?></a></li>
+    <li><a href="/organization"><?=__('Organizations')?></a></li>
     <li><?= $model->name ?></li>
     <span class="pull-right action_admin">
         <a href="/organization/create"><i class="fa fa-plus"></i> <?= __('Add Organization') ?></a>
@@ -15,7 +15,7 @@
 <div class="page-header">
     <h3>
         <i class="fa fa-university"></i> <?= $model->name ?>
-        <small class="info_block " data-src="info_block_org"> Information</small>
+        <small class="info_block " data-src="info_block_org"><?=__('Information')?></small>
     </h3>
 </div>
 <div id="info_block_org" class="info_block_src">
@@ -59,10 +59,10 @@
 </div>
 
 <ul class="nav nav-tabs" role="tablist">
-    <li class="active"><a href="#tab_active_periods" role="tab" data-toggle="tab">Active Periods</a></li>
-    <li><a href="#tab_archive_periods" role="tab" data-toggle="tab">Archive Periods</a></li>
-    <li><a href="#tab_organizations" role="tab" data-toggle="tab">Organizations</a></li>
-    <li><a href="#tab_users" role="tab" data-toggle="tab">Users</a></li>
+    <li class="active"><a href="#tab_active_periods" role="tab" data-toggle="tab"><?=__('Active Periods')?></a></li>
+    <li><a href="#tab_archive_periods" role="tab" data-toggle="tab"><?=__('Archive Periods')?></a></li>
+    <li><a href="#tab_organizations" role="tab" data-toggle="tab"><?=__('Organizations')?></a></li>
+    <li><a href="#tab_users" role="tab" data-toggle="tab"><?=__('Users')?></a></li>
 </ul>
 
 <!-- Tab panes -->

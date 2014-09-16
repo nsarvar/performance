@@ -9,5 +9,5 @@
 
 function __($message, $params = array(), $source = null, $language = null)
 {
-    return Yii::t('app', $message, $params, $source = null, $language = null);
+    return Yii::t('app', $message, $params, $source = null, $language = null) . '^';
 }

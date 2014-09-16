@@ -29,12 +29,12 @@ class User extends CActiveRecord
     public $organization_name;
     public $password_repeat;
 
-    const ROLE_USER = 'user';
-    const ROLE_MODERATOR = 'moderator';
-    const ROLE_ADMIN = 'admin';
+    const ROLE_USER        = 'user';
+    const ROLE_MODERATOR   = 'moderator';
+    const ROLE_ADMIN       = 'admin';
     const ROLE_SUPER_ADMIN = 'superadmin';
 
-    const STATUS_ENABLED = 1;
+    const STATUS_ENABLED  = 1;
     const STATUS_DISABLED = 0;
 
     /**
@@ -55,7 +55,7 @@ class User extends CActiveRecord
             array('password, password_repeat', 'required', 'on' => array('insert')),
             array('password_repeat', 'compare', 'compareAttribute' => 'password',
                                                 'allowEmpty'       => true,
-                                                'message'          => "Passwords doesn't match",
+                                                'message'          => __("Passwords doesn't match"),
                                                 'on'               => array('insert', 'update')),
             array('email', 'email'),
 
@@ -97,20 +97,20 @@ class User extends CActiveRecord
     public function attributeLabels()
     {
         return array(
-            'id'              => 'User ID',
-            'login'           => 'Login',
-            'password'        => 'Password',
-            'name'            => 'Full Name',
-            'organization_id' => 'Organization',
-            'group_id'        => 'Group',
-            'email'           => 'Email',
-            'telephone'       => 'Phone',
-            'mobile'          => 'Mobile Phone',
-            'picture'         => 'Picture',
-            'status'          => 'Status',
-            'created_at'      => 'Created At',
-            'role'            => 'Role',
-            'password_repeat' => 'Confirmation',
+            'id'              => __('ID'),
+            'login'           => __('Login'),
+            'password'        => __('Password'),
+            'name'            => __('Full Name'),
+            'organization_id' => __('Organization'),
+            'group_id'        => __('Group'),
+            'email'           => __('Email'),
+            'telephone'       => __('Phone'),
+            'mobile'          => __('Mobile Phone'),
+            'picture'         => __('Picture'),
+            'status'          => __('Status'),
+            'created_at'      => __('Created At'),
+            'role'            => __('Role'),
+            'password_repeat' => __('Confirmation'),
         );
     }
 
@@ -119,10 +119,10 @@ class User extends CActiveRecord
      */
     public function search()
     {
-        $criteria = new CDbCriteria;
-        $criteria->alias = 'u';
+        $criteria         = new CDbCriteria;
+        $criteria->alias  = 'u';
         $criteria->select = 'u.id,u.login,u.organization_id,u.role,u.name,o.name as organization_name';
-        $criteria->join = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = u.organization_id';
+        $criteria->join   = 'LEFT JOIN ' . Organization::model()->tableName() . ' as o on o.id = u.organization_id';
         $criteria->compare('u.login', $this->login, true);
         $criteria->compare('u.name', $this->name, true);
         $criteria->compare('u.email', $this->email, true);

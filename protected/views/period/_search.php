@@ -25,8 +25,9 @@ $this->widget('CJuiDateTimePicker', array(
 ));
 
 ?>
-<div class="form-actions">
-    <?php echo BsHtml::submitButton('Show Periods', array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>
+<div class="form-actions pull-right">
+    <?php echo BsHtml::submitButton(__('Search'), array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>
 </div>
 
+<div class="clearfix"></div>
 <?php $this->endWidget(); ?>

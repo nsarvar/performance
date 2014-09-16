@@ -5,14 +5,14 @@
 
 <?php
 $this->breadcrumbs = array(
-    'Users'     => array('index'),
-    'Create New User',
+    __('Users') => array('index'),
+    __('Create New User'),
 );
 ?>
-<div class="page-header">
-    <h3>
-        <?=__('Create New User')?>
-    </h3>
-</div>
+    <div class="page-header">
+        <h3>
+            <?= __('Create New User') ?>
+        </h3>
+    </div>
 
-<?php $this->renderPartial('_form', array('model'=> $model)); ?>
+<?php $this->renderPartial('_form', array('model' => $model)); ?>

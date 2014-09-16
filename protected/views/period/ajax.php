@@ -10,9 +10,8 @@
             'type'  => 'raw',
         ),
         array(
-            'htmlOptions'=> array('width'=> '220px'),
             'name'       => 'period_from',
-            'header'     => 'From',
+            'htmlOptions'=> array('width'=> '220px'),
             'value'      => 'Yii::app()->dateFormatter->format("MMMM, y",strtotime($data->period_from))'
         ),
         array(

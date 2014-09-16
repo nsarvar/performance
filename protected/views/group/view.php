@@ -5,7 +5,7 @@
 
 <?php
 $this->breadcrumbs=array(
-	'Groups'=>array('index'),
+	__('Groups')=>array('index'),
 	$model->name,
 );
 

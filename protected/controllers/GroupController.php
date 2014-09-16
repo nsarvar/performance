@@ -85,7 +85,7 @@ class GroupController extends Controller
     {
         $model = Group::model()->findByPk($id);
         if ($model === NULL)
-            throw new CHttpException(404, 'The requested page does not exist.');
+           $this->show404();
 
         return $model;
     }

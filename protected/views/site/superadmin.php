@@ -8,13 +8,13 @@ $this->pageTitle = Yii::app()->name;
 
 
 <ol class="breadcrumb">
-    <li><a href="/">Home</a></li>
-    <li>Organizations</li>
+    <li><a href="/"><?=__('Home')?></a></li>
+    <li><?=__('Organizations')?></li>
 </ol>
 
 <div class="page-header">
     <h3>
-        <i class="fa fa-university"></i> Organizations
+        <i class="fa fa-university"></i> <?=__('Organizations')?>
     </h3>
 </div>
 
@@ -30,21 +30,21 @@ $this->pageTitle = Yii::app()->name;
     <div class="tab-pane <?=$type == 'ministry' ? 'active' : ''?>" id="organization_<?=$type?>">
         <table class="table table-bordered table-responsible table-striped table-hover" style="border-top: none;">
             <thead>
-            <th class="col_name">Name</th>
-            <th class="col_active" style="width: 140px;">Active Periods</th>
-            <th class="col_archive" style="width: 140px;">Archive Periods</th>
+            <th class="col_name"><?=__('Name')?></th>
+            <th class="col_active" style="width: 140px;"><?=__('Active Periods')?></th>
+            <th class="col_archive" style="width: 140px;"><?=__('Archive Periods')?></th>
             </thead>
             <?php foreach ($data as $organization): ?>
-            <tr>
-                <td class="col_name hider">
-                    <a href='/organization/view/<?=$organization['id']?>'><?=$organization['name']?></a>
+                <tr>
+                    <td class="col_name hider">
+                        <a href='/organization/view/<?= $organization['id'] ?>'><?= $organization['name'] ?></a>
                     <span class="action action_admin">
-                        <a href="/organization/update/<?=$organization['id']?>">Edit</a>
+                        <a href="/organization/update/<?= $organization['id'] ?>"><?=__('Edit')?></a>
                     </span>
-                </td>
-                <td class="col_archive"></td>
-                <td class="col_active"></td>
-            </tr>
+                    </td>
+                    <td class="col_archive"></td>
+                    <td class="col_active"></td>
+                </tr>
             <?php endforeach; ?>
         </table>
     </div>

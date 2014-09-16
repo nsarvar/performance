@@ -47,7 +47,7 @@ class Organization extends CActiveRecord
             array('name, description, address, phone, web_site', 'length', 'max' => 255),
             array('short_name', 'length', 'max' => 30),
             array('email', 'length', 'max' => 64),
-            array('email', 'email', 'message' => "The email isn't correct"),
+            array('email', 'email', 'message' => __("Invalid email format")),
             array('type', 'length', 'max' => 10),
             array('created_at', 'safe'),
             // The following rule is used by search().
@@ -79,17 +79,17 @@ class Organization extends CActiveRecord
     {
         return array(
             'id'          => 'ID',
-            'parent_id'   => 'Parent',
-            'name'        => 'Name',
-            'short_name'  => 'Short Name',
-            'description' => 'Description',
-            'address'     => 'Address',
-            'phone'       => 'Phone',
-            'email'       => 'Email',
-            'web_site'    => 'Web-site',
-            'type'        => 'Type',
-            'region_id'   => 'Region',
-            'created_at'  => 'Created At',
+            'parent_id'   => __('Parent'),
+            'name'        => __('Name'),
+            'short_name'  => __('Short Name'),
+            'description' => __('Description'),
+            'address'     => __('Address'),
+            'phone'       => __('Phone'),
+            'email'       => __('Email'),
+            'web_site'    => __('Web-site'),
+            'type'        => __('Type'),
+            'region_id'   => __('Region'),
+            'created_at'  => __('Created At'),
         );
     }
 

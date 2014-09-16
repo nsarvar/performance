@@ -60,11 +60,11 @@ class Period extends CActiveRecord
     {
         return array(
             'id'          => 'ID',
-            'name'        => 'Name',
-            'status'      => 'Status',
-            'task_count'  => 'Task Count',
-            'period_from' => 'Period From',
-            'period_to'   => 'Period To',
+            'name'        => __('Name'),
+            'status'      => __('Status'),
+            'task_count'  => __('Task Count'),
+            'period_from' => __('Period From'),
+            'period_to'   => __('Period To'),
         );
     }
 

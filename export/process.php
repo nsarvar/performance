@@ -416,6 +416,7 @@ class _Move extends Import
         while ($row = mysql_fetch_assoc($result)) {
             $j++;
             if ($realname = $row['file_real_filename']) {
+                echo "$realname\n";
                 $period   = $row['file_project'];
                 $filename = UPLOAD_DIR . $period . DS . $realname;
                 $newDir   = UPLOAD_DIR . '__ALL__' . DS . $realname;
@@ -443,8 +444,114 @@ class _Move extends Import
 
 }
 
+
+class _Check extends Import
+{
+    function startImport()
+    {
+
+        $resultFO = mysql_query("SELECT * FROM files order by file_id", $this->db->oldDbLink);
+        $resultFN = mysql_query("SELECT * FROM file order by id", $this->db->newDbLink);
+        $j        = 0;
+        $foArray  = array();
+        $fnArray  = array();
+
+        while ($row = mysql_fetch_assoc($resultFO)) {
+            $j++;
+            if ($realname = $row['file_real_filename']) {
+                $foArray[$realname] = $row['file_id'];
+            } else {
+                echo "Realname not found old: {$row['file_id']}\n";
+            }
+        }
+
+        while ($row = mysql_fetch_assoc($resultFN)) {
+            $j++;
+            if ($realname = $row['realname']) {
+                $fnArray[$realname] = $row['id'];
+            } else {
+                echo "Realname not found new: {$row['id']}\n";
+            }
+        }
+
+        foreach ($foArray as $name => $id) {
+            if (isset($fnArray[$name])) {
+                unset($foArray[$name]);
+                unset($fnArray[$name]);
+            } else {
+                echo "Not associated {$name}\t{$id}";
+            }
+        }
+
+        print_r($foArray);
+        print_r($fnArray);
+    }
+
+}
+
+class _Create extends Import
+{
+    function startImport()
+    {
+
+        $result = mysql_query("SELECT * FROM file order by id", $this->db->newDbLink);
+        $j      = 0;
+        echo UPLOAD_DIR;
+        while ($row = mysql_fetch_assoc($result)) {
+            $j++;
+            if ($realname = $row['realname']) {
+                file_put_contents(UPLOAD_DIR . $realname, print_r($row, true));
+            }
+        }
+    }
+
+}
+
+
+class _Fix extends Import
+{
+    function startImport()
+    {
+
+        $resultF = mysql_query("SELECT * FROM file order by id", $this->db->newDbLink);
+        $resultT = mysql_query("SELECT * FROM task order by id", $this->db->newDbLink);
+        $j       = 0;
+        $tasks   = array();
+        while ($row = mysql_fetch_assoc($resultT)) {
+            $tasks[$row['id']] = $row;
+        }
+
+        while ($row = mysql_fetch_assoc($resultF)) {
+            $j++;
+            if ($realname = $row['realname']) {
+                if ($taskId = $row['task_id']) {
+                    if (isset($tasks[$taskId])) {
+                        $task = $tasks[$taskId];
+                        if (file_exists(UPLOAD_DIR . $realname)) {
+                            if ($periodId = $task['period_id']) {
+
+                            }else{
+                                echo "Period not found for {$realname}\n";
+                            }
+                        } else {
+                            echo "Real file not found for {$realname}\n";
+                        }
+                    } else {
+                        echo "Task not found {$realname}\n";
+                    }
+                } else {
+                    echo "Unknown task_id for {$realname}\n";
+                }
+            }
+        }
+    }
+
+}
+
+
 define('DS', DIRECTORY_SEPARATOR);
-define('UPLOAD_DIR', __DIR__ . DS . '..' . DS . 'files' . DS);
+define('FIX_DIR', __DIR__ . DS . '..' . DS . 'files' . DS);
+define('UPLOAD_DIR', __DIR__ . DS . '..' . DS . 'files' . DS . '__ALL__' . DS);
 /**
  * @var $model Import
  */

@@ -26,13 +26,13 @@
     </div>
 </div>
 <hr>
-<p class="text-muted pull-left">Fields with <span class="required">*</span> are required.</p>
+<p class="text-muted pull-left"><?=__('Fields with <span class="required">*</span> are required.')?></p>
 <p class="pull-right">
     <button type="button" name="yt10"
             class="btn btn-default btn-lg btn-delete <?= $model->scenario == 'update' ? '' : 'hidden' ?>"
-            action="<?= Yii::app()->createUrl("user/delete", array("id" => $model->primaryKey)) ?>">Delete
+            action="<?= Yii::app()->createUrl("group/delete", array("id" => $model->primaryKey)) ?>"><?=__('Delete')?>
     </button>
     <button type="submit" name="save"
-            class="btn btn-success btn-lg"><?= $model->scenario == 'update' ? 'Update' : 'Create User' ?></button>
+            class="btn btn-success btn-lg"><?= $model->scenario == 'update' ? __('Update') : __('Create Group') ?></button>
 </p>
 <?php $this->endWidget(); ?>

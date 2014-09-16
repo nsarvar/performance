@@ -5,7 +5,7 @@
 
 <?php
 $this->breadcrumbs = array(
-    'Users' => array('index'),
+    __('Users') => array('index'),
     $model->name,
 );
 ?>

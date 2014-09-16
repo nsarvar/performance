@@ -38,7 +38,7 @@ class OrganizationController extends Controller
             $model->attributes = $_POST['Organization'];
             try {
                 $model->save();
-                Yii::app()->user->setFlash('success', Yii::t('app', 'Organization ":name" is updated', array(':name' => $model->name)));
+                Yii::app()->user->setFlash('success', __('Organization ":name" is updated', array(':name' => $model->name)));
             } catch (Exception $e) {
                 Yii::app()->user->setFlash('danger', $e->getMessage());
             }
@@ -57,7 +57,7 @@ class OrganizationController extends Controller
         try {
             $model = $this->loadModel($id);
             if ($model->delete()) {
-                Yii::app()->user->setFlash('success', Yii::t('app', 'Organization ":name" is deleted', array(':name' => $model->name)));
+                Yii::app()->user->setFlash('success', __('Organization ":name" is deleted', array(':name' => $model->name)));
             }
         } catch (Exception $e) {
             Yii::app()->user->setFlash('danger', $e->getMessage());
@@ -94,7 +94,7 @@ class OrganizationController extends Controller
     {
         $model = Organization::model()->findByPk($id);
         if ($model === NULL)
-            throw new CHttpException(404, 'The requested page does not exist.');
+           $this->show404();
 
         return $model;
     }

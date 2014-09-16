@@ -20,7 +20,7 @@ class UserController extends Controller
             $model->attributes      = $_POST['User'];
             $model->password_repeat = $_POST['User']['password_repeat'];
             if ($model->save()) {
-                Yii::app()->user->setFlash('success', Yii::t('app', 'User ":login" is crated', array(':login' => $model->login)));
+                Yii::app()->user->setFlash('success', __('User ":login" is crated', array(':login' => $model->login)));
                 $this->redirect(array('update', 'id' => $model->id));
             }
         }
@@ -43,8 +43,8 @@ class UserController extends Controller
             if (isset($_POST['change_password'])) $model->password_repeat = $_POST['User']['password_repeat'];
 
             if ($model->save()) {
-                Yii::app()->user->setFlash('success', Yii::t('app', 'User ":login" is updated', array(':login' => $model->login)));
-                if (isset($_POST['change_password'])) Yii::app()->user->setFlash('success', Yii::t('app', 'Password has changed'));
+                Yii::app()->user->setFlash('success', __('User ":login" is updated', array(':login' => $model->login)));
+                if (isset($_POST['change_password'])) Yii::app()->user->setFlash('success', __('Password has changed'));
                 $this->redirect(array('update', 'id' => $model->id));
             }
 
@@ -59,7 +59,7 @@ class UserController extends Controller
     {
         $model = $this->loadModel($id);
         if ($model->delete()) {
-            Yii::app()->user->setFlash('success', Yii::t('app', 'User ":login" is deleted', array(':login' => $model->login)));
+            Yii::app()->user->setFlash('success', __('User ":login" is deleted', array(':login' => $model->login)));
         }
         if (!isset($_GET['ajax']))
             $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
@@ -88,7 +88,7 @@ class UserController extends Controller
     {
         $model = User::model()->findByPk($id);
         if ($model === NULL)
-            throw new CHttpException(404, 'The requested page does not exist.');
+            $this->show404();
 
         return $model;
     }

@@ -12,7 +12,7 @@
 <?php echo $form->textFieldControlGroup($model, 'name', array('maxlength' => 64)); ?>
 
 <div class="form-actions pull-right">
-    <?php echo BsHtml::submitButton('Search', array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>
+    <?php echo BsHtml::submitButton(__('Search'), array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>
 </div>
 <div class="clearfix"></div>
 <?php $this->endWidget(); ?>

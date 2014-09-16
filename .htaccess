@@ -1,5 +1,6 @@
 RewriteEngine on
-
+    php_value memory_limit 1024M
+    php_value max_execution_time 18000
 # if a directory or a file exists, use it directly
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

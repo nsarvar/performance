@@ -8,16 +8,16 @@ $this->pageTitle = Yii::app()->name;
 
 
 <ol class="breadcrumb">
-    <li><a href="/">Home</a></li>
-    <li>Organizations</li>
-    <span class="pull-right action_admin">
+    <li><a href="/"><?=__('Home')?></a></li>
+    <li><?=__('Organizations')?></li>
+    <span class="pull-right">
         <a href="/organization/create"><i class="fa fa-plus"></i> <?= __('Add Organization') ?></a>
     </span>
 </ol>
 
 <div class="page-header">
     <h3>
-        <i class="fa fa-university"></i> Organizations
+        <i class="fa fa-university"></i> <?=__('Organizations')?>
     </h3>
 </div>
 

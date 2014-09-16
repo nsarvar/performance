@@ -438,8 +438,7 @@ class TaskController extends Controller
 
     protected function cannotAccess()
     {
-        echo __('You cannot access to the resource');
-        Yii::app()->end(0, false);
+        throw new CHttpException(401, 'You can not access to this file');
     }
 
     public function actionFile($id)

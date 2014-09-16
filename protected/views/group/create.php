@@ -5,12 +5,12 @@
 
 <?php
 $this->breadcrumbs = array(
-    'Users'  => array('user'),
-    'Groups' => array('index'),
-    'Create New Group',
+    __('Users')  => array('user'),
+    __('Groups') => array('index'),
+    __('Create New Group'),
 );
 ?>
 
-<?php echo BsHtml::pageHeader('Create New Group') ?>
+<?php echo BsHtml::pageHeader(__('Create New Group')) ?>
 
 <?php $this->renderPartial('_form', array('model' => $model)); ?>

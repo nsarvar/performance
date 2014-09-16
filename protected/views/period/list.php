@@ -4,8 +4,7 @@
 
 
 $this->breadcrumbs = array(
-    'Periods'=> array('index'),
-    'List',
+    __('Periods'),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -19,7 +18,7 @@ $('.search-form form').submit(function(){
 ?>
 <div class="page-header">
     <h3>
-        Periods
+        <?=__('Periods')?>
         <small></small>
     </h3>
 </div>
@@ -51,7 +50,6 @@ $('.search-form form').submit(function(){
                     ),
                     array(
                         'name'  => 'period_from',
-                        'header'=> 'From',
                         'value' => 'Yii::app()->dateFormatter->format("MMMM, y",strtotime($data->period_from))'
                     ),
                     'status',

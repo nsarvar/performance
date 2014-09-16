@@ -6,7 +6,6 @@
     'columns'     => array(
         array(
             'name'       => 'name',
-            'header'     => 'Name',
             'value'      => 'CHtml::link($data->name, Yii::app()->createUrl("group/update",array("id"=>$data->primaryKey)))',
             'type'       => 'raw'
         ),

@@ -64,7 +64,7 @@ class Controller extends CController
     protected $acl = array(
         User::ROLE_SUPER_ADMIN => array('*' => '*'),
         User::ROLE_ADMIN       => array(
-            'site'         => array('index', 'login', 'logout', 'user'),
+            'site'         => array('index', 'login', 'logout', 'user', 'error'),
             'calendar'     => array('index', 'events'),
             'period'       => array('index', 'ajax', 'view'),
             'group'        => array('index', 'view'),
@@ -74,7 +74,7 @@ class Controller extends CController
         ),
         User::ROLE_MODERATOR   => array(),
         User::ROLE_USER        => array(
-            'site'         => array('index', 'login', 'logout', 'usertasks', 'user'),
+            'site'         => array('index', 'login', 'logout', 'usertasks', 'user', 'error'),
             'calendar'     => array('index', 'events'),
             'period'       => array('index', 'ajax', 'view'),
             'organization' => array('view'),
@@ -106,8 +106,6 @@ class Controller extends CController
         } elseif (Yii::app()->controller->action->id == 'login') {
             return $c->run();
         }
-
-        //return $c->run();
         $this->show404();
     }
 
@@ -144,7 +142,7 @@ class Controller extends CController
 
     protected function show404()
     {
-        throw new CHttpException(404, 'The requested page does not exist.');
+        throw new CHttpException(404, __('The requested page does not exist.'));
     }
 
 }

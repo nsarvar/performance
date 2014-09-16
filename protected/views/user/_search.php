@@ -17,15 +17,15 @@
         <?php echo $form->textFieldControlGroup($model, 'email', array('maxlength'=> 30)); ?>
     </div>
     <div class="col col-md-3 col-lg-12">
-        <?php echo $form->dropDownListControlGroup($model, 'organization_id', Organization::getOptionLabelsForUsers(), array('class'=> 'selectpicker show-tick', 'title'=> 'Any Organization')); ?>
+        <?php echo $form->dropDownListControlGroup($model, 'organization_id', Organization::getOptionLabelsForUsers(), array('class'=> 'selectpicker show-tick', 'title'=> __('Any Organization'))); ?>
     </div>
     <div class="col col-md-3 col-lg-12">
-        <?php echo $form->dropDownListControlGroup($model, 'role', User::getRolesArray(), array('class'=> 'selectpicker show-tick', 'title'=> 'Any Role')); ?>
+        <?php echo $form->dropDownListControlGroup($model, 'role', User::getRolesArray(), array('class'=> 'selectpicker show-tick', 'title'=> __('Any Role'))); ?>
     </div>
 </div>
 
 <div class="form-actions pull-right">
-    <?php echo BsHtml::submitButton('Search', array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>
+    <?php echo BsHtml::submitButton(__('Search'), array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>
 </div>
 <div class="clearfix"></div>
 <?php $this->endWidget(); ?>
